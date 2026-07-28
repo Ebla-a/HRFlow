@@ -4,6 +4,7 @@ namespace Modules\Auth\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Auth\App\Services\AuthService;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,8 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->singleton(AuthService::class);
+
     }
 
     /**
