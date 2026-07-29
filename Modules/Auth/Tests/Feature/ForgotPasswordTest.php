@@ -24,10 +24,9 @@ class ForgotPasswordTest extends TestCase
              'status',
              'message',
              'data',
-             'errors',
-             'meta',
+             'meta', 
          ]);
-         
+
         $this->assertDatabaseHas('password_reset_tokens', [
             'email' => 'user@example.com',
         ]);

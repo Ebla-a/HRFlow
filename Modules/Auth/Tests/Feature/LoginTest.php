@@ -60,4 +60,25 @@ class LoginTest extends TestCase
             'password',
         ]);
   }
+
+    public function test_inactive_user_cannot_login(): void
+    {
+    $user = User::factory()->create([
+        'email' => 'inactive@example.com',
+        'password' => bcrypt('password'),
+        'is_active' => false,
+    ]);
+
+    $response = $this->postJson('/api/v1/auth/login', [
+        'email' => 'inactive@example.com',
+        'password' => 'password',
+    ]);
+
+    $response
+        ->assertStatus(403)
+        ->assertJson([
+            'status' => false,
+            'message' => 'User account is inactive.',
+        ]);
+   }
 }
