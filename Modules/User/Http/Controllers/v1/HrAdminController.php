@@ -6,57 +6,124 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\User\Services\v1\HrService;
+use Modules\Core\App\Traits\ApiResponseTrait;
+use Modules\User\Http\Requests\CreatePermissionRequest;
+use Modules\User\Http\Requests\CreateRoleRequest;
+use Modules\User\Http\Requests\GranteRevokepermissionRequest;
+use Modules\User\Http\Requests\GrantRevokeeRoleRequest;
 
 class HrAdminController extends Controller
 {
-    public function createRole(Request $request,HrService $service)
+    use ApiResponseTrait;
+
+    /**
+     * Create a new security role.
+     *
+     * @param CreateRoleRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function createRole(CreateRoleRequest $request,HrService $service)
     {
         $service->createRole($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Role created successfully", 200);
     }
 
-    public function deleteRole(Request $request,HrService $service)
+
+    /**
+     * Delete an existing role by ID.
+     *
+     * @param int|string $id
+     * @param HrService $service
+     * @return JsonResponse
+     */
+
+    public function deleteRole($id,HrService $service)
     {
-        $service->deleteRole($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        $service->deleteRole(['id' => $id]);
+        return $this->success(null, "Role deleted successfully", 200);
     }
 
 
-    public function createPermission(Request $request,HrService $service)
+
+    /**
+     * Create a new permission.
+     *
+     * @param CreatePermissionRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function createPermission(CreatePermissionRequest $request,HrService $service)
     {
         $service->createPermission($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Permission created successfully", 200);
     }
 
-    public function deletePermission(Request $request,HrService $service)
+
+    /**
+     * Delete an existing permission by ID.
+     *
+     * @param int|string $id
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function deletePermission($id,HrService $service)
     {
-        $service->deletePermission($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        $service->deletePermission(['id' => $id]);
+        return $this->success(null, "Permission deleted successfully", 200);
     }
 
-    
-    public function GrantRole(Request $request,HrService $service)
+
+    /**
+     * Assign/grant a role to a user.
+     *
+     * @param GrantRevokeeRoleRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function GrantRole(GrantRevokeeRoleRequest $request,HrService $service)
     {
         $service->GrantRole($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Role granted successfully", 200);
     }
 
-        public function revokeRole(Request $request,HrService $service)
+    /**
+     * Revoke  role from a user.
+     *
+     * @param GrantRevokeeRoleRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function revokeRole(GrantRevokeeRoleRequest $request,HrService $service)
     {
         $service->revokeRole($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Role revoked successfully", 200);
     }
 
-        public function GrantPermission(Request $request,HrService $service)
+    /**
+     * Grant  permission to a user.
+     *
+     * @param GranteRevokepermissionRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function GrantPermission(GranteRevokepermissionRequest $request,HrService $service)
     {
         $service->GrantPermission($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Permission granted successfully", 200);
     }
 
-    public function revokePermission(Request $request,HrService $service)
+    /**
+     * Revoke permission from a user.
+     *
+     * @param GranteRevokepermissionRequest $request
+     * @param HrService $service
+     * @return JsonResponse
+     */
+    public function revokePermission(GranteRevokepermissionRequest $request,HrService $service)
     {
         $service->revokePermission($request->validated());
-        return response()->json(['messsage'=>"done"]);
+        return $this->success(null, "Permission revoked successfully", 200);
     }
 
 

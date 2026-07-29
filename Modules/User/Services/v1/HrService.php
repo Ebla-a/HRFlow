@@ -4,6 +4,7 @@ namespace Modules\User\Services\v1;
 use Illuminate\Support\Facades\Storage;
 use Modules\User\Entities\User;
 use Modules\User\Events\UserCreated;
+use Modules\User\Exceptions\NotFoundException;
 use Modules\User\Exceptions\UserNotFoundException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -27,11 +28,14 @@ class HrService
 
     public function deleteRole(array $data)
     {
-        $rolename=$data['role'];
-        $role = Role::findByName($rolename);
+        $id=$data['id'];
+        $role = Role::findById($id);
+        if(!$role)
+        {
+            throw new NotFoundException();
+        }
         $role->delete();
     }
-
 
     public function createPermission(array $data)
     {
@@ -41,12 +45,14 @@ class HrService
 
     public function deletePermission(array $data)
     {
-        $permitionname=$data['permition'];
-        $permission = Permission::findByName($permitionname);
+        $id=$data['id'];
+        $permission = Permission::findById($id);
+        if(!$permission){
+            throw new NotFoundException();
+        }
         $permission->delete();
     }
-
-    
+  
     public function GrantRole(array $data)
     {
         $id = $data['id'];
@@ -55,7 +61,6 @@ class HrService
         $user->assignRole($role);
         $user->save();
     }
-
 
     public function revokeRole(array $data)
     {

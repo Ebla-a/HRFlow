@@ -5,9 +5,8 @@ namespace Modules\User\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
 
-class UpdateEmailRequest extends FormRequest
+class GrantRevokeeRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,14 +26,8 @@ class UpdateEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => ['required', 'integer', 'exists:users,id'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($this->input('id')),
-            ],
+            'id'   => ['required', 'integer', 'exists:users,id'],
+            'role' => ['required', 'string', 'exists:roles,name'],
         ];
     }
 
@@ -46,13 +39,12 @@ class UpdateEmailRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required'    => 'User ID is required.',
-            'id.integer'     => 'User ID must be a valid number.',
-            'id.exists'      => 'Selected user does not exist.',
-            'email.required' => 'Email address is required.',
-            'email.email'    => 'Please enter a valid email address.',
-            'email.unique'   => 'This email address is already in use by another user.',
-            'email.max'      => 'Email address cannot exceed 255 characters.',
+            'id.required'   => 'User ID is required.',
+            'id.integer'    => 'User ID must be a valid integer.',
+            'id.exists'     => 'Selected user does not exist.',
+            'role.required' => 'Role name is required.',
+            'role.string'   => 'Role name must be a valid text string.',
+            'role.exists'   => 'The specified role does not exist.',
         ];
     }
 

@@ -5,7 +5,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class UserNotFoundException extends Exception
+class NotFoundException extends Exception
 {
     /**
      * Render the exception into an HTTP response.

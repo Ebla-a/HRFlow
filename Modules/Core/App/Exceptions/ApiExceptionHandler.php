@@ -15,5 +15,7 @@ public function render($request , Throwable $e)
         ], 500);
 }
 
+
+
 }
     

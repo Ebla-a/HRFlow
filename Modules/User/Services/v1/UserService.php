@@ -4,13 +4,12 @@ namespace Modules\User\Services\v1;
 use Illuminate\Support\Facades\Storage;
 use Modules\User\Entities\User;
 use Modules\User\Events\UserCreated;
-use Modules\User\Exceptions\UserNotFoundException;
+use Modules\User\Exceptions\NotFoundException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserService
 {
-
 
     public function createUser($email)
     {
@@ -23,21 +22,21 @@ class UserService
         return $user;
     }
 
-
     public function allUsers()
     {
         return  User::paginate(10);
     }
 
+
     public function userById($id)
     {
         $user = User::find($id);
         if (!$user) {
-            throw new UserNotFoundException();
+            throw new NotFoundException();
+            
         }
         return $user;
     }
-
 
     public function updateEmail(array $data)
     {
@@ -49,7 +48,6 @@ class UserService
         $user->save();
         return $user;
     }
-
 
     public function disActiveUserAccount(array $data)
     {

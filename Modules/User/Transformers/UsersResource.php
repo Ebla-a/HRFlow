@@ -3,6 +3,7 @@
 namespace Modules\User\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UsersResource extends JsonResource
 {
@@ -18,6 +19,7 @@ class UsersResource extends JsonResource
             'id'         => $this->id,
             'email'      => $this->email,
             'is_active'  => $this->is_active,
+            'avatar_url' => $this->avatar_url ? Storage::url($this->profile_image) : null, 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -1,12 +1,12 @@
 <?php
 namespace Modules\Core\App\Traits;
 
-class ApiResponseTrait {
+trait ApiResponseTrait {
 
 protected function success($data = null , $message="Success", $status = 200)
 {
     return response()->json([
-           'status' => true,
+            'status' => true,
             'message' => $message,
             'data' => $data,
         ], $status);
