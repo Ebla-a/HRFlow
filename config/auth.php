@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use Modules\User\Entities\User;
 
 return [
 
@@ -65,7 +65,7 @@ return [
         'users' => [
             'driver' => 'eloquent',
             // 'model' => env('AUTH_MODEL', User::class),
-            'model' => Modules\Core\Entities\User::class,
+            'model' => Modules\User\Entities\User::class,
         ],
 
         // 'users' => [

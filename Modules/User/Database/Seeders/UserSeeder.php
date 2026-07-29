@@ -4,8 +4,9 @@ namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Modules\User\Entities\User;
 
-class UserDatabaseSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,6 +17,13 @@ class UserDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $this->call(UserSeeder::class);
+        $counter=10;
+        
+        for($i=0;$i<=$counter;$i++)
+        {
+            User::factory()->create([
+                'email' => $i.fake()->unique()->safeEmail()
+            ]);
+        }
     }
 }
