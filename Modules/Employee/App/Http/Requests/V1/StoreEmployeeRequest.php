@@ -11,19 +11,34 @@ class StoreEmployeeRequest extends FormRequest
      *
      * @return array
      */
-  public function rules(): array
+public function rules(): array
 {
     return [
-        'department_id' => 'required|integer',
-        'job_title_id' => 'required|integer',
-        'employee_number' => 'required|string',
+        'department_id' => 'required|integer|exists:departments,id',
 
-        'employment_type' => 'required|in:full_time,part_time,contract',
-        'status' => 'required|in:active,on_leave,suspended,terminated',
+        'job_title_id' => 'required|integer|exists:job_titles,id',
 
-        'hire_date' => 'required|date',
+        'employee_number' => ['required','string', 'max:50',],
+
+        'employment_type' => [ 'required', 'in:full_time,part_time,contract' ],
+
+        'status' => [ 'required','in:active,on_leave,suspended,terminated' ],
+
+        'hire_date' => ['required','date' ],
+        'manager_id' => [ 'nullable','integer','exists:employees,id' ],
+
+        'national_id' => [ 'nullable','string','max:50'],
+
+        'phone' => 'nullable|string|max:20',
+
+        'address' => 'nullable|string',
+
+        'birth_date' => 'nullable|date',
+
+        'gender' => 'nullable|in:male,female',
     ];
 }
+
     /**
      * Determine if the user is authorized to make this request.
      *

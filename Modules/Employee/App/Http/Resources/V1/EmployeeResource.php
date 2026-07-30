@@ -20,9 +20,25 @@ class EmployeeResource extends JsonResource
     'department_id' => $this->department_id,
     'job_title_id' => $this->job_title_id,
     'manager_id' => $this->manager_id,
-    'manager' => new EmployeeResource(
-    $this->whenLoaded('manager')
-     ),
+    'manager' => [
+    'id' => $this->manager?->id,
+    'name' => $this->manager?->user?->name,
+],
+    'user' => [
+    'id' => $this->user?->id,
+    'name' => $this->user?->name,
+    'email' => $this->user?->email,
+],
+
+'department' => [
+    'id' => $this->department?->id,
+    'name' => $this->department?->name,
+],
+
+'job_title' => [
+    'id' => $this->jobTitle?->id,
+    'name' => $this->jobTitle?->name,
+],
 
     'employment_type' => $this->employment_type,
     'status' => $this->status,

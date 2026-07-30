@@ -21,6 +21,7 @@ class EmployeeFilterRequest extends FormRequest
             'department_id' => 'sometimes|nullable|integer|exists:departments,id',
             'sort_by'       => 'sometimes|nullable|in:hire_date,age,name,department',
             'direction'     => 'sometimes|nullable|in:asc,desc',
+            'status' => 'sometimes|nullable|in:active,on_leave,suspended,terminated',
         ];
     }
 }

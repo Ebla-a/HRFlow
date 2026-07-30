@@ -7,6 +7,9 @@ use App\Models\User;
 use Modules\Department\Entities\Department;
 use Modules\Department\Entities\JobTitle;
 
+/**
+ * Summary of Employee
+ */
 class Employee extends Model
 {
     protected $fillable = [
