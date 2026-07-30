@@ -2,78 +2,76 @@
 
 namespace Modules\Auth\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Modules\Auth\App\Services\AuthService;
+use Modules\Auth\Http\Requests\ForgotPasswordRequest;
+use Modules\Auth\Http\Requests\LoginRequest;
+use Modules\Auth\Http\Requests\ResetPasswordRequest;
+use Modules\Auth\Http\Requests\UpdatePasswordRequest;
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('auth::index');
+    public function __construct(
+        private readonly AuthService $authService
+    ) {
     }
 
     /**
-     * Show the form for creating a new resource.
-     * @return Renderable
+     * Login user.
      */
-    public function create()
+    public function login(LoginRequest $request): JsonResponse
     {
-        return view('auth::create');
+        return $this->authService->login(
+            $request->toDTO()
+        );
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
+     * Logout user.
      */
-    public function store(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        //
+        return $this->authService->logout($request);
     }
 
     /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
+     * Get authenticated user.
      */
-    public function show($id)
+    public function me(Request $request): JsonResponse
     {
-        return view('auth::show');
+        return $this->authService->me($request);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
+     * Update authenticated user password.
      */
-    public function edit($id)
+    public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
-        return view('auth::edit');
+        return $this->authService->updatePassword(
+            $request->toDTO(),
+            $request
+        );
     }
 
     /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
+     * Send reset password token.
      */
-    public function update(Request $request, $id)
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        //
+        return $this->authService->forgotPassword(
+            $request->validated('email')
+        );
     }
 
     /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
+     * Reset password.
      */
-    public function destroy($id)
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        //
+        return $this->authService->resetPassword(
+            $request->toDTO()
+        );
     }
-}
+} 
