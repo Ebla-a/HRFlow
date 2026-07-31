@@ -3,6 +3,7 @@
 namespace Modules\User\Services\v1;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Modules\Core\App\Exceptions\UserNotFoundException as ExceptionsUserNotFoundException;
 use Modules\User\App\DTOs\CreateUserData;
 use Modules\User\App\DTOs\UpdateEmailData;
 use Modules\User\Entities\User;
@@ -46,7 +47,7 @@ class UserService
         $user = User::find($id);
 
         if (! $user) {
-            throw new UserNotFoundException();
+            throw new ExceptionsUserNotFoundException();
         }
 
         return $user;
