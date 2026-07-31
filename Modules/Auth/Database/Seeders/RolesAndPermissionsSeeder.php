@@ -22,6 +22,18 @@ class RolesAndPermissionsSeeder extends Seeder
      app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $hr_permissions = [
+            'roles.create',
+            'roles.delete',
+            'roles.grant',
+            'roles.revoke',
+
+            'permissions.create',
+            'permissions.delete',
+            'permissions.grant',
+            'permissions.revoke',
+
+
+
 'create.user','update.user','user.active','user.inActive','view.users.all',
 'employees.view.all','employee.create','employee.update','employee.change.status',
 
