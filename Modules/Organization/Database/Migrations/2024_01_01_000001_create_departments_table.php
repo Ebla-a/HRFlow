@@ -21,10 +21,7 @@ return new class extends Migration
                 ->constrained('departments')
                 ->nullOnDelete();
 
-            $table->foreignId('manager_id')
-                ->nullable()
-                ->constrained('employees')
-                ->nullOnDelete();
+           $table->unsignedBigInteger('manager_id')->nullable();
 
             $table->boolean('is_active')
                 ->default(true);
