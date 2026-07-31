@@ -1,93 +1,58 @@
 <?php
 namespace Modules\User\Services\v1;
 
-use Illuminate\Support\Facades\Storage;
+use Modules\User\App\DTOs\AssignPermissionData;
 use Modules\User\Entities\User;
-use Modules\User\Events\UserCreated;
-use Modules\User\Exceptions\NotFoundException;
-use Modules\User\Exceptions\UserNotFoundException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-
 class HrService
 {
-
-    public $service;
-
-    public function __construct(UserService $service)
+    public function createRole(string $name): Role
     {
-        $this->service = $service;
+        return Role::create(['name' => $name]);
     }
 
-    public function createRole(array $data)
+    public function deleteRole(Role $role): void
     {
-        $role=$data['role'];
-        Role::create(['name'=>$role]);
-    }
-
-    public function deleteRole(array $data)
-    {
-        $id=$data['id'];
-        $role = Role::findById($id);
-        if(!$role)
-        {
-            throw new NotFoundException();
-        }
         $role->delete();
     }
 
-    public function createPermission(array $data)
+    public function createPermission(string $name): Permission
     {
-        $permition=$data['permition'];
-        Permission::create(['name'=>$permition]);
+        return Permission::create(['name' => $name]);
     }
 
-    public function deletePermission(array $data)
+    public function deletePermission(Permission $permission): void
     {
-        $id=$data['id'];
-        $permission = Permission::findById($id);
-        if(!$permission){
-            throw new NotFoundException();
-        }
         $permission->delete();
     }
-  
-    public function GrantRole(array $data)
+
+    public function grantRole(User $user, string $roleName): User
     {
-        $id = $data['id'];
-        $role=$data['role'];
-        $user=$this->service->userById($id);
-        $user->assignRole($role);
-        $user->save();
+        $user->assignRole($roleName);
+
+        return $user;
     }
 
-    public function revokeRole(array $data)
+    public function revokeRole(User $user, string $roleName): User
     {
-        $id = $data['id'];
-        $role=$data['role'];
-        $user=$this->service->userById($id);
-        $user->removeRole($role);
-        $user->save();
+        $user->removeRole($roleName);
+
+        return $user;
     }
 
-    public function GrantPermission(array $data)
+    public function grantPermission(User $user, AssignPermissionData $dto): User
     {
-        $id = $data['id'];
-        $permission = $data['permission'];
-        $user=$this->service->userById($id);
-        $user->givePermissionTo($permission);
-        $user->save();
+        $user->givePermissionTo($dto->permission);
+
+        return $user;
     }
 
-    public function revokePermission(array $data)
+    public function revokePermission(User $user, AssignPermissionData $dto): User
     {
-        $id = $data['id'];
-        $permission = $data['permission'];
-        $user=$this->service->userById($id);
-        $user->revokePermissionTo($permission);
-        $user->save();
-    }
-    
+        $user->revokePermissionTo($dto->permission);
 
+        return $user;
+    }
 }

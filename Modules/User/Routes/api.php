@@ -1,54 +1,35 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-use Modules\User\Http\Controllers\v1\HrAdminController as V1HrAdminController;
 use Modules\User\Http\Controllers\v1\UserController;
+use Modules\User\Http\Controllers\v1\HrAdminController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+Route::prefix('v1')->middleware(['auth:sanctum', 'role:Hr_admin'])->group(function () {
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+    /**
+     * User Management
+     */
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
-Route::prefix('v1')->middleware(['role:Hr_admin','auth:sanctum'])->group(function () {
+    Route::put('/users/{user}/email', [UserController::class, 'updateEmail'])->name('users.updateEmail');
+    Route::post('/users/{user}/avatar', [UserController::class, 'updateProfileImage'])->name('users.updateAvatar');
 
+    Route::post('/users/{user}/deactivate', [UserController::class, 'deactivateUserAccount'])->name('users.deactivate');
+    Route::post('/users/{user}/activate', [UserController::class, 'activateUserAccount'])->name('users.activate');
 
-Route::post('/user/updateEmail',[UserController::class,'updateEmail'])->name('updateEmail');
-Route::post('/user/updateProfileImage',[UserController::class,'updateProfileImage'])->name('updateProfileImage');
+    /**
+     * HR Admin (Roles & Permissions)
+     */
+    Route::post('/roles', [HrAdminController::class, 'createRole'])->name('roles.create');
+    Route::delete('/roles/{role}', [HrAdminController::class, 'deleteRole'])->name('roles.delete');
 
-Route::get('/users',[UserController::class,'getAllUsers'])->name('get_all_useres');
-Route::get('/user/{id}',[UserController::class,'getUserById'])->name('getUserById');
+    Route::post('/permissions', [HrAdminController::class, 'createPermission'])->name('permissions.create');
+    Route::delete('/permissions/{permission}', [HrAdminController::class, 'deletePermission'])->name('permissions.delete');
 
+    Route::post('/users/{user}/roles/grant', [HrAdminController::class, 'grantRole'])->name('roles.grant');
+    Route::post('/users/{user}/roles/revoke', [HrAdminController::class, 'revokeRole'])->name('roles.revoke');
 
-Route::post('/user/disActiveUserAccount/{id}',[UserController::class,'disActiveUserAccount'])->name('disActiveUserAccount');
-Route::post('/user/activeUserAccount/{id}',[UserController::class,'activeUserAccount'])->name('activeUserAccount');
-
-
-Route::post('/Hr/createRole',[V1HrAdminController::class,'createRole'])->name('createRole');
-Route::post('/Hr/deleteRole',[V1HrAdminController::class,'deleteRole'])->name('deleteRole');
-
-
-Route::post('/Hr/createPermission',[V1HrAdminController::class,'createPermission'])->name('createPermission');
-Route::post('/Hr/deletePermission',[V1HrAdminController::class,'deletePermission'])->name('deletePermission');
-
-
-Route::post('/Hr/GrantRole',[V1HrAdminController::class,'GrantRole'])->name('GrantRole');
-Route::post('/Hr/revokeRole',[V1HrAdminController::class,'revokeRole'])->name('revokeRole');
-
-
-Route::post('/Hr/GrantPermission',[V1HrAdminController::class,'GrantPermission'])->name('GrantPermission');
-Route::post('/Hr/revokePermission',[V1HrAdminController::class,'revokePermission'])->name('revokePermission');
-
-
+    Route::post('/users/{user}/permissions/grant', [HrAdminController::class, 'grantPermission'])->name('permissions.grant');
+    Route::post('/users/{user}/permissions/revoke', [HrAdminController::class, 'revokePermission'])->name('permissions.revoke');
 });

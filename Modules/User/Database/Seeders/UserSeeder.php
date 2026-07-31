@@ -16,14 +16,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-
-        $counter=10;
         
-        for($i=0;$i<=$counter;$i++)
-        {
-            User::factory()->create([
-                'email' => $i.fake()->unique()->safeEmail()
-            ]);
-        }
+        User::factory()->count(10)->create();
     }
 }

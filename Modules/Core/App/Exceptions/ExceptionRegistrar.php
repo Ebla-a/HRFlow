@@ -2,107 +2,103 @@
 
 namespace Modules\Core\App\Exceptions;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Exceptions\UnauthorizedException as SpatieUnauthorizedException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class ExceptionRegistrar
 {
-    /**
-     * @param Exceptions $exceptions
-     * @return void
-     */
+    protected static Controller $controller;
+
     public static function register(Exceptions $exceptions): void
     {
+        // Create ONE instance only
+        static::$controller = new Controller();
+
         static::validation($exceptions);
         static::authentication($exceptions);
         static::authorization($exceptions);
         static::notFound($exceptions);
         static::serverError($exceptions);
+        static::userNotFound($exceptions);
     }
-    /**
-     * 
-     * @param Exceptions $exceptions
-     * @return void
-     */
+
     protected static function validation(Exceptions $exceptions): void
     {
-        $exceptions->render(function (ValidationException $e) {
-
-            return response()->json([
-              'status' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
-
-        });
+        $exceptions->render(fn (ValidationException $e) =>
+            static::$controller->error(
+                'Validation failed.',
+                Response::HTTP_UNPROCESSABLE_ENTITY,
+                $e->errors()
+            )
+        );
     }
-    /**
-     * @param Exceptions $exceptions
-     * @return void
-     */
+
     protected static function authentication(Exceptions $exceptions): void
     {
-        $exceptions->render(function (AuthenticationException $e) {
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
-
-        });
+        $exceptions->render(fn (AuthenticationException $e) =>
+            static::$controller->error(
+                'Unauthenticated.',
+                Response::HTTP_UNAUTHORIZED
+            )
+        );
     }
-    /**
-     * @param Exceptions $exceptions
-     * @return void
-     */
+
     protected static function authorization(Exceptions $exceptions): void
     {
-        $exceptions->render(function (AuthorizationException $e) {
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Forbidden',
-            ], 403);
-
-        });
+        $exceptions->render(fn (AuthorizationException|SpatieUnauthorizedException $e) =>
+            static::$controller->error(
+                'Forbidden. You do not have the required permissions.',
+                Response::HTTP_FORBIDDEN
+            )
+        );
     }
-    /**
-     * @param Exceptions $exceptions
-     * @return void
-     */
+
     protected static function notFound(Exceptions $exceptions): void
     {
-        $exceptions->render(function (
-            ModelNotFoundException|NotFoundHttpException $e
-        ) {
-
-            return response()->json([
-               'status' => false,
-                'message' => 'Resource not found',
-            ], 404);
-
-        });
+        $exceptions->render(fn (ModelNotFoundException|NotFoundHttpException $e) =>
+            static::$controller->error(
+                'Resource not found.',
+                Response::HTTP_NOT_FOUND
+            )
+        );
     }
-    /**
-     * @param Exceptions $exceptions
-     * @return void
-     */
+
     protected static function serverError(Exceptions $exceptions): void
     {
         $exceptions->render(function (Throwable $e) {
 
-            return response()->json([
-                'status' => false,
-                'message' => config('app.debug')
-                    ? $e->getMessage()
-                    : 'Internal Server Error',
-            ], 500);
+            report($e);
 
+            $statusCode = $e instanceof HttpExceptionInterface
+                ? $e->getStatusCode()
+                : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            $message = config('app.debug')
+                ? $e->getMessage()
+                : ($statusCode === Response::HTTP_INTERNAL_SERVER_ERROR
+                    ? 'Internal server error.'
+                    : $e->getMessage());
+
+            return static::$controller->error($message, $statusCode);
         });
+    }
+
+    protected static function userNotFound(Exceptions $exceptions): void
+    {
+        $exceptions->render(fn (UserNotFoundException $e) =>
+            static::$controller->error(
+                $e->getMessage() ?: 'User not found.',
+                Response::HTTP_NOT_FOUND
+            )
+        );
     }
 }

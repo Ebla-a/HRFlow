@@ -1,69 +1,89 @@
 <?php
+
 namespace Modules\User\Services\v1;
 
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Modules\User\App\DTOs\CreateUserData;
+use Modules\User\App\DTOs\UpdateEmailData;
 use Modules\User\Entities\User;
 use Modules\User\Events\UserCreated;
-use Modules\User\Exceptions\NotFoundException;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Modules\User\Exceptions\UserNotFoundException;
 
 class UserService
 {
-
-    public function createUser($email)
+    /**
+     * Create a new user and dispatch creation event.
+     */
+    public function createUser(CreateUserData $dto): User
     {
-        $password="12345678";
-        $user=User::create([
-            'email'=>$email,
-            'password'=>$password,
+        $user = User::create([
+            'email' => $dto->email,
+            'password' => bcrypt($dto->password),
+            'avatar_url' => $dto->avatarUrl,
+            'is_active' => $dto->isActive,
         ]);
-        UserCreated::dispatch($email,$password);
+
+        UserCreated::dispatch($user);
+
         return $user;
     }
 
-    public function allUsers()
+    /**
+     * Get paginated list of users with optional filtering.
+     */
+    public function allUsers(?bool $isActive = null, int $perPage = 15): LengthAwarePaginator
     {
-        return  User::paginate(10);
+        return User::query()
+            ->when(! is_null($isActive), fn ($query) => $query->where('is_active', $isActive))
+            ->paginate($perPage);
     }
 
-
-    public function userById($id)
+    /**
+     * Return user instance by ID using custom exception.
+     */
+    public function userById(int $id): User
     {
         $user = User::find($id);
-        if (!$user) {
-            throw new NotFoundException();
-            
+
+        if (! $user) {
+            throw new UserNotFoundException();
         }
+
         return $user;
     }
 
-    public function updateEmail(array $data)
+    /**
+     * Update user email.
+     */
+    public function updateEmail(User $user, UpdateEmailData $dto): User
     {
-        $id = $data['id'];
-        $newEmail = $data['email'];
-        $user = $this->userById($id);
-        $user->email = $newEmail;
-        $user->email_verified_at=null;
-        $user->save();
+        $user->when($user->email !== $dto->email, function (User $u) use ($dto) {
+            $u->update([
+                'email' => $dto->email,
+                'email_verified_at' => null,
+            ]);
+        });
+
         return $user;
     }
 
-    public function disActiveUserAccount(array $data)
+    /**
+     * Deactivate user account.
+     */
+    public function deactivateUserAccount(User $user): User
     {
-        $id = $data['id'];
-        $user = $this->userById($id);
-        $user->is_active = false;
-        $user->save();
+        $user->when($user->is_active, fn (User $u) => $u->update(['is_active' => false]));
+
+        return $user;
     }
 
-    public function activeUserAccount(array $data)
+    /**
+     * Activate user account.
+     */
+    public function activateUserAccount(User $user): User
     {
-        $id = $data['id'];
-        $user = $this->userById($id);
-        $user->is_active = true;
-        $user->save();
+        $user->when(! $user->is_active, fn (User $u) => $u->update(['is_active' => true]));
+
+        return $user;
     }
-
-
 }

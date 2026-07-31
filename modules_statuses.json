@@ -1,6 +1,12 @@
 {
     "Core": true,
-    "Employee": true
+    "Employee": true,
     "User": true,
-    "Auth": true
+    "Auth": true,
+    "Organization": true,
+    "Leave": true,
+    "Payroll": true,
+    "Performance": true,
+    "Notification": true,
+    "Report": true
 }
