@@ -11,18 +11,59 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Reset cached roles and permissions
+        // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 2. Create permissions
-        Permission::firstOrCreate(['name' => 'edit articles']);
-        Permission::firstOrCreate(['name' => 'delete articles']);
+        /**
+         * USER MANAGEMENT PERMISSIONS
+         */
+        $permissions = [
+            'users.view',
+            'users.view.single',
+            'users.update.email',
+            'users.update.avatar',
+            'users.activate',
+            'users.deactivate',
 
-        // 3. Create roles and assign existing permissions
-        $roleAdmin = Role::firstOrCreate(['name' => 'Hr_Admin']);
+            /**
+             * ROLE MANAGEMENT
+             */
+            'roles.create',
+            'roles.delete',
+            'roles.grant',
+            'roles.revoke',
+
+            /**
+             * PERMISSION MANAGEMENT
+             */
+            'permissions.create',
+            'permissions.delete',
+            'permissions.grant',
+            'permissions.revoke',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
+
+        /**
+         * ROLES
+         */
+        $roleAdmin = Role::firstOrCreate(['name' => 'Hr_admin']);
+        $roleEmployee = Role::firstOrCreate(['name' => 'Employee']);
+        $roleEmployee = Role::firstOrCreate(['name' => 'Manager ']);
+
+        /**
+         * ASSIGN PERMISSIONS TO ROLES
+         */
+
+        // Admin gets everything
         $roleAdmin->givePermissionTo(Permission::all());
 
-        $roleUser = Role::firstOrCreate(['name' => 'Employee']);
-        $roleUser->givePermissionTo('edit articles');
+        // Employee gets minimal permissions (view only)
+        $roleEmployee->givePermissionTo([
+            'users.view',
+            'users.view.single',
+        ]);
     }
 }

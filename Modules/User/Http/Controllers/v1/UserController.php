@@ -1,100 +1,110 @@
 <?php
-
 namespace Modules\User\Http\Controllers\v1;
 
-use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Modules\User\Http\Requests\UpdateEmailRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Modules\User\App\DTOs\UpdateAvatarData;
+use Modules\User\App\DTOs\UpdateEmailData;
+use Modules\User\App\Http\Requests\UpdateEmailRequest;
+use Modules\User\App\Http\Requests\UpdateProfileImageRequest;
+use Modules\User\Entities\User;
 use Modules\User\Services\v1\UploadService;
 use Modules\User\Services\v1\UserService;
 use Modules\User\Transformers\UserResource;
-use Modules\User\Transformers\UsersResource;
-use Modules\Core\App\Traits\ApiResponseTrait;
-use Modules\User\Http\Requests\UpdateProfileImageRequest;
 
 class UserController extends Controller
 {
-    use ApiResponseTrait;
+    public function __construct(
+        protected UserService $userService,
+        protected UploadService $uploadService
+    ) {}
 
     /**
-     * Retrieve a paginated  of all users.
-     *
-     * @param UserService $userService
-     * @return AnonymousResourceCollection
+     * Display a paginated list of users.
      */
-    public function getAllUsers(UserService $userService)
+    public function index(): JsonResponse
     {
-        $users=$userService->allUsers();
-        return UserResource::collection($users);
-    
+        $this->authorize('viewAny', User::class);
+        $users = $this->userService->allUsers();
+
+        return $this->success(
+            UserResource::collection($users)->response()->getData(true),
+            'Users retrieved successfully.'
+        );
     }
 
     /**
-     * Retrieve  specific user by ID.
-     *
-     * @param int|string $id
-     * @param UserService $userService
-     * @return JsonResponse
+     * Display the specified user details.
      */
-    public function getUserById($id,UserService $userService)
+    public function show(User $user): JsonResponse
     {
-        $user=$userService->userById($id);
-        return $this->success(new UserResource($user), 'User found successfully', 200);
+        $this->authorize('view', $user);
+        return $this->success(
+            new UserResource($user),
+            'User retrieved successfully.'
+        );
     }
-    
 
     /**
      * Update the email address of a user.
-     *
-     * @param UpdateEmailRequest $request
-     * @param UserService $userService
-     * @return JsonResponse
      */
-    public function updateEmail(UpdateEmailRequest $request,UserService $userService)
+    public function updateEmail(UpdateEmailRequest $request, User $user): JsonResponse
     {
-        $user = $userService->updateEmail($request->validated()); 
-        return $this->success(new UserResource($user), 'Email updated successfully', 200);
+        $this->authorize('updateEmail', $user);
+        $dto = UpdateEmailData::fromArray([
+            'userId' => $user->id,
+            'email' => $request->validated()['email'],
+        ]);
+
+        $updatedUser = $this->userService->updateEmail($user, $dto);
+
+        return $this->success(
+            new UserResource($updatedUser),
+            'Email updated successfully.'
+        );
     }
 
     /**
      * Upload and update the profile avatar image for a user.
-     *
-     * @param UpdateProfileImageRequest $request
-     * @param UploadService $userService
-     * @return JsonResponse
      */
-    public function updateProfileImage(UpdateProfileImageRequest $request,UploadService $userService)
+    public function updateProfileImage(UpdateProfileImageRequest $request, User $user): JsonResponse
     {
-        $user = $userService->updateProfileImage($request->validated()); 
-        return $this->success(new UserResource($user), 'profile Image updated successfully', 200);
+        $dto = UpdateAvatarData::fromArray($request->validated());
+
+        $updatedUser = $this->uploadService->updateProfileImage($user, $dto);
+
+        return $this->success(
+            new UserResource($updatedUser),
+            'Profile image updated successfully.'
+        );
     }
 
     /**
-     * Deactivate a user account by ID.
-     *
-     * @param int|string $id
-     * @param UserService $userService
-     * @return JsonResponse
+     * Deactivate a user account.
      */
-    public function disActiveUserAccount($id,UserService $userService)
+    public function deactivateUserAccount(User $user): JsonResponse
     {
-        $userService->disActiveUserAccount(['id' => $id]);
-        return $this->success(null, "User disactivated successfully", 200);
+        $this->authorize('deactivate', $user);
+        $updatedUser = $this->userService->deactivateUserAccount($user);
+
+        return $this->success(
+            new UserResource($updatedUser),
+            'User deactivated successfully.'
+        );
     }
 
     /**
-     * Activate a user account by ID.
-     *
-     * @param int|string $id
-     * @param UserService $userService
-     * @return JsonResponse
+     * Activate a user account.
      */
-    public function activeUserAccount($id,UserService $userService)
+    public function activateUserAccount(User $user): JsonResponse
     {
-        $userService->activeUserAccount(['id' => $id]);
-        return $this->success(null, "User activated successfully", 200);
+
+    $this->authorize('activate', $user);
+        $updatedUser = $this->userService->activateUserAccount($user);
+
+        return $this->success(
+            new UserResource($updatedUser),
+            'User activated successfully.'
+        );
     }
-
-
 }

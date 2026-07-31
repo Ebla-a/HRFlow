@@ -2,70 +2,53 @@
 
 namespace Modules\User\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
+use Modules\User\Entities\User;
+use Modules\User\Policies\UserPolicy;
 
 class UserServiceProvider extends ServiceProvider
 {
-    /**
-     * @var string $moduleName
-     */
     protected $moduleName = 'User';
-
-    /**
-     * @var string $moduleNameLower
-     */
     protected $moduleNameLower = 'user';
 
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
     public function boot()
     {
+        /**
+         * Register Policies
+         */
+        Gate::policy(User::class, UserPolicy::class);
+
+        /**
+         * Module boot operations
+         */
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
     }
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(EventServiceProvider::class);
     }
-    
 
-    /**
-     * Register config.
-     *
-     * @return void
-     */
     protected function registerConfig()
     {
         $this->publishes([
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
+
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 
-    /**
-     * Register views.
-     *
-     * @return void
-     */
     public function registerViews()
     {
         $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-
         $sourcePath = module_path($this->moduleName, 'Resources/views');
 
         $this->publishes([
@@ -75,11 +58,6 @@ class UserServiceProvider extends ServiceProvider
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
     }
 
-    /**
-     * Register translations.
-     *
-     * @return void
-     */
     public function registerTranslations()
     {
         $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
@@ -93,11 +71,6 @@ class UserServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
     public function provides()
     {
         return [];
