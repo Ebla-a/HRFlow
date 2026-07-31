@@ -3,9 +3,14 @@
     "alias": "user",
     "description": "",
     "keywords": [],
-    "priority": 0,
+    "priority": 1,
     "providers": [
         "Modules\\User\\Providers\\UserServiceProvider"
     ],
-    "files": []
+    "files": [],
+    "autoload": {
+        "psr-4": {
+            "Modules\\User\\": ""
+        }
+    }
 }

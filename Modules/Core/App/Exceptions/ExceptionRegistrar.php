@@ -20,8 +20,6 @@ class ExceptionRegistrar
 
     public static function register(Exceptions $exceptions): void
     {
-        // Create ONE instance only
-        static::$controller = new Controller();
 
         static::validation($exceptions);
         static::authentication($exceptions);
@@ -34,7 +32,7 @@ class ExceptionRegistrar
     protected static function validation(Exceptions $exceptions): void
     {
         $exceptions->render(fn (ValidationException $e) =>
-            static::$controller->error(
+            controller::error(
                 'Validation failed.',
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 $e->errors()
@@ -45,7 +43,7 @@ class ExceptionRegistrar
     protected static function authentication(Exceptions $exceptions): void
     {
         $exceptions->render(fn (AuthenticationException $e) =>
-            static::$controller->error(
+           controller::error(
                 'Unauthenticated.',
                 Response::HTTP_UNAUTHORIZED
             )
@@ -55,7 +53,7 @@ class ExceptionRegistrar
     protected static function authorization(Exceptions $exceptions): void
     {
         $exceptions->render(fn (AuthorizationException|SpatieUnauthorizedException $e) =>
-            static::$controller->error(
+            controller::error(
                 'Forbidden. You do not have the required permissions.',
                 Response::HTTP_FORBIDDEN
             )
@@ -65,7 +63,7 @@ class ExceptionRegistrar
     protected static function notFound(Exceptions $exceptions): void
     {
         $exceptions->render(fn (ModelNotFoundException|NotFoundHttpException $e) =>
-            static::$controller->error(
+          controller::error(
                 'Resource not found.',
                 Response::HTTP_NOT_FOUND
             )
@@ -88,14 +86,14 @@ class ExceptionRegistrar
                     ? 'Internal server error.'
                     : $e->getMessage());
 
-            return static::$controller->error($message, $statusCode);
+            return controller::error($message, $statusCode);
         });
     }
 
     protected static function userNotFound(Exceptions $exceptions): void
     {
         $exceptions->render(fn (UserNotFoundException $e) =>
-            static::$controller->error(
+            controller::error(
                 $e->getMessage() ?: 'User not found.',
                 Response::HTTP_NOT_FOUND
             )
