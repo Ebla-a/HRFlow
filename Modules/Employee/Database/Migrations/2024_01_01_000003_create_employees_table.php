@@ -55,6 +55,7 @@ return new class extends Migration
             $table->date('termination_date')->nullable();
 
             $table->text('termination_reason')->nullable();
+            $table->softDeletes();
 
             $table->timestamps();
 
