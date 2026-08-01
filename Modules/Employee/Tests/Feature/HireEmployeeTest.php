@@ -55,7 +55,7 @@ class HireEmployeeTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.employee_number', 'EMP-1001')
-            ->assertJsonPath('data.full_name', 'Sami Kahlil');
+            ->assertJsonPath('data.full_name', 'Ebla Zyab');
 
         $this->assertDatabaseHas('users', ['email' => 'new.employee@hrflow.test']);
         $this->assertDatabaseHas('employees', ['employee_number' => 'EMP-1001']);
@@ -69,7 +69,7 @@ class HireEmployeeTest extends TestCase
 
         $payload = [
             'email' => 'mismatch@hrflow.test',
-            'first_name' => 'Omar',
+            'first_name' => 'Aya',
             'last_name' => 'Ali',
             'department_id' => $anotherDepartment->id,
             'job_title_id' => $this->jobTitle->id,

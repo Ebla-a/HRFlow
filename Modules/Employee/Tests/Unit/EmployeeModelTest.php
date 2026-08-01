@@ -25,7 +25,7 @@ class EmployeeModelTest extends TestCase
 
     public function test_it_calculates_employee_age_correctly(): void
     {
-        $birthDate = Carbon::now()->subYears(25)->format('Y-m-d');
+        $birthDate = Carbon::now()->subYears(23)->format('Y-m-d');
         
         $employee = new Employee([
             'birth_date' => $birthDate,

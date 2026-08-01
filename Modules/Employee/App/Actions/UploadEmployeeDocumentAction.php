@@ -3,10 +3,10 @@
 namespace Modules\Employee\App\Actions;
 
 
-use Modules\Employee\App\Models\EmployeeDocument;
 use Modules\Employee\App\Services\EmployeeDocumentService;
 use Illuminate\Http\UploadedFile;
 use Modules\Employee\Entities\Employee;
+use Modules\Employee\Entities\EmployeeDocument;
 
 class UploadEmployeeDocumentAction
 {

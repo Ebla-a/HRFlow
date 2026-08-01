@@ -25,23 +25,17 @@ use Modules\Employee\Entities\Employee;
 ])]
 class EmployeeDocument extends Model
 {
-    protected $fillable = [
-        'employee_id',
-        'uploaded_by',
-        'title',
-        'type',
-        'disk',
-        'file_path',
-        'original_name',
-        'mime_type',
-        'file_size',
-    ];
-
+ 
+    /**
+     * @return BelongsTo<Employee, EmployeeDocument>
+     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
     }
-
+    /**
+     * @return BelongsTo<User, EmployeeDocument>
+     */
     public function uploader(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');

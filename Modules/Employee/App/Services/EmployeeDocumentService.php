@@ -5,7 +5,6 @@ namespace Modules\Employee\App\Services;
 
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;
 
@@ -13,7 +12,8 @@ class EmployeeDocumentService
 {
     public function upload(Employee $employee, UploadedFile $file, string $title, string $type, int $uploaderId): EmployeeDocument
     {
-        $path = $file->store("employees/{$employee->id}/documents", 'public');
+        $disk = config('filesystems.default_private_disk', 'local');
+       $path = $file->store("employees/{$employee->id}/documents", $disk);
 
         return EmployeeDocument::create([
             'employee_id' => $employee->id,

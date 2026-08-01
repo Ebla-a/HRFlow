@@ -6,6 +6,7 @@ use Modules\Employee\App\DTOs\UpdateEmployeeDTO;
 
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
 use Modules\Department\Entities\JobTitle;
+use Modules\Employee\App\Events\EmployeeUpdated;
 use Modules\Employee\Entities\Employee;
 
 class UpdateEmployeeAction
@@ -20,11 +21,12 @@ class UpdateEmployeeAction
         if (isset($data['job_title_id']) || isset($data['department_id'])) {
             $jobTitle = JobTitle::findOrFail($jobTitleId);
             if ($jobTitle->department_id !== (int) $departmentId) {
-                throw InvalidJobTitleForDepartmentException::make();
+                throw  new InvalidJobTitleForDepartmentException;
             }
         }
 
         $employee->update($data);
+        event(new EmployeeUpdated($employee));
 
         return $employee->fresh(['user', 'department', 'jobTitle', 'manager']);
     }

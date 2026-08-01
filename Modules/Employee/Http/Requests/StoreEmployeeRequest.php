@@ -28,10 +28,10 @@ class StoreEmployeeRequest extends FormRequest
             'status' => ['required', Rule::in(EmployeeStatus::values())],
             'hire_date' => 'required|date',
             'manager_id' => 'nullable|integer|exists:employees,id',
-            'national_id' => 'nullable|string|max:50|unique:employees,national_id',
+            'national_id' => 'required|string|max:50|unique:employees,national_id',
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string',
-            'birth_date' => 'nullable|date',
+            'birth_date' => 'required|date',
             'gender' => ['nullable', Rule::in(Gender::values())],
         ];
     }
