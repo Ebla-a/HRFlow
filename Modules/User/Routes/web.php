@@ -1,5 +1,7 @@
 <?php
 
+use Modules\User\Http\Controllers\v1\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +14,8 @@
 */
 
 Route::prefix('user')->group(function() {
-    Route::get('/', 'UserController@index');
+   Route::get('/', [
+    UserController::class,
+    'index'
+]);
 });

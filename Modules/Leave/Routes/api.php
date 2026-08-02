@@ -1,18 +1,68 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\Leave\Http\Controllers\v1\LeaveRequestController;
+use Modules\Leave\Http\Controllers\v1\LeaveTypeController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+Route::prefix('v1')
+    ->middleware('auth:sanctum')
+    ->group(function () {
 
-Route::middleware('auth:api')->get('/leave', function (Request $request) {
-    return $request->user();
-});
+        Route::apiResource(
+            'leave-types',
+            LeaveTypeController::class
+        );
+
+        Route::prefix('leave')
+            ->group(function () {
+
+                Route::get(
+                    'requests',
+                    [
+                        LeaveRequestController::class,
+                        'index'
+                    ]
+                );
+
+                Route::post(
+                    'requests',
+                    [
+                        LeaveRequestController::class,
+                        'store'
+                    ]
+                );
+
+                Route::get(
+                    'requests/{leaveRequest}',
+                    [
+                        LeaveRequestController::class,
+                        'show'
+                    ]
+                );
+
+                Route::post(
+                    'requests/{leaveRequest}/approve-manager',
+                    [
+                        LeaveRequestController::class,
+                        'approveManager'
+                    ]
+                );
+
+                Route::post(
+                    'requests/{leaveRequest}/approve-hr',
+                    [
+                        LeaveRequestController::class,
+                        'approveHR'
+                    ]
+                );
+
+                Route::post(
+                    'requests/{leaveRequest}/reject',
+                    [
+                        LeaveRequestController::class,
+                        'reject'
+                    ]
+                );
+            });
+    });
+     
