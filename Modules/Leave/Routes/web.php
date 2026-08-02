@@ -11,6 +11,4 @@
 |
 */
 
-Route::prefix('leave')->group(function() {
-    Route::get('/', 'LeaveController@index');
-});
+ 

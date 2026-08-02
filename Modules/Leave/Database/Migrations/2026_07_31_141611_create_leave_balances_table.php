@@ -22,14 +22,13 @@ return new class extends Migration
 
             $table->year('year');
 
-            $table->integer('allocated_days');
-
+            $table->unsignedInteger('accrual_days');
+             
             $table->integer('used_days')
-                ->default(0);
+                ->default(0); 
 
-            $table->integer('remaining_days')
-                ->default(0);
-
+            $table->unsignedInteger('remaining_days');
+ 
             $table->timestamps();
 
             $table->unique([
@@ -45,3 +44,4 @@ return new class extends Migration
         Schema::dropIfExists('leave_balances');
     }
 };
+ 
