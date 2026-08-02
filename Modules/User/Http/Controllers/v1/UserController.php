@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\User\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
@@ -99,7 +100,7 @@ class UserController extends Controller
     public function activateUserAccount(User $user): JsonResponse
     {
 
-    $this->authorize('activate', $user);
+        $this->authorize('activate', $user);
         $updatedUser = $this->userService->activateUserAccount($user);
 
         return $this->success(
