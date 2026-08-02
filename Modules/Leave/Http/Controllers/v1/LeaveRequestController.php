@@ -83,22 +83,20 @@ class LeaveRequestController extends Controller
    }
 
     public function approveHR(
-       LeaveRequest $leaveRequest
-    )
-    {
-       $this->authorize(
-         'approveHR',
-         $leaveRequest
-      );
-
-
+    LeaveRequest $leaveRequest
+)
+{
+    $this->authorize(
+        'approveHR',
+        $leaveRequest
+    );
+ 
     return new LeaveRequestResource(
         $this->service->approveByHR(
             $leaveRequest
         )
-      );
-    }
-
+    );
+}
     public function reject(
        RejectLeaveRequestRequest $request,
        LeaveRequest $leaveRequest
@@ -108,8 +106,7 @@ class LeaveRequestController extends Controller
           'reject',
           $leaveRequest
       );
-
-
+ 
        return new LeaveRequestResource(
          $this->service->reject(
             $leaveRequest,

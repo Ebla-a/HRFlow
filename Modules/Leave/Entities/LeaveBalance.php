@@ -3,37 +3,42 @@
 namespace Modules\Leave\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Employee\Entities\Employee;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Leave\Entities\LeaveType;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Modules\Leave\Enums\LeaveBalanceStatusEnum;
+use Modules\Employee\Entities\Employee;
 
-class LeaveBalance extends Model
-{
-    use HasFactory;
+  #[Fillable([
+    'employee_id',
+    'leave_type_id',
+    'total_days',
+    'used_days',
+    'remaining_days',
+    'status',
+    'year',
+  ])]
 
-    protected $fillable = [
-        'employee_id',
-        'leave_type_id',
-        'year',
-        'accrual_days',
-        'used_days',
-        'remaining_days',
+  class LeaveBalance extends Model
+  {
+    use SoftDeletes;
+
+    protected $casts = [
+        'year' => 'integer',
+        'status' => LeaveBalanceStatusEnum::class,
     ];
-
-    protected static function newFactory()
-   {
-       return \Modules\Leave\Database\Factories\LeaveBalanceFactory::new();
-   }
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class);
-    }
-
+        return $this->belongsTo(
+            Employee::class
+        );
+    } 
 
     public function leaveType()
     {
-        return $this->belongsTo(LeaveType::class);
+        return $this->belongsTo(
+            LeaveType::class
+        );
     }
-}
- 
+  } 

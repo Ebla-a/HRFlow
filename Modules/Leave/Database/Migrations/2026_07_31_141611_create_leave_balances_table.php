@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_balances', function (Blueprint $table) {
-
-            $table->id();
+            $table->id(); 
 
             $table->foreignId('employee_id')
                 ->constrained()
@@ -18,25 +17,33 @@ return new class extends Migration
 
             $table->foreignId('leave_type_id')
                 ->constrained()
-                ->restrictOnDelete();
+                ->cascadeOnDelete(); 
+
+            $table->integer('total_days')
+                ->default(0);
+
+            $table->integer('used_days')
+                ->default(0);
+
+            $table->integer('remaining_days')
+                ->default(0);
+
+            $table->string('status')
+                ->default('active');
 
             $table->year('year');
 
-            $table->unsignedInteger('accrual_days');
-             
-            $table->integer('used_days')
-                ->default(0); 
-
-            $table->unsignedInteger('remaining_days');
- 
             $table->timestamps();
+
+            $table->softDeletes();
 
             $table->unique([
                 'employee_id',
                 'leave_type_id',
                 'year'
-            ]);
-        });
+           ]);
+
+          });
     }
 
     public function down(): void

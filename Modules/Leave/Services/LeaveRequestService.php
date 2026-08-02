@@ -3,13 +3,12 @@
 namespace Modules\Leave\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Modules\Leave\DTO\LeaveRequestDTO;
 use Modules\Leave\Entities\LeaveBalance;
 use Modules\Leave\Entities\LeaveRequest;
-use Modules\Leave\Events\LeaveRequestApproved;
-use Modules\Leave\Events\LeaveRequestCreated;
-use Modules\Leave\Events\LeaveRequestRejected;
+use Modules\Leave\Enums\LeaveRequestStatusEnum;
 use Modules\Leave\Repositories\Interfaces\LeaveRequestRepositoryInterface;
 
 class LeaveRequestService
@@ -19,16 +18,24 @@ class LeaveRequestService
     ) {
     }
 
+    /**
+     * Create new leave request.
+     */
     public function create(
         LeaveRequestDTO $dto
     ): LeaveRequest {
 
         $data = $dto->toArray();
 
-        $daysCount = $this->calculateDays(
-            $data['start_date'],
-            $data['end_date']
-        );
+        if (request()->hasFile('attachment')) {
+
+            $data['attachment_path'] = request()
+                ->file('attachment')
+                ->store(
+                    'leave_attachments',
+                    'public'
+                );
+        }
 
         $this->checkOverlap(
             $data['employee_id'],
@@ -39,24 +46,27 @@ class LeaveRequestService
         $this->checkBalance(
             $data['employee_id'],
             $data['leave_type_id'],
-            $daysCount
+            $this->calculateDays(
+                $data['start_date'],
+                $data['end_date']
+            )
         );
 
-        $data['days_count'] = $daysCount;
-        $data['status'] = 'pending';
-        $data['manager_approval_status'] = 'pending';
-        $data['hr_approval_status'] = 'pending';
+        $data['status']
+            = LeaveRequestStatusEnum::PENDING->value;
 
-        $leaveRequest = $this->repository->create($data);
+        $data['manager_approval_status']
+            = 'pending';
 
-        event(
-          new LeaveRequestCreated(
-          $leaveRequest->refresh()
-         )
-        ); 
-        return $leaveRequest;
+        $data['hr_approval_status']
+            = 'pending';
+
+        return $this->repository->create($data);
     }
 
+    /**
+     * Calculate leave days.
+     */
     private function calculateDays(
         string $startDate,
         string $endDate
@@ -68,6 +78,9 @@ class LeaveRequestService
             ) + 1;
     }
 
+    /**
+     * Prevent overlapping leave requests.
+     */
     private function checkOverlap(
         int $employeeId,
         string $startDate,
@@ -78,35 +91,42 @@ class LeaveRequestService
             'employee_id',
             $employeeId
         )
-        ->whereIn('status', [
-            'pending',
-            'approved'
-        ])
+        ->whereIn(
+            'status',
+            [
+                LeaveRequestStatusEnum::PENDING->value,
+                LeaveRequestStatusEnum::APPROVED->value,
+            ]
+        )
         ->where(function ($query) use (
             $startDate,
             $endDate
         ) {
-
-            $query->where(
-                'start_date',
-                '<=',
-                $endDate
-            )
-            ->where(
-                'end_date',
-                '>=',
-                $startDate
-            );
+            $query
+                ->where(
+                    'start_date',
+                    '<=',
+                    $endDate
+                )
+                ->where(
+                    'end_date',
+                    '>=',
+                    $startDate
+                );
         })
         ->exists();
 
         if ($exists) {
+
             throw ValidationException::withMessages([
-                'date' => 'You already have a leave request in this period.'
+                'date' =>
+                'You already have a leave request in this period.',
             ]);
         }
     }
-
+        /**
+     * Check employee leave balance.
+     */
     private function checkBalance(
         int $employeeId,
         int $leaveTypeId,
@@ -114,106 +134,124 @@ class LeaveRequestService
     ): void {
 
         $balance = LeaveBalance::where(
-            'employee_id',
-            $employeeId
-        )
-        ->where(
-            'leave_type_id',
-            $leaveTypeId
-        )
-        ->where(
-            'year',
-            now()->year
-        )
-        ->first();
+                'employee_id',
+                $employeeId
+            )
+            ->where(
+                'leave_type_id',
+                $leaveTypeId
+            )
+            ->where(
+                'year',
+                now()->year
+            )
+            ->first();
 
         if (!$balance) {
+
             throw ValidationException::withMessages([
-                'balance' => 'Leave balance not found.'
+                'balance' => 'Leave balance not found.',
             ]);
         }
 
         if ($balance->remaining_days < $days) {
+
             throw ValidationException::withMessages([
-                'balance' => 'Insufficient leave balance.'
+                'balance' => 'Insufficient leave balance.',
             ]);
         }
     }
 
+    /**
+     * Manager approves leave request.
+     */
     public function approveByManager(
-        LeaveRequest $leaveRequest
+      LeaveRequest $leaveRequest
     ): LeaveRequest {
 
+    return DB::transaction(function () use ($leaveRequest) {
+
         if ($leaveRequest->status !== 'pending') {
+
             throw ValidationException::withMessages([
-                'status' => 'Leave request already processed.'
+                'status' => 'Leave request must be pending.',
             ]);
         }
 
         $leaveRequest->update([
             'manager_approval_status' => 'approved',
             'manager_approved_at' => now(),
+            'approved_by' => auth()->id(),
         ]);
 
         return $leaveRequest->refresh();
-    }
+    });
+ }
 
+    /**
+     * HR approves leave request.
+     */
     public function approveByHR(
         LeaveRequest $leaveRequest
     ): LeaveRequest {
 
-        if ($leaveRequest->status === 'approved') {
-            throw ValidationException::withMessages([
-                'status' => 'Leave request already approved.'
-            ]);
-        }
+        return DB::transaction(function () use ($leaveRequest) {
 
-        if ($leaveRequest->manager_approval_status !== 'approved') {
-            throw ValidationException::withMessages([
-                'approval' => 'Manager approval is required first.'
-            ]);
-        }
+            if (
+                $leaveRequest->status === 'pending') {
 
-        $leaveRequest->update([
-            'hr_approval_status' => 'approved',
-            'hr_approved_at' => now(),
-            'status' => 'approved',
-        ]);
+                throw ValidationException::withMessages([
+                    'status' => 'Leave request must be pending.',
+                ]);
+            }
 
-        $this->updateBalance(
-            $leaveRequest
-        );
+            if (
+                $leaveRequest->manager_approval_status
+                !== 'approved'
+            ) {
+                throw ValidationException::withMessages([
+                    'approval' => 'Manager approval is required first.',
+                ]);
+            }
 
-        $leaveRequest = $leaveRequest->refresh();
+           $leaveRequest->update([
+               'hr_approval_status' => 'approved',
+               'hr_approved_at' => now(),
+               'hr_approved_by' => auth()->id(),
+               'status' => LeaveRequestStatusEnum::APPROVED->value,
+           ]);
 
-        event(
-           new LeaveRequestApproved(
-           $leaveRequest
-         )
-        ); 
-        return $leaveRequest;
+            $this->updateBalance($leaveRequest);
+
+            return $leaveRequest->refresh();
+        });
     }
 
+    /**
+     * Update employee leave balance.
+     */
     private function updateBalance(
         LeaveRequest $leaveRequest
     ): void {
+
         $balance = LeaveBalance::where(
-            'employee_id',
-            $leaveRequest->employee_id
-        )
-        ->where(
-            'leave_type_id',
-            $leaveRequest->leave_type_id
-        )
-        ->where(
-            'year',
-            now()->year
-        )
-        ->first();
+                'employee_id',
+                $leaveRequest->employee_id
+            )
+            ->where(
+                'leave_type_id',
+                $leaveRequest->leave_type_id
+            )
+            ->where(
+                'year',
+                now()->year
+            )
+            ->first();
 
         if (!$balance) {
+
             throw ValidationException::withMessages([
-                'balance' => 'Leave balance not found.'
+                'balance' => 'Leave balance not found.',
             ]);
         }
 
@@ -228,30 +266,28 @@ class LeaveRequestService
         );
     }
 
+    /**
+     * Reject leave request.
+     */
     public function reject(
         LeaveRequest $leaveRequest,
         string $reason
     ): LeaveRequest {
 
-        if ($leaveRequest->status === 'approved') {
+        if (
+            $leaveRequest->status
+            === LeaveRequestStatusEnum::APPROVED->value
+        ) {
             throw ValidationException::withMessages([
-                'status' => 'Approved request cannot be rejected.'
+                'status' => 'Approved request cannot be rejected.',
             ]);
         }
 
         $leaveRequest->update([
-            'status' => 'rejected',
+            'status' => LeaveRequestStatusEnum::REJECTED->value,
             'rejection_reason' => $reason,
         ]);
 
-        $leaveRequest = $leaveRequest->refresh();
-
-        event(
-           new LeaveRequestRejected(
-           $leaveRequest
-          )
-        );
-
-        return $leaveRequest;
+        return $leaveRequest->refresh();
     }
-}
+} 
