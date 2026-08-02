@@ -4,7 +4,7 @@ namespace Modules\Performance\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-
+use Modules\Performance\Database\Seeders\PerformanceSeederTableSeeder;
 class PerformanceDatabaseSeeder extends Seeder
 {
     /**
@@ -16,6 +16,6 @@ class PerformanceDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call(PerformanceSeederTableSeeder::class);
     }
 }
