@@ -25,8 +25,16 @@ return new class extends Migration
             $table->decimal('allowances',12,2)
                 ->default(0);
 
+             $table->decimal('gross_salary',12,2);   
+
             $table->decimal('deductions',12,2)
                 ->default(0);
+
+
+
+            $table->decimal('unpaid_leave_deduction', 12, 2)->default(0);
+
+            $table->unsignedInteger('unpaid_leave_days')->default(0);
 
             $table->decimal('net_salary',12,2);
 

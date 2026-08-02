@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->unsignedSmallInteger('year');
 
-            $table->string('status');
+            $table->string('status')->default('draft');
 
             $table->timestamp('processed_at')
                 ->nullable();

@@ -16,10 +16,6 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->decimal('old_salary',12,2);
-
-            $table->decimal('new_salary',12,2);
-
             $table->string('reason');
 
             $table->date('effective_date');
