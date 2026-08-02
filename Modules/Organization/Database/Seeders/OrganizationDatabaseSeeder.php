@@ -39,9 +39,7 @@ $techDept = Department::firstOrCreate(
             ['name' => 'Network & Infrastructure', 'parent_id' => $techDept->id, 'is_active' => true, ]
         );
 
-        // -------------------------------------------------------------
-        // 2️⃣ إنشاء المسميات الوظيفية المحددة للشركة (Defined Job Titles)
-        // -------------------------------------------------------------
+       
         $definedJobTitles = [
             [
                 'title'         => 'Backend Developer',
@@ -82,16 +80,12 @@ $techDept = Department::firstOrCreate(
             );
         }
 
-        // -------------------------------------------------------------
-        // 3️⃣ توليد أقسام ومسميات عشوائية كثيرة للاختبار (Dynamic Mock Data)
-        // -------------------------------------------------------------
-        // إنشاء 5 أقسام فرعية إضافية عشوائية تحت قسم IT
+
         $randomSubDepartments = Department::factory()
             ->count(5)
             ->withParent($techDept->id)
             ->create();
 
-        // لكل قسم فرعي تم إنشاؤه، نولد 3 مسميات وظيفية عشوائية
         $randomSubDepartments->each(function ($dept) {
             JobTitle::factory()
                 ->count(3)
