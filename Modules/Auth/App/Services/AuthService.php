@@ -20,6 +20,7 @@ class AuthService
         use ApiResponseTrait;
 
 
+
     /**
      * Login user.
      */
@@ -143,7 +144,7 @@ class AuthService
      */
     public function forgotPassword(string $email): JsonResponse
     {
-        
+
         $token = Str::random(60);
 
         DB::table('password_reset_tokens')

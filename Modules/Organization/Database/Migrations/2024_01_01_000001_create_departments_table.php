@@ -16,22 +16,22 @@ return new class extends Migration
 
             $table->string('code',20)->unique();
 
-            $table->foreignId('parent_id')
-                ->nullable()
-                ->constrained('departments')
+            $table->foreignId('parent_id')->nullable()->constrained('departments')
                 ->nullOnDelete();
 
-           $table->unsignedBigInteger('manager_id')->nullable();
+          $table->unsignedBigInteger('manager_id')->nullable();
 
             $table->boolean('is_active')
                 ->default(true);
 
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index([
                 'parent_id',
                 'manager_id'
             ]);
+            $table->index('name');
 
         });
     }

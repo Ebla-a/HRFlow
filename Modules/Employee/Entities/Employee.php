@@ -2,10 +2,11 @@
 
 namespace Modules\Employee\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
+use Illuminate\Database\Eloquent\Model;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
+
 
 /**
  * Summary of Employee
@@ -13,6 +14,8 @@ use Modules\Department\Entities\JobTitle;
 class Employee extends Model
 {
     protected $fillable = [
+        'first_name',
+        'last_name',
         'user_id',
         'department_id',
         'job_title_id',
@@ -41,7 +44,7 @@ class Employee extends Model
 
     public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class,);
     }
 
     public function jobTitle()
@@ -57,5 +60,11 @@ class Employee extends Model
     public function subordinates()
     {
         return $this->hasMany(self::class, 'manager_id');
+    }
+
+
+       public function managedDepartment()
+    {
+        return $this->hasOne(Department::class, 'manager_id');
     }
 }

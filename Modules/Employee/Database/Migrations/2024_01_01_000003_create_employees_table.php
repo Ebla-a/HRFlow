@@ -19,7 +19,7 @@ return new class extends Migration
 
             $table->foreignId('department_id')
                 ->constrained()
-                ->restrictOnDelete();
+                ->nullOnDelete();
 
             $table->foreignId('job_title_id')
                 ->constrained()

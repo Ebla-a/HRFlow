@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\Organization\Enums\JobTitleGrade;
 
 return new class extends Migration
 {
@@ -12,27 +13,24 @@ return new class extends Migration
 
             $table->id();
 
-            $table->foreignId('department_id')
-                ->constrained()
-                ->restrictOnDelete();
+            $table->foreignId('department_id')->constrained('departments')->restrictOnDelete();
 
             $table->string('title');
-
-            $table->string('grade',50)->nullable();
+            $table->text('description')->nullable();
+            $table->enum('grade', JobTitleGrade::cases())->default(JobTitleGrade::JUNIOR->value);
 
             $table->boolean('is_active')
                 ->default(true);
 
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->index([
-                'department_id'
-            ]);
 
             $table->unique([
                 'department_id',
                 'title'
             ]);
+            $table->index(['title','department_id']);
 
         });
     }
@@ -42,3 +40,4 @@ return new class extends Migration
         Schema::dropIfExists('job_titles');
     }
 };
+

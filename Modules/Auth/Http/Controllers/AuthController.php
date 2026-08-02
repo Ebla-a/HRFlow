@@ -18,6 +18,8 @@ class AuthController extends Controller
     ) {
     }
 
+
+
     /**
      * Login user.
      */
@@ -74,4 +76,4 @@ class AuthController extends Controller
             $request->toDTO()
         );
     }
-} 
+}

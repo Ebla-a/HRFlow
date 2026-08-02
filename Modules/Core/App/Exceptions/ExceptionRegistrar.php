@@ -25,8 +25,9 @@ class ExceptionRegistrar
         static::authentication($exceptions);
         static::authorization($exceptions);
         static::notFound($exceptions);
-        static::serverError($exceptions);
         static::userNotFound($exceptions);
+        static::serverError($exceptions);
+
     }
 
     protected static function validation(Exceptions $exceptions): void
