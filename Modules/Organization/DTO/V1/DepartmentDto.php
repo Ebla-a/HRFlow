@@ -10,7 +10,11 @@ class DepartmentDTO
         public readonly ?int $managerId = null,
         public readonly ?bool $isActive = null,
     ) {}
-
+    /**
+     * Summary of fromRequest
+     * @param array $data
+     * @return DepartmentDTO
+     */
     public static function fromRequest(array $data): self
     {
         return new self(
@@ -21,7 +25,10 @@ class DepartmentDTO
             isActive: isset($data['is_active']) ? (bool) $data['is_active'] : true,
         );
     }
-
+    /**
+     * Summary of toArray
+     * @return array{code: string|null, is_active: bool|null, manager_id: int|null, name: string|null, parent_id: int|null}
+     */
     public function toArray(): array
     {
         return array_filter([

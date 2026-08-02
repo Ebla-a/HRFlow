@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Employee\Entities\Employee;
+use Modules\Organization\Database\factories\DepartmentFactory;
 use Modules\Organization\Entities\JobTitle;
 
 #[Fillable(['name','code','parent_id','manager_id','is_active'])]
@@ -17,16 +18,27 @@ class Department extends Model
 {
     use HasFactory,SoftDeletes;
 
+    protected static function newFactory()
+    {
+        return DepartmentFactory::new();
+    }
 protected $casts = [
         'is_active' => 'boolean',
     ];
 
     protected $appends = ['main_department_name', 'manager_name'];
+    /**
+     * Summary of jobTitles
+     * @return HasMany<JobTitle, Department>
+     */
     public function jobTitles(): HasMany
     {
         return $this->hasMany(JobTitle::class, 'department_id');
     }
-
+    /**
+     * Summary of employees
+     * @return HasMany<Employee, Department>
+     */
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class, 'department_id');
@@ -46,6 +58,10 @@ protected $casts = [
     {
         return $this->belongsTo(Department::class, 'parent_id');
     }
+    /**
+     * Summary of childrenRecursive
+     * @return HasMany<Department, Department>
+     */
     public function childrenRecursive(): HasMany
     {
         return $this->children()->with('childrenRecursive');

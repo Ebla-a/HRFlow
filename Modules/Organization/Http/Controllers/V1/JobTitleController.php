@@ -14,6 +14,10 @@ class JobTitleController extends Controller
 public function __construct(
         protected JobTitleService $jobTitleService
     ) {}
+    /**
+     * Summary of index
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $result = $this->jobTitleService->getAllJobTitles();
@@ -24,7 +28,11 @@ public function __construct(
             $meta = $result['meta']
         );
     }
-
+    /**
+     * Summary of store
+     * @param StoreJobTitleRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreJobTitleRequest $request)
     {
         $dto = JobTitleDTO::fromRequest($request->validated());
@@ -36,7 +44,12 @@ public function __construct(
             'data' => new JobTitleResource($jobTitle),
         ], 201);
     }
-
+    /**
+     * Summary of update
+     * @param UpdateJobTitleRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(UpdateJobTitleRequest $request, int $id)
     {
 
@@ -50,7 +63,11 @@ public function __construct(
             ]);
 
     }
-
+    /**
+     * Summary of destroy
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(int $id)
     {
 
@@ -67,7 +84,11 @@ public function __construct(
 
 
 
-
+      /**
+       * Summary of restore
+       * @param int $id
+       * @return \Illuminate\Http\JsonResponse
+       */
       public function restore(int $id)
     {
         $jobTitle = $this->jobTitleService->restoreJobTitle($id);

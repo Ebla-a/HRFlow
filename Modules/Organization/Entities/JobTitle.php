@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Employee\Entities\Employee;
+use Modules\Organization\Database\factories\JobTitleFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Enums\JobTitleGrade;
 
@@ -16,16 +17,28 @@ use Modules\Organization\Enums\JobTitleGrade;
 class JobTitle extends Model
 {
     use HasFactory,SoftDeletes;
+
+
+    protected static function newFactory()
+    {
+        return JobTitleFactory::new();
+    }
 protected $casts = [
         'is_active' => 'boolean',
         'grade' => JobTitleGrade::class,
     ];
-
+    /**
+     * Summary of department
+     * @return BelongsTo<Department, JobTitle>
+     */
     public function department(): BelongsTo
      {
         return $this->belongsTo(Department::class, 'department_id');
       }
-
+/**
+ * Summary of employees
+ * @return HasMany<Employee, JobTitle>
+ */
 public function employees(): HasMany
     {
         return $this->hasMany(Employee::class, 'job_title_id');

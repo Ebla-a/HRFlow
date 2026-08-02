@@ -11,7 +11,7 @@ class JobTitleService
     public function __construct(
         protected JobTitleRepositoryInterface $jobTitleRepository
     ) {}
-
+   
     public function getAllJobTitles()
     {
 
@@ -51,7 +51,11 @@ class JobTitleService
         });
     });
     }
-
+    /**
+     * Summary of createJobTitle
+     * @param JobTitleDTO $dto
+     * @return JobTitle
+     */
     public function createJobTitle(JobTitleDTO $dto): JobTitle
     {
         $jobTitle= $this->jobTitleRepository->create($dto->toArray());
@@ -60,7 +64,12 @@ class JobTitleService
         return $jobTitle;
 
     }
-
+    /**
+     * Summary of updateJobTitle
+     * @param int $id
+     * @param JobTitleDTO $dto
+     * @return JobTitle
+     */
     public function updateJobTitle(int $id, JobTitleDTO $dto): JobTitle
     {
         $jobTitle = $this->jobTitleRepository->findById($id);
@@ -69,7 +78,11 @@ class JobTitleService
         return $jobTitleNew;
 
     }
-
+    /**
+     * Summary of deleteJobTitle
+     * @param int $id
+     * @return bool
+     */
     public function deleteJobTitle(int $id): bool
     {
         $jobTitle = $this->jobTitleRepository->findById($id);
@@ -78,7 +91,11 @@ class JobTitleService
         Cache::tags(['JobTitles'])->flush();
          return $deletedJob;
     }
-
+     /**
+      * Summary of restoreJobTitle
+      * @param int $id
+      * @return JobTitle
+      */
      public function restoreJobTitle(int $id)
     {
         $department = $this->jobTitleRepository->restore($id);

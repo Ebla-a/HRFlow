@@ -20,22 +20,40 @@ class JobTitlePolicy
         //
     }
 
-
+    /**
+     * Summary of viewAny
+     * @param User $user
+     * @return bool
+     */
     public function viewAny(User $user): bool
     {
         return $user->can('jobtitles.view.all');
     }
-
+    /**
+     * Summary of create
+     * @param User $user
+     * @return bool
+     */
     public function create(User $user): bool
     {
         return $user->can('jobtitle.create');
     }
-
+    /**
+     * Summary of update
+     * @param User $user
+     * @param JobTitle $jobTitle
+     * @return bool
+     */
     public function update(User $user, JobTitle $jobTitle): bool
     {
         return $user->can('jobtitle.update');
     }
-
+    /**
+     * Summary of delete
+     * @param User $user
+     * @param JobTitle $jobTitle
+     * @return bool
+     */
     public function delete(User $user, JobTitle $jobTitle): bool
     {
         if (! $user->can('jobtitle.delete')) {

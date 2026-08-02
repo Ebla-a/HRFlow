@@ -25,18 +25,8 @@ class DepartmentResource extends JsonResource
               'manager'=>$this->manager_name,
               'main_department_name'=>$this->main_department_name,
 
-            'job_titles' => JobTitleResource::collection($this->whenLoaded('jobTitles', function () {
-                return $this->jobTitles->map(function ($jobTitle) {
-                 return[
-
-                    'id' => $jobTitle->id,
-                    'title' => $jobTitle->title,
-                    'description' => $jobTitle->description,
-                    'is_active' => $jobTitle->is_active,
-
-                        ];
-               });
-            })),
+            'job_titles' => JobTitleResource::collection($this->whenLoaded('jobTitles')),
+       
             'created_at' => $this->created_at->format('Y-m-d'),
             'updated_at' => $this->updated_at->format('Y-m-d'),
 

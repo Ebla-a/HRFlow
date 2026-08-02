@@ -11,7 +11,11 @@ class JobTitleDTO
         public readonly ?string $description = null,
         public readonly ?bool $isActive = true,
     ) {}
-
+    /**
+     * Summary of fromRequest
+     * @param array $data
+     * @return JobTitleDTO
+     */
     public static function fromRequest(array $data): self
     {
         return new self(
@@ -22,7 +26,10 @@ class JobTitleDTO
             isActive: isset($data['is_active']) ? (bool) $data['is_active'] : true,
         );
     }
-
+    /**
+     * Summary of toArray
+     * @return array{department_id: int, description: string|null, grade: string, is_active: bool|null, title: string}
+     */
     public function toArray(): array
     {
         return array_filter([
