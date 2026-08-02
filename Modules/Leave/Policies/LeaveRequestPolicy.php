@@ -4,6 +4,7 @@ namespace Modules\Leave\Policies;
 
 use App\Models\User;
 use Modules\Leave\Entities\LeaveRequest;
+use Modules\Leave\Enums\LeaveRequestStatusEnum;
 
 class LeaveRequestPolicy
 {
@@ -21,15 +22,15 @@ class LeaveRequestPolicy
     public function view(
         User $user,
         LeaveRequest $leaveRequest
-    ): bool
-    {
-        // HR Admin can view all
+    ): bool {
+
+        // HR can view all requests
         if ($user->hasRole('Hr_admin')) {
             return true;
         }
 
         // Employee can view his own request
-        return $user->employee?->id 
+        return $user->employee?->id
             === $leaveRequest->employee_id;
     }
 
@@ -39,9 +40,10 @@ class LeaveRequestPolicy
     public function approveManager(
         User $user,
         LeaveRequest $leaveRequest
-    ): bool
-    {
-        if (!$user->employee) {
+    ): bool {
+
+        // only pending requests
+        if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
             return false;
         }
 
@@ -50,18 +52,28 @@ class LeaveRequestPolicy
             return false;
         }
 
-        // manager can approve only his department employees
+        if (!$user->employee) {
+            return false;
+        }
+
+        // only direct manager can approve
         return $leaveRequest->employee?->manager_id
-               === $user->employee->id;
+            === $user->employee->id;
     }
 
     /**
      * HR approval
      */
     public function approveHR(
-        User $user
-    ): bool
-    {
+        User $user,
+        LeaveRequest $leaveRequest
+    ): bool {
+
+        // only pending requests
+        if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
+            return false;
+        }
+
         return $user->hasRole('Hr_admin');
     }
 
@@ -71,19 +83,23 @@ class LeaveRequestPolicy
     public function reject(
         User $user,
         LeaveRequest $leaveRequest
-    ): bool
-    {
+    ): bool {
+
+        // only pending requests
+        if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
+            return false;
+        }
+
         if ($user->hasRole('Hr_admin')) {
             return true;
         }
 
         if ($user->hasRole('Manager')) {
 
-         return $leaveRequest->employee?->manager_id
-              === $user->employee->id;
+            return $leaveRequest->employee?->manager_id
+                === $user->employee?->id;
         }
 
         return false;
     }
-}
- 
+} 

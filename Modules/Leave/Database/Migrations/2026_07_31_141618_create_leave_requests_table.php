@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('end_date');
 
             $table->unsignedInteger('days_count');
-
+ 
             $table->string('status')
               ->default('pending');
 
@@ -45,6 +45,10 @@ return new class extends Migration
             $table->timestamp('manager_approved_at')
                 ->nullable();
 
+            $table->foreignId('approved_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             // HR Approval
             $table->string('hr_approval_status')
@@ -53,8 +57,14 @@ return new class extends Migration
             $table->timestamp('hr_approved_at')
                 ->nullable();
 
+            $table->foreignId('hr_approved_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
+
+            $table->softDeletes();
 
             $table->index([
                 'employee_id',
