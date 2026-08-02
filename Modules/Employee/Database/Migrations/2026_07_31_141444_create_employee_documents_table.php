@@ -26,6 +26,14 @@ return new class extends Migration
 
             $table->string('file_path');
 
+            $table->string('disk')->default('public');
+
+            $table->string('original_name');
+
+            $table->string('mime_type');
+
+            $table->unsignedBigInteger('file_size');
+
             $table->timestamps();
 
             $table->index([

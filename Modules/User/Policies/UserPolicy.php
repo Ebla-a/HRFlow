@@ -2,21 +2,18 @@
 
 namespace Modules\User\Policies;
 
-use Modules\User\Entities\User;
+use App\Models\User;
 
 class UserPolicy
 {
-   
     /**
-     * HR : see all
+     * HR Admin: see all
      * Manager: only his department users
-     * Employee : see himslef only
-     * @param User $authUser
-     * @return bool
+     * Employee: see himself only
      */
     public function viewAny(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin')
+        return $authUser->hasRole('HR Admin')
             || $authUser->hasRole('Manager')
             || $authUser->hasRole('Employee');
     }
@@ -29,13 +26,14 @@ class UserPolicy
     public function view(User $authUser, User $targetUser): bool
     {
         // HR Admin sees everything
-        if ($authUser->hasRole('Hr_admin')) {
+        if ($authUser->hasRole('HR Admin')) {
             return true;
         }
 
         // Manager sees employees in his department only
         if ($authUser->hasRole('Manager')) {
-            return $authUser->department_id === $targetUser->department_id;
+            return $authUser->employee?->department_id !== null
+                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
 
         // Employee sees only himself
@@ -47,55 +45,67 @@ class UserPolicy
     }
 
     /**
-     * emial updating
+     *  email updating
      * HR Admin: allow
      * Manager: his department users only
-     * Employee: unallowed
+     * @param User $authUser
+     * @param User $targetUser
+     * @return bool
      */
     public function updateEmail(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasRole('Hr_admin')) {
+        if ($authUser->hasRole('HR Admin')) {
             return true;
         }
 
         if ($authUser->hasRole('Manager')) {
-            return $authUser->department_id === $targetUser->department_id;
+            return $authUser->employee?->department_id !== null
+                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
 
         return false;
     }
 
     /**
-     * updating image profile
+     *  updating avatar profile
      * @param User $authUser
      * @param User $targetUser
      * @return bool
      */
     public function updateAvatar(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasRole('Hr_admin')) {
+        if ($authUser->hasRole('HR Admin')) {
+            return true;
+        }
+
+        if ($authUser->id === $targetUser->id) {
             return true;
         }
 
         if ($authUser->hasRole('Manager')) {
-            return $authUser->department_id === $targetUser->department_id;
+            return $authUser->employee?->department_id !== null
+                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
 
         return false;
     }
 
     /**
-     * active & deactive account only HR
+     * activate account only HR Admin
      * @param User $authUser
      * @return bool
      */
     public function activate(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin');
+        return $authUser->hasRole('HR Admin');
     }
-
+    /**
+     * deactivate account only HR Admin
+     * @param User $authUser
+     * @return bool
+     */
     public function deactivate(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin');
+        return $authUser->hasRole('HR Admin');
     }
 }
