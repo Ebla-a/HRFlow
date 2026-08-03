@@ -4,7 +4,7 @@ namespace Modules\Employee\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Modules\Employee\App\Observers\EmployeeObserver;
+use Modules\Employee\Observers\EmployeeObserver;
 use Modules\Employee\App\Policies\EmployeePolicy;
 use Modules\Employee\Entities\Employee;
 use Modules\User\Providers\EventServiceProvider;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Employee\App\Services;
+namespace Modules\Employee\Services;
 
 
 

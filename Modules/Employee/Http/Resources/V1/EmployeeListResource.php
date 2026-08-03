@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Employee\App\Http\Resources\V1;
+namespace Modules\Employee\Http\Resources\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

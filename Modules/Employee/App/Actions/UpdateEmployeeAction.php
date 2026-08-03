@@ -7,7 +7,7 @@ use Modules\Employee\App\DTOs\UpdateEmployeeDTO;
 
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
 use Modules\Department\Entities\JobTitle;
-use Modules\Employee\App\Events\EmployeeUpdated;
+use Modules\Employee\Events\EmployeeUpdated;
 use Modules\Employee\Entities\Employee;
 
 class UpdateEmployeeAction
