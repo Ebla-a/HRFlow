@@ -3,7 +3,17 @@
 namespace Modules\Leave\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
+use Modules\Leave\Entities\LeaveRequest;
+use Modules\Leave\Policies\LeaveRequestPolicy;
+use Modules\Leave\Repositories\LeaveRequestRepository;
+use Modules\Leave\Repositories\Interfaces\LeaveRequestRepositoryInterface;
+use Modules\Leave\Providers\RouteServiceProvider;
+use Modules\Leave\Providers\EventServiceProvider;
+use Modules\Leave\Observers\LeaveRequestObserver;
+use Modules\Leave\Repositories\LeaveTypeRepository;
+use Modules\Leave\Repositories\Interfaces\LeaveTypeRepositoryInterface;
 
 class LeaveServiceProvider extends ServiceProvider
 {
@@ -23,12 +33,23 @@ class LeaveServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        $this->registerTranslations();
-        $this->registerConfig();
-        $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-    }
+   {
+      Gate::policy(
+        LeaveRequest::class,
+        LeaveRequestPolicy::class
+     );
+
+      LeaveRequest::observe(
+        LeaveRequestObserver::class
+     );
+
+    $this->registerTranslations();
+    $this->registerConfig();
+    $this->registerViews();
+    $this->loadMigrationsFrom(
+        module_path($this->moduleName, 'Database/Migrations')
+     );
+  }
 
     /**
      * Register the service provider.
@@ -36,9 +57,25 @@ class LeaveServiceProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    {
-        $this->app->register(RouteServiceProvider::class);
-    }
+   {
+      $this->app->register(
+        RouteServiceProvider::class
+      );
+
+      $this->app->register(
+        EventServiceProvider::class
+      );
+
+      $this->app->bind(
+        LeaveRequestRepositoryInterface::class,
+        LeaveRequestRepository::class
+      );
+
+      $this->app->bind(
+        LeaveTypeRepositoryInterface::class,
+        LeaveTypeRepository::class
+      );
+   }
 
     /**
      * Register config.
@@ -104,7 +141,7 @@ class LeaveServiceProvider extends ServiceProvider
     private function getPublishableViewPaths(): array
     {
         $paths = [];
-        foreach (\Config::get('view.paths') as $path) {
+        foreach (Config::get('view.paths') as $path) {
             if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
                 $paths[] = $path . '/modules/' . $this->moduleNameLower;
             }
@@ -112,3 +149,4 @@ class LeaveServiceProvider extends ServiceProvider
         return $paths;
     }
 }
+ 

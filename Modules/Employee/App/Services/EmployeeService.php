@@ -16,7 +16,7 @@ class EmployeeService
     */
    public function getPaginatedEmployees(array $filters, int $perPage = 15): LengthAwarePaginator
     {
-       
+       //Generate a unique cache key based on the filters and the page
        $page = request('page', 1);
         $cacheKey = "employees_page_{$page}_" . md5(json_encode($filters) . $perPage);
 
@@ -34,10 +34,16 @@ class EmployeeService
             ->paginate($perPage);
     });
     }
-
+    /**
+     * get employee derailes
+     * @param Employee $employee
+     * @return Employee
+     */
     public function show(Employee $employee): Employee
     {
+        return Cache::tags(['employees', "employee_{$employee->id}"])->remember("employee_profile_{$employee->id}", now()->addHours(24), function () use ($employee) {
         return $employee->load(['user', 'department', 'jobTitle', 'manager', 'documents']);
+        });
     }
 
     private function applySearch(Builder $query, string $search): Builder

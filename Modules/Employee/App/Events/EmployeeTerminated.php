@@ -5,8 +5,9 @@ namespace Modules\Employee\App\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Employee\Entities\Employee;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
-class EmployeeTerminated
+class EmployeeTerminated implements ShouldHandleEventsAfterCommit
 {
     use Dispatchable, SerializesModels;
 

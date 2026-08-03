@@ -2,6 +2,7 @@
 
 namespace Modules\Employee\App\Actions;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Employee\App\DTOs\UpdateEmployeeDTO;
 
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
@@ -25,9 +26,31 @@ class UpdateEmployeeAction
             }
         }
 
-        $employee->update($data);
-        event(new EmployeeUpdated($employee));
+        return DB::transaction(function () use ($employee, $data) {
 
-        return $employee->fresh(['user', 'department', 'jobTitle', 'manager']);
+
+            if ($employee->user) {
+                $userData = [];
+
+                if (isset($data['first_name']) || isset($data['last_name'])) {
+                    $firstName = $data['first_name'] ?? $employee->first_name;
+                    $lastName = $data['last_name'] ?? $employee->last_name;
+                    $userData['name'] = trim("{$firstName} {$lastName}");
+                }
+
+                if (isset($data['email'])) {
+                    $userData['email'] = $data['email'];
+                }
+
+                if (!empty($userData)) {
+                    $employee->user->update($userData);
+                }
+            }
+
+            $employee->update($data);
+            event(new EmployeeUpdated($employee));
+
+            return $employee->fresh(['user', 'department', 'jobTitle', 'manager']);
+        });
     }
 }

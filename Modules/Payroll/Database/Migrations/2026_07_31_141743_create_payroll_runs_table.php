@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->unsignedSmallInteger('year');
 
-            $table->string('status');
+            $table->string('status')->default('draft');
 
             $table->timestamp('processed_at')
                 ->nullable();
@@ -25,6 +25,13 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+
+             $table->timestamp('finalized_at')->nullable();
+
+$table->foreignId('finalized_by')
+    ->nullable()
+    ->constrained('users')
+    ->nullOnDelete();   
 
             $table->timestamps();
 

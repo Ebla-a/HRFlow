@@ -20,7 +20,7 @@ class TerminateEmployeeAction
         return DB::transaction(function () use ($employee, $dto) {
             $employee->update([
                 'status' => EmployeeStatus::TERMINATED->value,
-                'termination_date' => now(),
+                'termination_date' => $dto->terminationDate ?? now(),
                 'termination_reason' => $dto->reason,
             ]);
 

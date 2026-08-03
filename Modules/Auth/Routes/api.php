@@ -16,3 +16,4 @@ Route::prefix('v1/auth')->group(function () {
         Route::put('/password', [AuthController::class, 'updatePassword']);
     });
 });
+ 

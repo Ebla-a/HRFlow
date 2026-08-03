@@ -7,11 +7,16 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Employee\App\Actions\UploadEmployeeDocumentAction;
 use Modules\Employee\App\Http\Requests\V1\UploadEmployeeDocumentRequest;
 use Modules\Employee\App\Http\Resources\V1\EmployeeDocumentResource;
+use Modules\Employee\App\Services\EmployeeDocumentService;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;
 
 class EmployeeDocumentController extends Controller
 {
+
+public function __construct(
+        protected EmployeeDocumentService $documentService
+    ) {}
     /**
      * Display a listing of the employee's documents.
      */
@@ -46,39 +51,27 @@ class EmployeeDocumentController extends Controller
     public function update(UploadEmployeeDocumentRequest $request, EmployeeDocument $document)
     {
         $this->authorize('update', $document);
+$updatedDocument = $this->documentService->update(
+            $document,
+            $request->file('file'),
+            $request->input('title'),
+            $request->input('type')
+        );
 
-        if (Storage::disk($document->disk)->exists($document->file_path)) {
-            Storage::disk($document->disk)->delete($document->file_path);
-        }
-
-        $file = $request->file('file');
-        $path = $file->store("employees/{$document->employee_id}/documents", $document->disk);
-
-        $document->update([
-            'title' => $request->input('title', $document->title),
-            'type' => $request->input('type', $document->type),
-            'file_path' => $path,
-            'original_name' => $file->getClientOriginalName(),
-            'mime_type' => $file->getClientMimeType(),
-            'file_size' => $file->getSize(),
-        ]);
-
-        return new EmployeeDocumentResource($document);
+        return new EmployeeDocumentResource($updatedDocument);
     }
 
     /**
      * Remove the specified document from storage and database.
      */
-    public function destroy(EmployeeDocument $document)
+   public function destroy(EmployeeDocument $document)
     {
         $this->authorize('destroy', $document);
 
-        if (Storage::disk($document->disk)->exists($document->file_path)) {
-            Storage::disk($document->disk)->delete($document->file_path);
-        }
+        $this->documentService->delete($document);
 
-        $document->delete();
         return $this->success(['message' => 'Document deleted successfully'], 200);
+
     }
 
 
