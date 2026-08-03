@@ -109,36 +109,27 @@ class AuthService
     /**
      * Update password.
      */
-    public function updatePassword(
-        ChangePasswordDTO $dto,
-        Request $request
-    ): void {
- 
-        $user = $request->user();
+   public function updatePassword(
+    ChangePasswordDTO $dto,
+    Request $request
+): void {
+    $user = $request->user();
 
-        if (! Hash::check(
-            $dto->currentPassword,
-            $user->password
-        )) {
-            throw new \Exception(
-                'Current password is incorrect.',
-                422
-            );
-        }
-
-        $user->update([
-            'password' => Hash::make(
-                $dto->password
-            ),
+    if (! Hash::check($dto->currentPassword, $user->password)) {
+        throw \Illuminate\Validation\ValidationException::withMessages([
+            'current_password' => ['Current password is incorrect.'],
         ]);
-
-        event(new PasswordChanged(
-            $user,
-            request()->ip(),
-            request()->userAgent()
-        ));
     }
 
+    $user->password = Hash::make($dto->password);
+    $user->save();
+
+    event(new PasswordChanged(
+        $user,
+        request()->ip(),
+        request()->userAgent()
+    ));
+}
     /**
      * Forgot password.
      */
@@ -198,10 +189,15 @@ class AuthService
             );
         }
 
+   
+
         $user = User::where(
             'email',
             $dto->email
         )->first();
+
+             $user->password = Hash::make($dto->password);
+             $user->save();
 
         if (! $user) {
             throw new \Exception(
@@ -221,6 +217,7 @@ class AuthService
             request()->ip(),
             request()->userAgent()
         ));
+        
 
         DB::table('password_reset_tokens')
             ->where('email', $dto->email)

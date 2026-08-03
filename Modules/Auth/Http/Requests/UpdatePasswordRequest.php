@@ -4,6 +4,7 @@ namespace Modules\Auth\Http\Requests;
 
 use Modules\Auth\App\DTOs\ChangePasswordDTO;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @property-read string $current_password
@@ -22,11 +23,12 @@ class UpdatePasswordRequest extends FormRequest
             'current_password' => [
                 'required', 
                 'string',
+                'current_password',
              ],
             'password' => [
                 'required', 
                 'string', 
-                'min:8', 
+                Password::defaults(),
                 'confirmed',
                 'different:current_password',
              ],

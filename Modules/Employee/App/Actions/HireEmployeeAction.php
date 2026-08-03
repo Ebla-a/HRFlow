@@ -4,7 +4,7 @@ namespace Modules\Employee\App\Actions;
 
 use Modules\Employee\App\DTOs\CreateEmployeeDTO;
 
-use Modules\Employee\App\Events\EmployeeHired;
+use Modules\Employee\Events\EmployeeHired;
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
 use App\Models\User;
 use Modules\Department\Entities\JobTitle;

@@ -15,22 +15,14 @@ class LoginRequest extends FormRequest
     {
         return true;
     }
-
-    public function rules(): array
-    {
-        return [
-        'email' => [
-            'required',
-            'email',
-        ], 
-
-        'password' => [
-            'required',
-            'string',
-            'min:8',
-        ],
-      ];
-    }
+       public function rules(): array
+{
+    return [
+        'email' => ['required'],
+        'password' => ['required'],
+    ];
+}
+    
 
     public function toDTO(): LoginDTO
    {

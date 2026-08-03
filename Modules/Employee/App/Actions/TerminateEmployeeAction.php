@@ -4,7 +4,7 @@ namespace Modules\Employee\App\Actions;
 
 use Modules\Employee\App\DTOs\TerminateEmployeeDTO;
 use Modules\Employee\App\Enums\EmployeeStatus;
-use Modules\Employee\App\Events\EmployeeTerminated;
+use Modules\Employee\Events\EmployeeTerminated;
 use Illuminate\Support\Facades\DB;
 use Modules\Employee\Entities\Employee;
 

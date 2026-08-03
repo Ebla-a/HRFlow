@@ -19,173 +19,54 @@ class AuthController extends Controller
     ) {
     }
 
-    /**
-     * Login
-     */
-    public function login(
-        LoginRequest $request
-    ): JsonResponse {
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $data = $this->authService->login($request->toDTO());
 
-        try {
-
-            $data = $this->authService->login(
-                $request->toDTO()
-            );
-
-            return Controller::success(
-                [
-                    'access_token' => $data['access_token'],
-                    'token_type' => $data['token_type'],
-                    'user' => new UserAuthResource($data['user']),
-                ],
-                'Login successful'
-            );
-
-        } catch (\Exception $e) {
-
-            return Controller::error(
-               $e->getMessage(),
-               is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-             );
-        }
+        return Controller::success([
+            'access_token' => $data['access_token'],
+            'token_type' => $data['token_type'],
+            'user' => new UserAuthResource($data['user']),
+        ], 'Login successful');
     }
 
-    /**
-     * Logout
-     */
-    public function logout(
-        Request $request
-    ): JsonResponse {
+    public function logout(Request $request): JsonResponse
+    {
+        $this->authService->logout($request);
 
-        try {
-
-            $this->authService->logout(
-                $request
-            );
-
-            return Controller::success(
-                null,
-                'Successfully logged out'
-            );
-
-        } catch (\Exception $e) {
-
-            return Controller::error(
-                $e->getMessage(),
-                is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-            );
-        }
+        return Controller::success(null, 'Successfully logged out');
     }
 
-    /**
-     * Authenticated user
-     */
-    public function me(
-        Request $request
-    ): JsonResponse {
+    public function me(Request $request): JsonResponse
+    {
+        $data = $this->authService->me($request);
 
-        try {
-
-            $data = $this->authService->me(
-                $request
-            );
-
-            return Controller::success(
-                new UserAuthResource($data),
-                'User profile fetched successfully'
-            );
-
-        } catch (\Exception $e) {
-
-           return Controller::error(
-               $e->getMessage(),
-                is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-            );
-        }
+        return Controller::success(
+            new UserAuthResource($data),
+            'User profile fetched successfully'
+        );
     }
 
-    /**
-     * Update password
-     */
-    public function updatePassword(
-        UpdatePasswordRequest $request
-    ): JsonResponse {
+    public function updatePassword(UpdatePasswordRequest $request): JsonResponse
+    {
+        $this->authService->updatePassword($request->toDTO(), $request);
 
-        try {
-
-            $this->authService->updatePassword(
-                $request->toDTO(),
-                $request
-            );
-
-            return Controller::success(
-                null,
-                'Password updated successfully'
-            );
-
-        } catch (\Exception $e) {
-
-             return Controller::error(
-                 $e->getMessage(),
-                 is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-            );
-        }
+        return Controller::success(null, 'Password updated successfully');
     }
 
-    /**
-     * Forgot password
-     */
-    public function forgotPassword(
-        ForgotPasswordRequest $request
-    ): JsonResponse {
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $token = $this->authService->forgotPassword($request->validated('email'));
 
-        try {
-
-            $token = $this->authService->forgotPassword(
-                $request->validated('email')
-            );
-
-            return Controller::success(
-                [
-                    'reset_token' => $token,
-                ],
-                'Password reset token generated successfully.'
-            );
-
-        } catch (\Exception $e) {
-
-            return Controller::error(
-               $e->getMessage(),
-               is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-            );
-        }
+        return Controller::success([
+            'reset_token' => $token,
+        ], 'Password reset token generated successfully.');
     }
 
-    /**
-     * Reset password
-     */
-    public function resetPassword(
-        ResetPasswordRequest $request
-    ): JsonResponse {
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $this->authService->resetPassword($request->toDTO());
 
-        try {
-
-            $this->authService->resetPassword(
-                $request->toDTO()
-            );
-
-            return Controller::success(
-                null,
-                'Password reset successfully'
-            );
-
-        } catch (\Exception $e) {
-
-             return Controller::error(
-               $e->getMessage(),
-               is_numeric($e->getCode()) ? (int) $e->getCode() : 500
-            );
-        }
+        return Controller::success(null, 'Password reset successfully');
     }
 }
- 

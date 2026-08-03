@@ -1,14 +1,14 @@
 <?php
 
-namespace Modules\Employee\App\Http\Middleware;
+namespace Modules\Core\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+
 
 class EnsureApiHeader
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         if (!$request->hasHeader('X-Request-ID')) {
             $request->headers->set('X-Request-ID', (string) \Illuminate\Support\Str::uuid());

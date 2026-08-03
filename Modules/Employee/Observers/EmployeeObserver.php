@@ -1,6 +1,5 @@
 <?php
-
-namespace Modules\Employee\App\Observers;
+namespace Modules\Employee\Observers;
 
 use Modules\Employee\App\Entities\Employee;
 use Modules\Employee\Entities\Employee as EntitiesEmployee;

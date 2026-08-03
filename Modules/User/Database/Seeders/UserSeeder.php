@@ -4,7 +4,7 @@ namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Modules\User\Entities\User; 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,16 +20,16 @@ class UserSeeder extends Seeder
         Model::unguard();
 
 
- $hrRole = Role::firstOrCreate(['name' => 'HR Admin', 'guard_name' => 'api']);
-$managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'api']);
-$employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'api']);
+ $hrRole = Role::firstOrCreate(['name' => 'HR Admin', 'guard_name' => 'sanctum']);
+$managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'sanctum']);
+$employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'sanctum']);
 
 
         // اhr account
         $hrUser = User::firstOrCreate(
             ['email' => 'hr@company.com'],
             [
-                'name' => 'HR Manager',
+                
                 'password' => Hash::make('password123'),
                 'is_active' => true,
             ]
@@ -40,7 +40,6 @@ $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'api'
         $employeeUser = User::firstOrCreate(
             ['email' => 'employee@company.com'],
             [
-                'name' => 'John Doe',
                 'password' => Hash::make('password123'),
                 'is_active' => true,
             ]
@@ -54,7 +53,6 @@ $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'api'
 $managerUser = User::firstOrCreate(
     ['email' => 'manager@company.com'],
     [
-        'name' => 'IT Department Manager',
         'password' => Hash::make('password123'),
         'is_active' => true,
     ]

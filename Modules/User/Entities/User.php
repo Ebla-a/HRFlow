@@ -18,7 +18,7 @@ use Modules\User\Database\Factories\UserFactory;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable,HasApiTokens,HasRoles;
+     use HasRoles, HasFactory, Notifiable,HasApiTokens;
 
 
     /**
