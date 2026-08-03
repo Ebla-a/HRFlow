@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Models\User;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
 use Modules\Employee\App\Enums\Gender;
 use Carbon\Carbon;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
 
 #[Fillable([
     'user_id',
@@ -38,6 +38,7 @@ use Carbon\Carbon;
 ])]
 class Employee extends Model
 {
+    use SoftDeletes;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -104,7 +105,7 @@ class Employee extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class,);
+        return $this->belongsTo(Department::class);
     }
     /**
      * @return BelongsTo<JobTitle, Employee>
@@ -121,33 +122,12 @@ class Employee extends Model
         return $this->belongsTo(self::class, 'manager_id');
     }
     /**
-     * @return HasMany<Employee, Employee>
+     * @return HasMany<Employee, Employee> 
      */
     public function subordinates(): HasMany
     {
         return $this->hasMany(self::class, 'manager_id');
     }
-
-
-       public function managedDepartment()
-    {
-        return $this->hasOne(Department::class, 'manager_id');
-    }
-}
-    public function leaveRequests()
-   {
-     return $this->hasMany(
-        \Modules\Leave\Entities\LeaveRequest::class
-    );
-   }
-
-
-    public function leaveBalances()
-   {
-      return $this->hasMany(
-        \Modules\Leave\Entities\LeaveBalance::class
-    );
-   }
     /**
      * @return HasMany<EmployeeDocument, Employee>
      */

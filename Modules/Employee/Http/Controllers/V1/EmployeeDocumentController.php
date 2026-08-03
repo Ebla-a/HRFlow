@@ -1,14 +1,15 @@
 <?php
 
-namespace Modules\Employee\App\Http\Controllers\V1;
+namespace Modules\Employee\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Modules\Employee\App\Actions\UploadEmployeeDocumentAction;
-use Modules\Employee\App\Http\Requests\V1\UploadEmployeeDocumentRequest;
-use Modules\Employee\App\Http\Resources\V1\EmployeeDocumentResource;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;
+
+use Modules\Employee\Http\Requests\UploadEmployeeDocumentRequest ;
+use Modules\Employee\Http\Resources\V1\EmployeeDocumentResource;
 use Modules\Employee\Services\EmployeeDocumentService;
 
 class EmployeeDocumentController extends Controller
@@ -48,7 +49,7 @@ public function __construct(
     /**
      * Update/Replace an existing document file and metadata.
      */
-    public function update(UploadEmployeeDocumentRequest $request, EmployeeDocument $document)
+    public function update(UploadEmployeeDocumentAction $request, EmployeeDocument $document)
     {
         $this->authorize('update', $document);
 $updatedDocument = $this->documentService->update(
