@@ -2,8 +2,8 @@
 namespace Modules\Performance\Services\v1;
 
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 use Illuminate\Support\Facades\Auth;
 use Modules\Performance\DTO\CreateReviewDTO;
 
@@ -48,7 +48,7 @@ class ReviewService
      * @param Performance_review $id
      * @return Performance_review
      */
-    public function updateReview(CreateReviewDTO $dto, performance_review $id)
+    public function updateReview(CreateReviewDTO $dto, Performance_review $id)
     {
         $id->update([
             'score'=>$dto->score,
@@ -66,7 +66,7 @@ class ReviewService
      */
     public function employeeReviews(Employee $id,int $perPage = 15)
     {
-        return performance_review::with(['cycle', 'employee'])
+        return Performance_review::with(['cycle', 'employee'])
         ->where('employee_id',$id->id)->paginate($perPage);
     }
 

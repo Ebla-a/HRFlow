@@ -15,7 +15,7 @@ class CycleFactory extends Factory
      *
      * @var string
      */
-    protected $model = \Modules\Performance\Entities\performance_cycle::class;
+    protected $model = \Modules\Performance\Entities\Performance_cycle::class;
 
 
     /**

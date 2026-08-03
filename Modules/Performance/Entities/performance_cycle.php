@@ -3,11 +3,12 @@
 namespace Modules\Performance\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Performance\Database\Factories\CycleFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
 
-class performance_cycle extends Model
+class Performance_cycle extends Model
 {
     use HasFactory;
 
@@ -19,6 +20,11 @@ class performance_cycle extends Model
         'end_date',
         'status',
     ];
+
+    protected static function newFactory()
+    {
+        return CycleFactory::new();
+    }
 
     public function reviews()
     {

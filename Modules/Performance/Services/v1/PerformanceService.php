@@ -2,8 +2,8 @@
 namespace Modules\Performance\Services\v1;
 
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 use Modules\Performance\DTO\CreateCycleDTO;
 
 class PerformanceService
@@ -35,7 +35,7 @@ class PerformanceService
      * @param Performance_cycle $id
      * @return Performance_cycle
      */
-    public function activate(performance_cycle $id)
+    public function activate(Performance_cycle $id)
     {
         $id->status='Active';
         $id->save();

@@ -1,8 +1,8 @@
 <?php
 namespace Modules\Performance\Policies;
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 
 class PerformancePolicy
 {
@@ -84,7 +84,7 @@ class PerformancePolicy
     /**
      * Determine whether the user can update performance reviews.
      */
-    public function updateReview($authUser,performance_review $target):bool
+    public function updateReview($authUser,Performance_review $target):bool
     {
         
         if($authUser->hasRole('Manager')  && 

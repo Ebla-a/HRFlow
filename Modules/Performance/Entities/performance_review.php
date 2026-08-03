@@ -5,9 +5,10 @@ namespace Modules\Performance\Entities;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Employee\Entities\Employee;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Performance\Database\Factories\ReviewFactory;
 
 
-class performance_review extends Model
+class Performance_review extends Model
 {
     use HasFactory;
     
@@ -22,6 +23,11 @@ class performance_review extends Model
         'comments',
         'reviewed_at'
     ];
+
+    protected static function newFactory()
+    {
+        return ReviewFactory::new();
+    }
 
     public function cycle()
     {

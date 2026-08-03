@@ -9,8 +9,8 @@ use Modules\Performance\Http\Requests\CycleRequest;
 use Modules\Performance\Services\v1\PerformanceService;
 use Modules\Performance\Services\v1\ReviewService;
 use Modules\Performance\Transformers\PerformanceResource;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 use Modules\Performance\Http\Requests\ReviewRequest;
 use Modules\Performance\Transformers\ReviewResource;
 use Modules\Employee\Entities\Employee;
@@ -60,7 +60,7 @@ class PerformanceController extends Controller
      * @param Performance_cycle $id
      * @return JsonResponse
      */
-    public function ActivateCycle(performance_cycle $id)
+    public function ActivateCycle(Performance_cycle $id)
     {
         $this->authorize('updateCycle');
         $data=$this->performanceService->activate($id);
@@ -72,7 +72,7 @@ class PerformanceController extends Controller
      * @param Performance_cycle $id
      * @return JsonResponse
      */
-    public function CloseCycle(performance_cycle $id)
+    public function CloseCycle(Performance_cycle $id)
     {
         $this->authorize('updateCycle');
         $data=$this->performanceService->close($id);
@@ -138,10 +138,10 @@ class PerformanceController extends Controller
 
     /**
      * @param ReviewRequest $request
-     * @param performance_review $id
+     * @param Performance_review $id
      * @return JsonResponse
      */
-    public function UpdateReview(ReviewRequest $request,performance_review $id)
+    public function UpdateReview(ReviewRequest $request,Performance_review $id)
     {
         $this->authorize('updateReview',$id);
         $dto=CreateReviewDTO::fromRequest($request->validated());

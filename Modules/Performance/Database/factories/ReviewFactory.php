@@ -17,7 +17,7 @@ class ReviewFactory extends Factory
      *
      * @var string
      */
-    protected $model = \Modules\Performance\Entities\performance_review::class;
+    protected $model = \Modules\Performance\Entities\Performance_review::class;
 
 
     /**
@@ -35,6 +35,7 @@ class ReviewFactory extends Factory
             'score'       => $this->faker->numberBetween(1, 5),
             'comments'    => $this->faker->paragraph(),
         ];
+
     }
 }
 
