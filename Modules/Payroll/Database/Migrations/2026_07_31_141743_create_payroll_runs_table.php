@@ -26,6 +26,13 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
 
+             $table->timestamp('finalized_at')->nullable();
+
+$table->foreignId('finalized_by')
+    ->nullable()
+    ->constrained('users')
+    ->nullOnDelete();   
+
             $table->timestamps();
 
             $table->unique([

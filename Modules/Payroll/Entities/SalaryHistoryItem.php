@@ -1,25 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Payroll\Entities;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Payroll\App\Enums\SalaryField;
 
-#[Fillable(['salary_history_id',
-            'field',
-            'old_amount',
-            'new_amount',])]
-class SalaryHistoryItem extends Model
-{
-    use HasFactory;
 
-   
-    /**
-     * @return array{field: string, new_amount: string, old_amount: string}
-     */
+#[Fillable([  'salary_history_id',
+        'field',
+        'old_amount',
+        'new_amount',])]
+final class SalaryHistoryItem extends Model
+{
+    protected $table = 'salary_history_items';
+
     protected function casts(): array
     {
         return [
@@ -28,10 +26,14 @@ class SalaryHistoryItem extends Model
             'new_amount' => 'decimal:2',
         ];
     }
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<SalaryHistory, SalaryHistoryItem>
-     */
-    public function salaryHistory():BelongsTo
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    public function salaryHistory(): BelongsTo
     {
         return $this->belongsTo(SalaryHistory::class);
     }
