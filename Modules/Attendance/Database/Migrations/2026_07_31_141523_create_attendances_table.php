@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    
+   /**
+    *
+    */
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
@@ -13,25 +17,25 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('employee_id')
-                ->constrained()
+                ->constrained('employees')
                 ->cascadeOnDelete();
 
             $table->date('attendance_date');
 
             $table->timestamp('check_in')->nullable();
-
             $table->timestamp('check_out')->nullable();
 
-            $table->integer('worked_minutes')
-                ->default(0);
+            $table->integer('worked_minutes')->default(0);
+            $table->integer('late_minutes')->default(0);
+            $table->integer('overtime_minutes')->default(0);
 
-            $table->integer('late_minutes')
-                ->default(0);
-
-            $table->integer('overtime_minutes')
-                ->default(0);
-
-            $table->string('status');
+            $table->enum('status', [
+                'present',
+                'absent',
+                'late',
+                'on_leave',
+                'holiday'
+            ])->default('present');
 
             $table->text('notes')->nullable();
 
