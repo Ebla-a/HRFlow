@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\App\Events;
+namespace Modules\Auth\Events;
 
 use Modules\User\Entities\User;
 use Illuminate\Foundation\Events\Dispatchable;

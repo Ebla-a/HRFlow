@@ -5,11 +5,11 @@ namespace Modules\Auth\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\Event;
-use Modules\Auth\App\Services\AuthService;
-use Modules\Auth\App\Events\PasswordChanged;
-use Modules\Auth\App\Listeners\LogoutOtherDevices;
-use Modules\Auth\App\Listeners\LogPasswordChange;
-use Modules\Auth\App\Listeners\SendPasswordChangedNotification;
+use Modules\Auth\Services\AuthService;
+use Modules\Auth\Events\PasswordChanged;
+use Modules\Auth\Listeners\LogoutOtherDevices;
+use Modules\Auth\Listeners\LogPasswordChange;
+use Modules\Auth\Listeners\SendPasswordChangedNotification;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -58,9 +58,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
-        $this->app->singleton(AuthService::class);
-
+        $this->app->register(RouteServiceProvider::class); 
     }
 
     /**
