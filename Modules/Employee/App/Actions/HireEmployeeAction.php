@@ -19,7 +19,7 @@ class HireEmployeeAction
     {
         $jobTitle = JobTitle::findOrFail($dto->jobTitleId);
         
-        if ($jobTitle->department_id !== $dto->departmentId) {
+        if ($jobTitle->department_id !== (int) $dto->departmentId) {
             throw new InvalidJobTitleForDepartmentException;
         }
 
