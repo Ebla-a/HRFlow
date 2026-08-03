@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\App\Events;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,3 +16,4 @@ class PasswordChanged
         public ?string $device
     ) {}
 }
+ 

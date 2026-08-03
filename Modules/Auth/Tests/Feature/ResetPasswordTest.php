@@ -50,3 +50,4 @@ class ResetPasswordTest extends TestCase
    }
 
 }
+ 

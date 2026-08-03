@@ -1,5 +1,5 @@
 <?php
-
+return;
 use Illuminate\Support\Facades\Route;
 use Modules\Employee\App\Http\Controllers\V1\EmployeeController;
 use Modules\Employee\App\Http\Controllers\V1\EmployeeDocumentController;

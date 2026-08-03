@@ -4,21 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-
+use Illuminate\Http\Response; 
 
 abstract class Controller
 {
-     use AuthorizesRequests;
+    use AuthorizesRequests;
+
     /**
      * Send a success JSON response.
      */
-    public  static function success(
+    public static function success(
         mixed $data = null,
         string $message = 'Success',
         int $status = Response::HTTP_OK,
         array $meta = []
     ): JsonResponse {
+
         $response = [
             'status' => true,
             'message' => $message,
@@ -35,16 +36,26 @@ abstract class Controller
     /**
      * Send an error JSON response.
      */
-    public  static function error(
+    public static function error(
         string $message = 'Error',
         int $status = Response::HTTP_BAD_REQUEST,
-        array $errors = []
+        array $errors = [],
+        array $meta = []
     ): JsonResponse {
-        return response()->json([
+
+        $response = [
             'status' => false,
             'message' => $message,
             'errors' => (object) $errors,
-        ], $status);
-    }
-}
+        ];
 
+        if (! empty($meta)) {
+            $response['meta'] = $meta;
+        }
+
+        return response()->json(
+            $response,
+            $status
+        );
+    }
+} 

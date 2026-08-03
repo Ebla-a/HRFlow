@@ -19,3 +19,4 @@ class AuthDatabaseSeeder extends Seeder
         // $this->call("OthersTableSeeder");
     }
 }
+ 

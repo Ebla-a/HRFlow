@@ -32,3 +32,4 @@ class ForgotPasswordTest extends TestCase
         ]);
     }
 }
+ 
