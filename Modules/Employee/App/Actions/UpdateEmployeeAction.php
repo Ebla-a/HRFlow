@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Modules\Employee\App\DTOs\UpdateEmployeeDTO;
 
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
-use Modules\Department\Entities\JobTitle;
+
 use Modules\Employee\Events\EmployeeUpdated;
 use Modules\Employee\Entities\Employee;
+use Modules\Organization\Entities\JobTitle;
 
 class UpdateEmployeeAction
 {

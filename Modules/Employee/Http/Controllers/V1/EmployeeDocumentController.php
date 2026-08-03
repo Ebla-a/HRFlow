@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Employee\App\Actions\UploadEmployeeDocumentAction;
 use Modules\Employee\App\Http\Requests\V1\UploadEmployeeDocumentRequest;
 use Modules\Employee\App\Http\Resources\V1\EmployeeDocumentResource;
-use Modules\Employee\App\Services\EmployeeDocumentService;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;
+use Modules\Employee\Services\EmployeeDocumentService;
 
 class EmployeeDocumentController extends Controller
 {

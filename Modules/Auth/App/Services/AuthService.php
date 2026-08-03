@@ -15,11 +15,7 @@ use Modules\Auth\App\Events\PasswordChanged;
 
 class AuthService
 {
-        use ApiResponseTrait;
 
-
-
-{ 
     /**
      * Login user.
      */
