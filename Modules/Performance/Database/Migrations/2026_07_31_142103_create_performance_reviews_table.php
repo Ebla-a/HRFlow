@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\Performance\Enums\PerformanceReviewStatus;
 
 return new class extends Migration
 {
@@ -29,7 +30,10 @@ return new class extends Migration
             $table->text('comments')
                 ->nullable();
 
-            $table->string('status');
+
+            $table->enum('status', array_column(PerformanceReviewStatus::cases(), 'value'))
+                ->default(PerformanceReviewStatus::DRAFT->value);
+
 
             $table->timestamp('reviewed_at')
                 ->nullable();
