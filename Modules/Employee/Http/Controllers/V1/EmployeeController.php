@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Employee\App\Http\Controllers\V1;
+namespace Modules\Employee\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 
@@ -11,15 +11,14 @@ use Modules\Employee\App\Actions\TerminateEmployeeAction;
 use Modules\Employee\App\DTOs\CreateEmployeeDTO;
 use Modules\Employee\App\DTOs\UpdateEmployeeDTO;
 use Modules\Employee\App\DTOs\TerminateEmployeeDTO;
-use Modules\Employee\App\Http\Requests\V1\StoreEmployeeRequest;
-use Modules\Employee\App\Http\Requests\V1\UpdateEmployeeRequest;
-use Modules\Employee\App\Http\Requests\V1\TerminateEmployeeRequest;
-use Modules\Employee\App\Http\Requests\V1\EmployeeFilterRequest;
-use Modules\Employee\App\Http\Resources\V1\EmployeeResource;
-use Modules\Employee\App\Http\Resources\V1\EmployeeListResource;
-use Modules\Employee\App\Services\EmployeeService;
+use Modules\Employee\Http\Resources\V1\EmployeeListResource;
+use Modules\Employee\Http\Resources\V1\EmployeeResource;
 use Modules\Employee\Entities\Employee;
-
+use Modules\Employee\Http\Requests\EmployeeFilterRequest;
+use Modules\Employee\Http\Requests\StoreEmployeeRequest;
+use Modules\Employee\Http\Requests\TerminateEmployeeRequest;
+use Modules\Employee\Http\Requests\UpdateEmployeeRequest;
+use Modules\Employee\Services\EmployeeService;
 
 class EmployeeController extends Controller
 {
