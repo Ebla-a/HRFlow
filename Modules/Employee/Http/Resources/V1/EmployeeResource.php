@@ -4,7 +4,7 @@ namespace Modules\Employee\Http\Resources\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Employee\App\Http\Resources\V1\EmployeeDocumentResource;
+use Modules\Employee\Http\Resources\V1\EmployeeDocumentResource;
 
 
 class EmployeeResource extends JsonResource
