@@ -3,7 +3,7 @@
 namespace Modules\Employee\App\Actions;
 
 
-use Modules\Employee\App\Services\EmployeeDocumentService;
+use Modules\Employee\Services\EmployeeDocumentService;
 use Illuminate\Http\UploadedFile;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;

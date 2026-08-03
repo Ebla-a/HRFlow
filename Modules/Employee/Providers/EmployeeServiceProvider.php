@@ -2,11 +2,13 @@
 
 namespace Modules\Employee\Providers;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Modules\Employee\Observers\EmployeeObserver;
-use Modules\Employee\App\Policies\EmployeePolicy;
+
 use Modules\Employee\Entities\Employee;
+use Modules\Employee\Policies\EmployeePolicy;
 use Modules\User\Providers\EventServiceProvider;
 
 /**
@@ -110,7 +112,7 @@ class EmployeeServiceProvider extends ServiceProvider
     {
         $paths = [];
 
-        foreach (\Config::get('view.paths') as $path) {
+        foreach (Config::get('view.paths') as $path) {
             if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
                 $paths[] = $path . '/modules/' . $this->moduleNameLower;
             }

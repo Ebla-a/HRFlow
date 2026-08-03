@@ -7,11 +7,11 @@ use Modules\Employee\App\DTOs\CreateEmployeeDTO;
 use Modules\Employee\Events\EmployeeHired;
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
 use App\Models\User;
-use Modules\Department\Entities\JobTitle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Modules\Employee\Entities\Employee;
+use Modules\Organization\Entities\JobTitle;
 
 class HireEmployeeAction
 {
