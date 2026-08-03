@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Auth\App\Listeners;
+namespace Modules\Auth\Listeners;
 
-use Modules\Auth\App\Events\PasswordChanged;
+use Modules\Auth\Events\PasswordChanged;
 
 class LogoutOtherDevices
 {

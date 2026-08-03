@@ -128,6 +128,27 @@ class Employee extends Model
     {
         return $this->hasMany(self::class, 'manager_id');
     }
+
+
+       public function managedDepartment()
+    {
+        return $this->hasOne(Department::class, 'manager_id');
+    }
+
+    public function leaveRequests()
+   {
+     return $this->hasMany(
+        \Modules\Leave\Entities\LeaveRequest::class
+    );
+   }
+
+
+    public function leaveBalances()
+   {
+      return $this->hasMany(
+        \Modules\Leave\Entities\LeaveBalance::class
+    );
+   }
     /**
      * @return HasMany<EmployeeDocument, Employee>
      */
