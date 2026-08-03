@@ -4,6 +4,7 @@ namespace Modules\Auth\Http\Requests;
 
 use Modules\Auth\App\DTOs\ResetPasswordDTO;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @property-read string $token
@@ -22,7 +23,7 @@ class ResetPasswordRequest extends FormRequest
         return [
             'token' => ['required', 'string'],
             'email' => ['required', 'email', 'exists:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', Password::defaults(), 'confirmed'],
         ];
     }
 
@@ -35,3 +36,4 @@ class ResetPasswordRequest extends FormRequest
     );
    }
 }
+ 

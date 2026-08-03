@@ -19,26 +19,52 @@ return new class extends Migration
             $table->foreignId('leave_type_id')
                 ->constrained()
                 ->restrictOnDelete();
+ 
+            $table->date('start_date');
+
+            $table->date('end_date');
+
+            $table->unsignedInteger('days_count');
+ 
+            $table->string('status')
+              ->default('pending');
+
+            $table->text('reason')
+               ->nullable();
+
+            $table->text('rejection_reason')
+                ->nullable();
+
+            $table->string('attachment_path')
+                ->nullable();
+
+            // Manager Approval
+            $table->string('manager_approval_status')
+                ->default('pending');
+
+            $table->timestamp('manager_approved_at')
+                ->nullable();
 
             $table->foreignId('approved_by')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
-            $table->date('start_date');
+            // HR Approval
+            $table->string('hr_approval_status')
+                ->default('pending');
 
-            $table->date('end_date');
-
-            $table->integer('days');
-
-            $table->string('status');
-
-            $table->text('reason')->nullable();
-
-            $table->timestamp('approved_at')
+            $table->timestamp('hr_approved_at')
                 ->nullable();
 
+            $table->foreignId('hr_approved_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->timestamps();
+
+            $table->softDeletes();
 
             $table->index([
                 'employee_id',
@@ -52,3 +78,4 @@ return new class extends Migration
         Schema::dropIfExists('leave_requests');
     }
 };
+ 

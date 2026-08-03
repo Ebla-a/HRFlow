@@ -2,11 +2,11 @@
 
 namespace Modules\Core\App\Exceptions;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\UnauthorizedException as SpatieUnauthorizedException;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,24 +16,21 @@ use Throwable;
 
 class ExceptionRegistrar
 {
-    protected static Controller $controller;
-
     public static function register(Exceptions $exceptions): void
     {
-
         static::validation($exceptions);
         static::authentication($exceptions);
         static::authorization($exceptions);
         static::notFound($exceptions);
         static::userNotFound($exceptions);
+        
         static::serverError($exceptions);
-
     }
 
     protected static function validation(Exceptions $exceptions): void
     {
         $exceptions->render(fn (ValidationException $e) =>
-            controller::error(
+            static::formatResponse(
                 'Validation failed.',
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 $e->errors()
@@ -44,7 +41,7 @@ class ExceptionRegistrar
     protected static function authentication(Exceptions $exceptions): void
     {
         $exceptions->render(fn (AuthenticationException $e) =>
-           controller::error(
+            static::formatResponse(
                 'Unauthenticated.',
                 Response::HTTP_UNAUTHORIZED
             )
@@ -54,7 +51,7 @@ class ExceptionRegistrar
     protected static function authorization(Exceptions $exceptions): void
     {
         $exceptions->render(fn (AuthorizationException|SpatieUnauthorizedException $e) =>
-            controller::error(
+            static::formatResponse(
                 'Forbidden. You do not have the required permissions.',
                 Response::HTTP_FORBIDDEN
             )
@@ -64,8 +61,18 @@ class ExceptionRegistrar
     protected static function notFound(Exceptions $exceptions): void
     {
         $exceptions->render(fn (ModelNotFoundException|NotFoundHttpException $e) =>
-          controller::error(
+            static::formatResponse(
                 'Resource not found.',
+                Response::HTTP_NOT_FOUND
+            )
+        );
+    }
+
+    protected static function userNotFound(Exceptions $exceptions): void
+    {
+        $exceptions->render(fn (UserNotFoundException $e) =>
+            static::formatResponse(
+                $e->getMessage() ?: 'User not found.',
                 Response::HTTP_NOT_FOUND
             )
         );
@@ -74,6 +81,10 @@ class ExceptionRegistrar
     protected static function serverError(Exceptions $exceptions): void
     {
         $exceptions->render(function (Throwable $e) {
+           
+            if (method_exists($e, 'render')) {
+                return null; 
+            }
 
             report($e);
 
@@ -87,17 +98,22 @@ class ExceptionRegistrar
                     ? 'Internal server error.'
                     : $e->getMessage());
 
-            return controller::error($message, $statusCode);
+            return static::formatResponse($message, $statusCode);
         });
     }
 
-    protected static function userNotFound(Exceptions $exceptions): void
+  
+    protected static function formatResponse(string $message, int $status, mixed $errors = null): JsonResponse
     {
-        $exceptions->render(fn (UserNotFoundException $e) =>
-            controller::error(
-                $e->getMessage() ?: 'User not found.',
-                Response::HTTP_NOT_FOUND
-            )
-        );
+        $response = [
+            'success' => false,
+            'message' => $message,
+        ];
+
+        if ($errors !== null) {
+            $response['errors'] = $errors;
+        }
+
+        return response()->json($response, $status);
     }
 }

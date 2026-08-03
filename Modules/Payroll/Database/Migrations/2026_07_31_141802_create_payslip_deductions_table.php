@@ -16,13 +16,15 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('name');
+            $table->string('type');
 
             $table->decimal('amount',12,2);
 
             $table->timestamps();
 
             $table->index('payslip_id');
+
+            $table->text('description');
         });
     }
 

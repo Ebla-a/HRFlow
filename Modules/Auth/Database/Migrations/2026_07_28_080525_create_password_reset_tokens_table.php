@@ -28,3 +28,4 @@ return new class extends Migration
         // Don't drop if created by standard users migration to prevent conflicts
     }
 };
+ 

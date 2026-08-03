@@ -65,3 +65,4 @@ class ResetPasswordEventTest extends TestCase
         );
     }
 }
+ 

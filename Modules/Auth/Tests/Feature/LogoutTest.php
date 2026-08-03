@@ -32,3 +32,4 @@ class LogoutTest extends TestCase
         $response->assertStatus(401);
     }
 }
+ 

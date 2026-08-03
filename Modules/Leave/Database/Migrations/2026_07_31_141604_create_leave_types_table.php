@@ -14,16 +14,13 @@ return new class extends Migration
 
             $table->string('name')->unique();
 
-            $table->integer('default_days');
+            $table->unsignedInteger('annual_days');
 
             $table->boolean('is_paid')
                 ->default(true);
 
-            $table->boolean('requires_approval')
-                ->default(true);
-
-            $table->boolean('is_active')
-                ->default(true);
+            $table->boolean('requires_attachment')
+                ->default(false);
 
             $table->timestamps();
         });
@@ -34,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('leave_types');
     }
 };
+ 

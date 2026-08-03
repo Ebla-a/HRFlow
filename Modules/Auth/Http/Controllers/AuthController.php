@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Auth\App\Services\AuthService;
+use Modules\Auth\Http\Resources\UserAuthResource;
 use Modules\Auth\Http\Requests\ForgotPasswordRequest;
 use Modules\Auth\Http\Requests\LoginRequest;
 use Modules\Auth\Http\Requests\ResetPasswordRequest;
@@ -18,62 +19,54 @@ class AuthController extends Controller
     ) {
     }
 
-
-
-    /**
-     * Login user.
-     */
     public function login(LoginRequest $request): JsonResponse
     {
-        return $this->authService->login(
-            $request->toDTO()
-        );
+        $data = $this->authService->login($request->toDTO());
+
+        return Controller::success([
+            'access_token' => $data['access_token'],
+            'token_type' => $data['token_type'],
+            'user' => new UserAuthResource($data['user']),
+        ], 'Login successful');
     }
 
-    /**
-     * Logout user.
-     */
     public function logout(Request $request): JsonResponse
     {
-        return $this->authService->logout($request);
+        $this->authService->logout($request);
+
+        return Controller::success(null, 'Successfully logged out');
     }
 
-    /**
-     * Get authenticated user.
-     */
     public function me(Request $request): JsonResponse
     {
-        return $this->authService->me($request);
+        $data = $this->authService->me($request);
+
+        return Controller::success(
+            new UserAuthResource($data),
+            'User profile fetched successfully'
+        );
     }
 
-    /**
-     * Update authenticated user password.
-     */
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
-        return $this->authService->updatePassword(
-            $request->toDTO(),
-            $request
-        );
+        $this->authService->updatePassword($request->toDTO(), $request);
+
+        return Controller::success(null, 'Password updated successfully');
     }
 
-    /**
-     * Send reset password token.
-     */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        return $this->authService->forgotPassword(
-            $request->validated('email')
-        );
+        $token = $this->authService->forgotPassword($request->validated('email'));
+
+        return Controller::success([
+            'reset_token' => $token,
+        ], 'Password reset token generated successfully.');
     }
 
-    /**
-     * Reset password.
-     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        return $this->authService->resetPassword(
-            $request->toDTO()
-        );
+        $this->authService->resetPassword($request->toDTO());
+
+        return Controller::success(null, 'Password reset successfully');
     }
 }

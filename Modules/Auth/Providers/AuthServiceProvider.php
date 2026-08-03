@@ -135,3 +135,4 @@ class AuthServiceProvider extends ServiceProvider
         return $paths;
     }
 }
+ 

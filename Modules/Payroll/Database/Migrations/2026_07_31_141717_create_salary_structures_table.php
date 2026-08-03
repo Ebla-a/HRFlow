@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('transport_allowance',12,2)->default(0);
 
             $table->decimal('other_allowance',12,2)->default(0);
+            $table->date('effective_date')->nullable();
 
             $table->timestamps();
         });

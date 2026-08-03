@@ -2,18 +2,16 @@
 
 namespace Modules\Auth\App\Services;
 
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Modules\User\Entities\User;
+use App\Models\LoginAttempt;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Modules\Auth\App\DTOs\ChangePasswordDTO;
 use Modules\Auth\App\DTOs\LoginDTO;
 use Modules\Auth\App\DTOs\ResetPasswordDTO;
-use Modules\Core\App\Traits\ApiResponseTrait;
-use Modules\Auth\App\Events\PasswordChanged;
-use Modules\Auth\Http\Resources\UserAuthResource;
+use Modules\Auth\App\Events\PasswordChanged; 
 
 class AuthService
 {
@@ -21,129 +19,140 @@ class AuthService
 
 
 
+{ 
     /**
      * Login user.
      */
-    public function login(LoginDTO $dto): JsonResponse
-    {
-        /** @var User|null $user */
+    public function login(LoginDTO $dto): array
+    { 
         $user = User::query()
             ->where('email', $dto->email)
             ->first();
 
-        if (! $user || ! Hash::check($dto->password, $user->password)) {
-           return $this->error(
-            'Invalid credentials provided.',
-               401,
-            [
-                  'email' => [
-                     'Invalid email or password.',
-                ],
-            ]
-          );
+        if (! $user) {
+          LoginAttempt::create([
+            'email' => $dto->email,
+            'status' => 'email_not_found',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+            throw new \Exception(
+              'Email not found.', 
+              404);
+        }
+
+        if (! Hash::check(
+          $dto->password,
+          $user->password
+          )) {
+            LoginAttempt::create([
+                'email' => $dto->email,
+                'status' => 'invalid_password',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+
+            throw new \Exception(
+              'Invalid password.',
+               401
+            );
         }
 
         if (! $user->is_active) {
-           return $this->error(
-            'User account is inactive.',
-              403
-           );
+          LoginAttempt::create([
+            'email' => $dto->email,
+            'status' => 'inactive_account',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+            throw new \Exception(
+              'User account is inactive.',
+               403
+            );
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user
+            ->createToken('auth_token')
+            ->plainTextToken;
 
-         return $this->success(
-           [
-             'access_token' => $token,
-             'token_type' => 'Bearer',
-             'user' => new UserAuthResource($user),
-           ],
-          'Login successful'
-        );
-    }
+        LoginAttempt::create([
+            'email' => $dto->email,
+            'status' => 'success',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
-   /**
- * Logout user.
- */
-  public function logout(Request $request): JsonResponse
-   {
-    /** @var User|null $user */
-    $user = $request->user();
-
-    if ($user) {
-
-        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
-        $token = $user->currentAccessToken();
-
-        if ($token !== null) {
-            $token->delete();
-        }
-      }
-
-      return $this->success(
-        null,
-          'Successfully logged out'
-     );
+        return [
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+        ];
     }
 
     /**
-     * Authenticated user profile.
+     * Logout user.
      */
-    public function me(Request $request): JsonResponse
+    public function logout(Request $request): void
     {
-        /** @var User $user */
         $user = $request->user();
 
-         return $this->success(
-           new UserAuthResource($user),
-             'User profile fetched successfully'
-       );
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+        } 
+    }
+
+    /**
+     * Authenticated user.
+     */
+    public function me(Request $request): User
+    {
+        return $request->user();
     }
 
     /**
      * Update password.
      */
-    public function updatePassword(
-        ChangePasswordDTO $dto,
-        Request $request
-    ): JsonResponse {
+   public function updatePassword(
+    ChangePasswordDTO $dto,
+    Request $request
+): void {
+    $user = $request->user();
 
-        /** @var User $user */
-        $user = $request->user();
-
-        if (! Hash::check($dto->currentPassword, $user->password)) {
-           return $this->error(
-             'Current password does not match.',
-               422,
-            [
-                'current_password' => [
-                  'The provided current password is incorrect.',
-                ],
-            ]
-          );
-        }
-
-        $user->update([
-            'password' => Hash::make($dto->password),
+    if (! Hash::check($dto->currentPassword, $user->password)) {
+        throw \Illuminate\Validation\ValidationException::withMessages([
+            'current_password' => ['Current password is incorrect.'],
         ]);
-
-        event(new PasswordChanged(
-          $user,
-          request()->ip(),
-          request()->userAgent()
-       ));
-
-        return $this->success(
-          null,
-            'Password updated successfully'
-       );
     }
 
+    $user->password = Hash::make($dto->password);
+    $user->save();
+
+    event(new PasswordChanged(
+        $user,
+        request()->ip(),
+        request()->userAgent()
+    ));
+}
     /**
      * Forgot password.
      */
-    public function forgotPassword(string $email): JsonResponse
-    {
+    public function forgotPassword(
+        string $email
+    ): string {
+
+        $user = User::where(
+            'email',
+            $email
+        )->first();
+
+        if (! $user) {
+            throw new \Exception(
+                'Email not found.',
+                404
+            );
+        }
 
         $token = Str::random(60);
 
@@ -158,55 +167,65 @@ class AuthService
                 ]
             );
 
-       return $this->success(
-        [
-           'reset_token' => $token,
-        ],
-          'Password reset token generated successfully.'
-       );
+        return $token;
     }
 
     /**
-    * Reset password.
-    */
-   public function resetPassword(
-    ResetPasswordDTO $dto
-     ): JsonResponse {
+     * Reset password.
+     */
+    public function resetPassword(
+        ResetPasswordDTO $dto
+    ): void {
 
-    $record = DB::table('password_reset_tokens')
-        ->where('email', '=', $dto->email)
-        ->first();
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $dto->email)
+            ->first();
 
-    if (! $record || ! Hash::check($dto->token, $record->token)) {
-        return $this->error('Invalid or expired reset token.', 400);
+        if (
+            ! $record ||
+            ! Hash::check(
+                $dto->token,
+                $record->token
+            )
+        ) {
+            throw new \Exception(
+                'Invalid or expired reset token.',
+                400
+            );
+        }
+
+   
+
+        $user = User::where(
+            'email',
+            $dto->email
+        )->first();
+
+             $user->password = Hash::make($dto->password);
+             $user->save();
+
+        if (! $user) {
+            throw new \Exception(
+                'User not found.',
+                404
+            );
+        }
+
+        $user->update([
+            'password' => Hash::make(
+                $dto->password
+            ),
+        ]);
+
+        event(new PasswordChanged(
+            $user,
+            request()->ip(),
+            request()->userAgent()
+        ));
+        
+
+        DB::table('password_reset_tokens')
+            ->where('email', $dto->email)
+            ->delete();
     }
-
-    /** @var User|null $user */
-    $user = User::query()
-        ->where('email', $dto->email)
-        ->first();
-
-    if (! $user) {
-        return $this->error('User not found.', 404);
-    }
-
-    $user->update([
-        'password' => Hash::make($dto->password),
-    ]);
-
-     event(new PasswordChanged(
-        $user,
-        request()->ip(),
-        request()->userAgent()
-      ));
-
-    DB::table('password_reset_tokens')
-        ->where('email', '=', $dto->email)
-        ->delete();
-
-    return $this->success(
-       null,
-         'Password reset successfully'
-     );
-  }
 }
