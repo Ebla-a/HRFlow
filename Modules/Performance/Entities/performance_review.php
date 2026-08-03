@@ -2,27 +2,25 @@
 
 namespace Modules\Performance\Entities;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Employee\Entities\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Performance\Database\Factories\ReviewFactory;
 
-
+#[Fillable([ 'employee_id',
+        'performance_cycle_id',
+        'reviewer_id',
+        'status',
+        'score',
+        'comments',
+        'reviewed_at'])]
 class Performance_review extends Model
 {
     use HasFactory;
     
     protected $table = 'performance_reviews';
     
-    protected $fillable = [
-        'employee_id',
-        'performance_cycle_id',
-        'reviewer_id',
-        'status',
-        'score',
-        'comments',
-        'reviewed_at'
-    ];
 
     protected static function newFactory()
     {
@@ -37,6 +35,11 @@ class Performance_review extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class,'employee_id');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(Employee::class, 'reviewer_id');
     }
 
 }

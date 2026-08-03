@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Performance\Rules;
 
 use Closure;
@@ -21,6 +22,9 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if (!isset($this->data['start_date'])) {
+            return;
+        }
         $startDate = $this->data['start_date'];
 
         $start = Carbon::parse($startDate);
@@ -30,6 +34,4 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
             $fail('end_date.minimum_days_after');
         }
     }
-
-
 }
