@@ -23,3 +23,4 @@ class PasswordChangedNotification extends Notification
             ->line('If you did not perform this action, please contact support.');
     }
 }
+ 
