@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/organization', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/organization', function (Request $request) {
+//     return $request->user();
+// });
+
+require __DIR__.'/Api/V1/department.php';
+require __DIR__.'/Api/V1/jobTitle.php';

@@ -2,8 +2,13 @@
 
 namespace Modules\Organization\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\ServiceProvider;
+use Modules\Organization\Repository\Contracts\DepartmentRepositoryInterface;
+use Modules\Organization\Repository\Contracts\JobTitleRepositoryInterface;
+use Modules\Organization\Repository\Implementation\DepartmentRepository;
+use Modules\Organization\Repository\Implementation\JobTitleRepository;
+
 
 class OrganizationServiceProvider extends ServiceProvider
 {
@@ -17,6 +22,8 @@ class OrganizationServiceProvider extends ServiceProvider
      */
     protected $moduleNameLower = 'organization';
 
+
+
     /**
      * Boot the application events.
      *
@@ -28,6 +35,7 @@ class OrganizationServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+
     }
 
     /**
@@ -37,8 +45,14 @@ class OrganizationServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
+        $this->app->bind(JobTitleRepositoryInterface::class, JobTitleRepository::class);
+
         $this->app->register(RouteServiceProvider::class);
     }
+
+
+
 
     /**
      * Register config.

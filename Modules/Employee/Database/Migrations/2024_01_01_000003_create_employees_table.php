@@ -17,9 +17,10 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->foreignId('department_id')
-                ->constrained()
-                ->restrictOnDelete();
+           $table->foreignId('department_id')
+                ->nullable()
+             ->constrained('departments')
+              ->nullOnDelete();
 
             $table->foreignId('job_title_id')
                 ->constrained()

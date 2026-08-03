@@ -104,7 +104,7 @@ class Employee extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class,);
     }
     /**
      * @return BelongsTo<JobTitle, Employee>
@@ -128,6 +128,12 @@ class Employee extends Model
         return $this->hasMany(self::class, 'manager_id');
     }
 
+
+       public function managedDepartment()
+    {
+        return $this->hasOne(Department::class, 'manager_id');
+    }
+}
     public function leaveRequests()
    {
      return $this->hasMany(

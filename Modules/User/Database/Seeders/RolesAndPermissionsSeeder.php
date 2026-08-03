@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Modules\User\Database\Seeders;
 
 
@@ -38,7 +38,9 @@ class RolesAndPermissionsSeeder extends Seeder
 'employees.view.all','employee.create','employee.update','employee.change.status',
 
 'department.create','department.update','department.delete','departments.view.all',
-'jobtitle.create','jobtitle.update','jobtitle.delete','jobtitles.view.all',
+'departments.assign-manager','departments.force-delete','departments.restore',
+
+'jobtitle.create','jobtitle.update','jobtitle.delete','jobtitles.view.all','jobtitles.restore',
 'leave.type.create','leave.type.update','leave.type.delete','leave.types.view.all',
 'leave.requests.view.all',
 

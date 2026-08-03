@@ -14,6 +14,11 @@ use Modules\Auth\App\DTOs\ResetPasswordDTO;
 use Modules\Auth\App\Events\PasswordChanged; 
 
 class AuthService
+{
+        use ApiResponseTrait;
+
+
+
 { 
     /**
      * Login user.
