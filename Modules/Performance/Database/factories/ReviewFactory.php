@@ -30,7 +30,7 @@ class ReviewFactory extends Factory
         return [
             'employee_id' => Employee::factory(),
             'reviewer_id' => Employee::factory(),
-            'cycle_id'    => performance_cycle::factory()->state(['status' => 'Active']),
+            'cycle_id'    => Performance_cycle::factory()->state(['status' => 'Active']),
             'status'      => $this->faker->randomElement(['Draft', 'Reviewed']),
             'score'       => $this->faker->numberBetween(1, 5),
             'comments'    => $this->faker->paragraph(),

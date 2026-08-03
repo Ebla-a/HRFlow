@@ -14,6 +14,8 @@ use Modules\Performance\Entities\performance_review;
 use Modules\Performance\Http\Requests\ReviewRequest;
 use Modules\Performance\Transformers\ReviewResource;
 use Modules\Employee\Entities\Employee;
+use Modules\Performance\DTO\CreateCycleDTO;
+use Modules\Performance\DTO\CreateReviewDTO;
 
 class PerformanceController extends Controller
 {
@@ -45,11 +47,14 @@ class PerformanceController extends Controller
      */
     public function CreateCycle(CycleRequest $request)
     {
+
         $this->authorize('createCycle');
-        $data=$this->performanceService->create($request->validated());
+        $dto=CreateCycleDTO::fromRequest($request->validated());
+        $data=$this->performanceService->create($dto);
         return $this->success(new PerformanceResource($data),
         "Performance cycle created successfully.");
     }
+
 
     /**
      * @param Performance_cycle $id
@@ -123,7 +128,8 @@ class PerformanceController extends Controller
     public function CreateReview(ReviewRequest $request,Employee $id)
     {
         $this->authorize('createReview',$id);
-        $data=$this->reviewService->createReview($request->validated());
+        $dto=CreateReviewDTO::fromRequest($request->validated());
+        $data=$this->reviewService->createReview($dto);
         return $this->success(new ReviewResource($data),
         "Performance review created successfully.");
     }
@@ -138,7 +144,8 @@ class PerformanceController extends Controller
     public function UpdateReview(ReviewRequest $request,performance_review $id)
     {
         $this->authorize('updateReview',$id);
-        $data=$this->reviewService->updateReview($request->validated(),$id);
+        $dto=CreateReviewDTO::fromRequest($request->validated());
+        $data=$this->reviewService->updateReview($dto,$id);
         return $this->success(new ReviewResource($data),
         "Performance review updated successfully.");
     }

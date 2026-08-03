@@ -4,6 +4,8 @@ namespace Modules\Performance\Services\v1;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\Entities\performance_cycle;
 use Modules\Performance\Entities\performance_review;
+use Modules\Performance\DTO\CreateCycleDTO;
+
 class PerformanceService
 {
     /**
@@ -16,15 +18,15 @@ class PerformanceService
     }
 
     /**
-     * @param array $data
+     * @param CreateCycleDTO $data
      * @return Performance_cycle
      */
-    public function create(array $data)
+    public function create(CreateCycleDTO $data)
     {
         return Performance_cycle::create([
-            'name'=>$data['name'],
-            'start_date'=>$data['start_date'],
-            'end_date'=>$data['end_date'],
+            'name'=>$data->name,
+            'start_date'=>$data->start_date,
+            'end_date'=>$data->end_date,
             'status'=>'Active',
         ]);
     }

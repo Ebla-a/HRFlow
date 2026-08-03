@@ -5,6 +5,7 @@ use Modules\Employee\Entities\Employee;
 use Modules\Performance\Entities\performance_cycle;
 use Modules\Performance\Entities\performance_review;
 use Illuminate\Support\Facades\Auth;
+use Modules\Performance\DTO\CreateReviewDTO;
 
 class ReviewService
 {
@@ -23,34 +24,35 @@ class ReviewService
     }
 
     /**
-     * @param array $data
+     * @param CreateReviewDTO $dto
      * @return Performance_review
      */
-    public function createReview(array $data)
+    public function createReview(CreateReviewDTO $dto)
     {
-        $data=Performance_review::create([
-        'performance_cycle_id'=>$data['performance_cycle_id'],
-        'employee_id'=>$data['employee_id'],
-        'reviewer_id'=>$data['reviewer_id'],
+        $result=Performance_review::create([
+        'performance_cycle_id'=>$dto->performance_cycle_id,
+        'employee_id'=>$dto->employee_id,
+        'reviewer_id'=>$dto->reviewer_id,
         'status'=>'Reviewed',
-        'score'=>$data['score'],
-        'comments'=>$data['comments'],
+        'score'=>$dto->score,
+        'comments'=>$dto->comments,
         'reviewed_at'=>now(),
         ]);
-        $data->load(['cycle', 'employee']);
-        return $data;
+        $result->load(['cycle', 'employee']);
+        return $result;
     }
 
+
     /**
-     * @param array $data
+     * @param CreateReviewDTO $dto
      * @param Performance_review $id
      * @return Performance_review
      */
-    public function updateReview(array $data, performance_review $id)
+    public function updateReview(CreateReviewDTO $dto, performance_review $id)
     {
         $id->update([
-            'score'=>$data['score'],
-            'comments'=>$data['comments'],
+            'score'=>$dto->score,
+            'comments'=>$dto->comments,
             'reviewed_at'=>now(),
         ]);
         $id->load(['cycle', 'employee']);
