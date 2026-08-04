@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Auth\App\Listeners;
+namespace Modules\Auth\Listeners;
 
 use App\Models\PasswordChangeLog;
-use Modules\Auth\App\Events\PasswordChanged;
+use Modules\Auth\Events\PasswordChanged;
 
 class LogPasswordChange
 {

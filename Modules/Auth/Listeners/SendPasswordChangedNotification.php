@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Auth\App\Listeners;
+namespace Modules\Auth\Listeners;
 
-use Modules\Auth\App\Events\PasswordChanged;
-use Modules\Auth\App\Notifications\PasswordChangedNotification;
+use Modules\Auth\Events\PasswordChanged;
+use Modules\Auth\Notifications\PasswordChangedNotification;
 
 class SendPasswordChangedNotification
 {

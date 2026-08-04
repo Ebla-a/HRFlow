@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\App\Services;
+namespace Modules\Auth\Services;
 
 use Modules\User\Entities\User;
 use App\Models\LoginAttempt;
@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Modules\Auth\App\DTOs\ChangePasswordDTO;
 use Modules\Auth\App\DTOs\LoginDTO;
 use Modules\Auth\App\DTOs\ResetPasswordDTO;
-use Modules\Auth\App\Events\PasswordChanged; 
+use Modules\Auth\Events\PasswordChanged; 
 
 class AuthService
 {
