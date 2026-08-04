@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Payroll\App\Actions;
+namespace Modules\Payroll\App\Actions\SalaryStructure;
 
 use Modules\Payroll\App\DTOs\CreateSalaryStructureDTO;
 use Modules\Payroll\Entities\SalaryStructure;

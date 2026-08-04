@@ -14,6 +14,8 @@ use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
 use Modules\Employee\App\Enums\Gender;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Employee\Database\Factories\EmployeeFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
 
@@ -38,7 +40,7 @@ use Modules\Organization\Entities\JobTitle;
 ])]
 class Employee extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,HasFactory;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -47,6 +49,13 @@ class Employee extends Model
         'birth_date' => 'date',
         'termination_date' => 'date',
     ];
+
+
+
+    protected static function newFactory(): EmployeeFactory
+    {
+        return EmployeeFactory::new();
+    }
 
     /**
      * get full name
@@ -135,4 +144,5 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeDocument::class);
     }
+    
 }

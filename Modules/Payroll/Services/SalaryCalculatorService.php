@@ -1,10 +1,7 @@
 <?php
-
-declare(strict_types=1);
-
 namespace Modules\Payroll\Services;
 
-use Modules\Payroll\App\DTOs\SalaryCalculationDTO;
+use Modules\Payroll\App\DTOs\PayrollCalculationDTO;
 use Modules\Payroll\Entities\SalaryStructure;
 
 final class SalaryCalculatorService
@@ -12,34 +9,30 @@ final class SalaryCalculatorService
     public function calculate(
         SalaryStructure $salaryStructure,
         int $unpaidLeaveDays = 0,
-        float $manualDeductions = 0,
-    ): SalaryCalculationDTO {
+        float $manualDeductions = 0.0
+    ): PayrollCalculationDTO {
+        $basicSalary = $salaryStructure->basic_salary;
+        $housing = $salaryStructure->housing_allowance;
+        $transport = $salaryStructure->transport_allowance;
+        $other = $salaryStructure->other_allowance;
 
-        $grossSalary =
-            $salaryStructure->basic_salary
-            + $salaryStructure->housing_allowance
-            + $salaryStructure->transport_allowance
-            + $salaryStructure->other_allowance;
+        $grossSalary = $basicSalary + $housing + $transport + $other;
 
-        $unpaidLeaveDeduction =
-            ($salaryStructure->basic_salary / 30)
-            * $unpaidLeaveDays;
+      // Calculate unpaid days deduction based on basic salary
+        $unpaidLeaveDeduction = ($basicSalary / 30) * $unpaidLeaveDays;
 
-        $netSalary =
-            $grossSalary
-            - $manualDeductions
-            - $unpaidLeaveDeduction;
+        // Protecting the salary from going into negative values 
+        $netSalary = max(0, $grossSalary - $manualDeductions - $unpaidLeaveDeduction);
 
-        return new SalaryCalculationDTO(
-            basicSalary: (float) $salaryStructure->basic_salary,
-            housingAllowance: (float) $salaryStructure->housing_allowance,
-            transportAllowance: (float) $salaryStructure->transport_allowance,
-            otherAllowance: (float) $salaryStructure->other_allowance,
-            grossSalary: (float) $grossSalary,
-            manualDeductions: $manualDeductions,
-            unpaidLeaveDeduction: (float) $unpaidLeaveDeduction,
+        return new PayrollCalculationDTO(
+            basicSalary: $basicSalary,
+            housingAllowance: $housing,
+            transportAllowance: $transport,
+            otherAllowance: $other,
+            grossSalary: $grossSalary,
+            unpaidLeaveDeduction: round($unpaidLeaveDeduction, 2),
             unpaidLeaveDays: $unpaidLeaveDays,
-            netSalary: (float) $netSalary,
+            netSalary: round($netSalary, 2)
         );
     }
 }
