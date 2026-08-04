@@ -10,6 +10,9 @@ use Modules\Auth\Events\PasswordChanged;
 use Modules\Auth\Listeners\LogoutOtherDevices;
 use Modules\Auth\Listeners\LogPasswordChange;
 use Modules\Auth\Listeners\SendPasswordChangedNotification;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,6 +33,21 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+          RateLimiter::for('auth-strict', function (Request $request) {
+            return Limit::perMinute(5)->by(
+                $request->ip() . '|' . strtolower((string) $request->input('email'))
+            );
+        });
+
+       
+        RateLimiter::for('auth-api', function (Request $request) {
+            return Limit::perMinute(60)->by(
+                $request->user()?->id ?: $request->ip()
+            );
+        });
+
+
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
