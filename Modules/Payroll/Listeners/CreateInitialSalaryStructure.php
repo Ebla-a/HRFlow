@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Payroll\App\Listeners;
+namespace Modules\Payroll\Listeners;
 
 
 use Modules\Employee\Events\EmployeeHired as EventsEmployeeHired;
