@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Modules\Report\Http\Controllers\ReportController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +14,8 @@
 |
 */
 
-Route::prefix('report')->group(function() {
-    Route::get('/', 'ReportController@index');
+Route::prefix('report')->group(function () {
+    Route::get('/{type}', [ReportController::class, 'index']);
+    Route::get('/{type}/show', [ReportController::class, 'show']);
+    Route::post('/{type}/generate', [ReportController::class, 'generate']);
 });

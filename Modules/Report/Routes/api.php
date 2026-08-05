@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\Report\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,17 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/report', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->prefix('report')->group(function () {
+    
+    Route::post('/payroll/generate/{run}', [ReportController::class,'generatePayroll']);
+
+    // List all report summaries for a type
+    Route::get('/{type}', [ReportController::class, 'index']);
+
+    // Read a specific report summary for a type/month/year
+    Route::get('/{type}/show', [ReportController::class, 'show']);
+
+    // Generate a report summary on demand
+    Route::post('/{type}/generate', [ReportController::class, 'generate']);
+
 });

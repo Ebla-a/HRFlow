@@ -3,58 +3,87 @@
 namespace Modules\Report\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Modules\Report\Services\ReportService;
+use Modules\Payroll\Entities\PayrollRun;
 
 class ReportController extends Controller
 {
+    public function __construct(
+        private readonly ReportService $reportService
+    ) {}
+
     /**
-     * Display a listing of the resource.
-     * @return Response
+     * Generate a report summary on demand.
+     *
+     * @param string $type payroll|attendance|leave|performance|employees
+     * @return JsonResponse
      */
-    public function index()
+public function generate(Request $request, string $type): JsonResponse
     {
-        //
+        $month = (int) ($request->input('month', now()->month));
+        $year = (int) ($request->input('year', now()->year));
+
+        $data = $this->reportService->generate($type, $month, $year);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    public function generatePayroll(PayrollRun $run): JsonResponse
+    {
+    $data = $this->reportService->generatePayroll($run);
+
+    return response()->json([
+        'success' => true,
+        'data' => $data,
+      ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Response
+     * Read a report summary for a given type/month/year.
+     *
+     * @param string $type
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function show(Request $request, string $type): JsonResponse
     {
-        //
+        $month = (int) ($request->input('month', now()->month));
+        $year = (int) ($request->input('year', now()->year));
+
+        $data = $this->reportService->read($type, $month, $year);
+
+        if ($data === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Report not found for this period. Generate it first.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
     }
 
     /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Response
+     * List all report summaries for a type.
+     *
+     * @param string $type
+     * @return JsonResponse
      */
-    public function show($id)
+    public function index(Request $request, string $type): JsonResponse
     {
-        //
-    }
+        $year = $request->has('year') ? (int) $request->input('year') : null;
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        $data = $this->reportService->listByType($type, $year);
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
     }
 }
