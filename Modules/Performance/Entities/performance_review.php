@@ -42,5 +42,4 @@ class Performance_review extends Model
         return $this->belongsTo(Employee::class, 'reviewer_id');
     }
 
-}
-
+} 
