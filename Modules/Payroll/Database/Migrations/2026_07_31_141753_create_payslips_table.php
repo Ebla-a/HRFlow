@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Modules\Payroll\App\Enums\PayslipStatus;
 
 return new class extends Migration
 {
@@ -34,6 +35,8 @@ return new class extends Migration
                 ->default(0);
 
 
+            $table->string('status')->default(PayslipStatus::DRAFT->value);
+             
 
             $table->decimal('unpaid_leave_deduction', 12, 2)->default(0);
 

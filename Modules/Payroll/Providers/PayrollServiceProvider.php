@@ -5,8 +5,8 @@ namespace Modules\Payroll\Providers;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Employee\App\Events\EmployeeHired;
-use Modules\Payroll\App\Listeners\CreateInitialSalaryStructure;
+use Modules\Employee\Events\EmployeeHired as EventsEmployeeHired;
+use Modules\Payroll\Listeners\CreateInitialSalaryStructure;
 
 class PayrollServiceProvider extends ServiceProvider
 {
@@ -28,7 +28,7 @@ class PayrollServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(
-            EmployeeHired::class,
+            EventsEmployeeHired::class,
             CreateInitialSalaryStructure::class
         );
 

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Performance\Http\Controllers\v1\PerformanceController;
+use Modules\Performance\Http\Controllers\V1\PerformanceController;
 
 /*
 |--------------------------------------------------------------------------

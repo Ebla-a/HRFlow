@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Leave\Entities\LeaveType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Query\Builder;
 use Modules\Leave\Enums\LeaveRequestStatusEnum;
 use Modules\Employee\Entities\Employee;
  
@@ -81,4 +82,39 @@ use Modules\Employee\Entities\Employee;
         'hr_approved_by'
     );
    }
+
+   /**
+    * For accepted vacations only
+    * @param Builder $query
+    * @return Builder
+    */
+   public function scopeApproved(Builder $query): Builder
+{
+    return $query->where('status', LeaveRequestStatusEnum::APPROVED);
+}
+
+/**
+ * For unpaid leaves only
+ * @param Builder $query
+ * @return Builder
+ */
+public function scopeUnpaid(Builder $query): Builder
+{
+    return $query->whereHas('leaveType', fn ($q) => $q->where('is_paid', false));
+}
+
+/**
+ * For vacations in a specific month and year
+ * @param Builder $query
+ * @param int $month
+ * @param int $year
+ * @return Builder
+ */
+public function scopeForMonth(Builder $query, int $month, int $year): Builder
+{
+    return $query->whereMonth('start_date', $month)
+                 ->whereYear('start_date', $year);
+}
+
+
  }
