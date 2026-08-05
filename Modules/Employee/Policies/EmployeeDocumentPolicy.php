@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Employee\Policies;
 
 use App\Models\User;
@@ -8,59 +7,43 @@ use Modules\Employee\Entities\EmployeeDocument;
 
 class EmployeeDocumentPolicy
 {
-    /**
-     * Determine whether the user can view any documents of a specific employee.
-     *
-     * @param User $user
-     * @param Employee $employee
-     * @return bool
-     */
     public function viewAny(User $user, Employee $employee): bool
     {
-        if ($user->hasRole('HR Admin')) {
+        if ($user->hasPermissionTo('view.documents.employee.all', 'sanctum')) {
             return true;
         }
 
-        if ($user->hasRole('Department Manager')) {
+        if ($user->hasPermissionTo('view.employee.documents.own', 'sanctum')) {
             return $user->employee && $user->employee->department_id === $employee->department_id;
         }
 
-        return $user->id === $employee->user_id;
+        if ($user->hasPermissionTo('view.document.own', 'sanctum')) {
+            return $user->id === $employee->user_id;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can upload documents for an employee.
-     *
-     * @param User $user
-     * @param Employee $employee
-     * @return bool
-     */
     public function store(User $user, Employee $employee): bool
     {
-        return $user->hasRole('HR Admin');
+        if ($user->hasPermissionTo('upload.documents.employee.all', 'sanctum')) {
+            return true;
+        }
+
+        if ($user->id === $employee->user_id && $user->hasPermissionTo('upload.document.own', 'sanctum')) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Determine whether the user can update/replace a specific document.
-     *
-     * @param User $user
-     * @param EmployeeDocument $document
-     * @return bool
-     */
     public function update(User $user, EmployeeDocument $document): bool
     {
-        return $user->hasRole('HR Admin');
+        return $user->hasPermissionTo('upload.documents.employee.all', 'sanctum');
     }
 
-    /**
-     * Determine whether the user can delete a document.
-     *
-     * @param User $user
-     * @param EmployeeDocument $document
-     * @return bool
-     */
     public function destroy(User $user, EmployeeDocument $document): bool
     {
-        return $user->hasRole('HR Admin');
+        return $user->hasPermissionTo('delete.documents.employee.all', 'sanctum');
     }
 }

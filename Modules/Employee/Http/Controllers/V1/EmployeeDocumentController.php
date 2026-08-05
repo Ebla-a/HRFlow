@@ -7,17 +7,16 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Employee\App\Actions\UploadEmployeeDocumentAction;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Entities\EmployeeDocument;
-
-use Modules\Employee\Http\Requests\UploadEmployeeDocumentRequest ;
+use Modules\Employee\Http\Requests\UploadEmployeeDocumentRequest;
 use Modules\Employee\Http\Resources\V1\EmployeeDocumentResource;
 use Modules\Employee\Services\EmployeeDocumentService;
 
 class EmployeeDocumentController extends Controller
 {
-
-public function __construct(
+    public function __construct(
         protected EmployeeDocumentService $documentService
     ) {}
+
     /**
      * Display a listing of the employee's documents.
      */
@@ -47,12 +46,13 @@ public function __construct(
     }
 
     /**
-     * Update/Replace an existing document file and metadata.
+     * Update or replace an existing document file and metadata.
      */
-    public function update(UploadEmployeeDocumentAction $request, EmployeeDocument $document)
+    public function update(UploadEmployeeDocumentRequest $request, EmployeeDocument $document)
     {
         $this->authorize('update', $document);
-$updatedDocument = $this->documentService->update(
+
+        $updatedDocument = $this->documentService->update(
             $document,
             $request->file('file'),
             $request->input('title'),
@@ -65,36 +65,31 @@ $updatedDocument = $this->documentService->update(
     /**
      * Remove the specified document from storage and database.
      */
-   public function destroy(EmployeeDocument $document)
+    public function destroy(EmployeeDocument $document)
     {
         $this->authorize('destroy', $document);
 
         $this->documentService->delete($document);
 
-        return $this->success(['message' => 'Document deleted successfully'], 200);
-
+        return response()->json(['message' => 'Document deleted successfully'], 200);
     }
 
-
-
     /**
- * Download or stream the specified document securely.
- */
-public function download(EmployeeDocument $document)
-{
-    
-    $this->authorize('viewAny', [EmployeeDocument::class, $document->employee]);
-   
-    $disk = Storage::disk($document->disk);
+     * Download or stream the specified document securely.
+     */
+    public function download(EmployeeDocument $document)
+    {
+        $this->authorize('viewAny', [EmployeeDocument::class, $document->employee]);
 
-   if (!$disk->exists($document->file_path)) {
+        $disk = Storage::disk($document->disk);
+
+        if (!$disk->exists($document->file_path)) {
             abort(404, 'File not found.');
         }
 
-   
-   return response()->download(
+        return response()->download(
             $disk->path($document->file_path),
             $document->original_name
         );
-}
+    }
 }

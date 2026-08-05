@@ -2,7 +2,7 @@
 
 namespace Modules\Employee\App\DTOs;
 
-use Modules\Employee\App\Http\Requests\V1\TerminateEmployeeRequest;
+use  Modules\Employee\Http\Requests\TerminateEmployeeRequest;
 
 class TerminateEmployeeDTO
 {

@@ -55,7 +55,7 @@ class RolesAndPermissionsSeeder extends Seeder
 'create.structure.salary','update.structure.salary','delete.structure.salary','view.structure.salary.all',
 'create.salary.history','update.salary.history','delete.salary.history','view.salary.history.all',
 
-'create.payroll.run','update.payroll.run','delete.payroll.run','view.payroll','finalize.payroll.run',
+'create.payroll.run','update.payroll.run','delete.payroll.run','view_payroll_runs','finalize.payroll.run',
 'generate.payslip','update.payslip','delete.payslip','view.payslip.all',
 
 'create.performance.cycle','update.performance.cycle','delete.performance.cycle','view.performance.cycle.all',
