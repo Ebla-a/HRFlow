@@ -2,8 +2,16 @@
 
 namespace Modules\Report\Providers;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Modules\Employee\Events\EmployeeHired;
+use Modules\Employee\Events\EmployeeTerminated;
+use Modules\Leave\Events\LeaveRequestApproved;
+use Modules\Payroll\Events\PayrollFinalized;
+use Modules\Report\Listeners\UpdateEmployeeReportsSummary;
+use Modules\Report\Listeners\UpdateLeaveReportsSummary;
+use Modules\Report\Listeners\UpdatePayrollReportsSummary;
 
 class ReportServiceProvider extends ServiceProvider
 {
@@ -24,6 +32,26 @@ class ReportServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Event::listen(
+            PayrollFinalized::class,
+            UpdatePayrollReportsSummary::class
+        );
+
+        Event::listen(
+            LeaveRequestApproved::class,
+            UpdateLeaveReportsSummary::class
+        );
+
+        Event::listen(
+            EmployeeHired::class,
+            UpdateEmployeeReportsSummary::class
+        );
+
+        Event::listen(
+            EmployeeTerminated::class,
+            UpdateEmployeeReportsSummary::class
+        );
+
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
