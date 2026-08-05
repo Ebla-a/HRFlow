@@ -19,24 +19,21 @@ class UserSeeder extends Seeder
     {
         Model::unguard();
 
+        $hrRole = Role::firstOrCreate(['name' => 'Hr_admin', 'guard_name' => 'sanctum']);
+        $managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'sanctum']);
+        $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'sanctum']);
 
- $hrRole = Role::firstOrCreate(['name' => 'HR Admin', 'guard_name' => 'sanctum']);
-$managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'sanctum']);
-$employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'sanctum']);
-
-
-        // اhr account
+        // hr account
         $hrUser = User::firstOrCreate(
             ['email' => 'hr@company.com'],
             [
-                
                 'password' => Hash::make('password123'),
                 'is_active' => true,
             ]
         );
         $hrUser->assignRole($hrRole);
 
-        //employee account
+        // employee account
         $employeeUser = User::firstOrCreate(
             ['email' => 'employee@company.com'],
             [
@@ -46,18 +43,16 @@ $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'sanc
         );
         $employeeUser->assignRole($employeeRole);
 
+        // manager account
+        $managerUser = User::firstOrCreate(
+            ['email' => 'manager@company.com'],
+            [
+                'password' => Hash::make('password123'),
+                'is_active' => true,
+            ]
+        );
+        $managerUser->assignRole($managerRole);
 
-
-
-//manager account
-$managerUser = User::firstOrCreate(
-    ['email' => 'manager@company.com'],
-    [
-        'password' => Hash::make('password123'),
-        'is_active' => true,
-    ]
-);
-$managerUser->assignRole($managerRole);
         User::factory()
             ->count(10)
             ->create()

@@ -4,44 +4,78 @@ namespace Modules\Employee\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Employee\Entities\Employee;
-use App\Models\User;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
+use Modules\User\Entities\User;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
 
 class EmployeeSeeder extends Seeder
 {
     public function run(): void
     {
-        $employeeUser = User::where('email', 'employee@company.com')->first();
-
         $department = Department::first();
-        $jobTitle = JobTitle::first();
+        $jobTitle   = JobTitle::first();
 
-        Employee::firstOrCreate(
-            [
-                'user_id' => $employeeUser->id,
-            ],
-            [
-                'department_id' => $department->id,
-                'job_title_id' => $jobTitle->id,
+        // 1. vreate HR Admin
+        $hrUser = User::where('email', 'hr@company.com')->first();
+        if ($hrUser) {
+            Employee::firstOrCreate(
+                ['user_id' => $hrUser->id],
+                [
+                    'department_id'   => $department?->id,
+                    'job_title_id'    => $jobTitle?->id,
+                    'employee_number' => 'EMP-001',
+                    'first_name'      => 'HR',
+                    'last_name'       => 'Admin',
+                    'national_id'     => '1000000001',
+                    'birth_date'      => '1990-01-01',
+                    'gender'          => 'male',
+                    'employment_type' => 'full_time',
+                    'status'          => 'active',
+                    'hire_date'       => now(),
+                ]
+            );
+        }
 
-                'employee_number' => 'EMP-001',
-
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-
-                'national_id' => '123456789',
-
-                'birth_date' => '1995-01-01',
-
-                'gender' => 'male',
-
-                'employment_type' => 'full_time',
-
-                'status' => 'active',
-
-                'hire_date' => now(),
-            ]
-        );
+        // 2.  create Manager
+        $managerUser = User::where('email', 'manager@company.com')->first();
+        if ($managerUser) {
+            Employee::firstOrCreate(
+                ['user_id' => $managerUser->id],
+                [
+                    'department_id'   => $department?->id,
+                    'job_title_id'    => $jobTitle?->id,
+                    'employee_number' => 'EMP-002',
+                    'first_name'      => 'General',
+                    'last_name'       => 'Manager',
+                    'national_id'     => '1000000002',
+                    'birth_date'      => '1988-05-15',
+                    'gender'          => 'male',
+                    'employment_type' => 'full_time',
+                    'status'          => 'active',
+                    'hire_date'       => now(),
+                ]
+            );
+        }
+       
+        //c create employee
+        $empUser = User::where('email', 'employee@company.com')->first();
+        if ($empUser) {
+            Employee::firstOrCreate(
+                ['user_id' => $empUser->id],
+                [
+                    'department_id'   => $department?->id,
+                    'job_title_id'    => $jobTitle?->id,
+                    'employee_number' => 'EMP-003',
+                    'first_name'      => 'John',
+                    'last_name'       => 'Doe',
+                    'national_id'     => '1000000003',
+                    'birth_date'      => '1995-01-01',
+                    'gender'          => 'male',
+                    'employment_type' => 'full_time',
+                    'status'          => 'active',
+                    'hire_date'       => now(),
+                ]
+            );
+        }
     }
 }

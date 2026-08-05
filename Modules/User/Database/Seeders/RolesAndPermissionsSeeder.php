@@ -37,8 +37,14 @@ class RolesAndPermissionsSeeder extends Seeder
 'create.user','update.user','user.active','user.inActive','view.users.all',
 'employees.view.all','employee.create','employee.update','employee.change.status',
 
-'department.create','department.update','department.delete','departments.view.all',
-'departments.assign-manager','departments.force-delete','departments.restore',
+'departments.view',
+    'departments.create',
+    'departments.show',
+    'departments.update',
+    'departments.delete',
+    'departments.assign_manager',
+    'departments.force-delete',
+    'departments.restore',
 
 'jobtitle.create','jobtitle.update','jobtitle.delete','jobtitles.view.all','jobtitles.restore',
 'leave.type.create','leave.type.update','leave.type.delete','leave.types.view.all',
@@ -68,7 +74,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
 
         $manager_permissions = [
-    'view.department.employees.own','view.profile.employee.own','view.employee.documents.own',
+    'view.department.employees.own','view.profile.employee.own','view.employee.documents.own','departments.show',
 
             'view.leave.request.department','view.leave.balance.employee', 'leave.approve','leave.reject',
             'view.leave.types',
@@ -95,13 +101,13 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'sanctum']);
         }
 
-        $hrAdminRole = Role::firstOrCreate(['name' => 'hr_admin', 'guard_name' => 'sanctum']);
+        $hrAdminRole = Role::firstOrCreate(['name' => 'Hr_admin', 'guard_name' => 'sanctum']);
         $hrAdminRole->givePermissionTo($allPermissions);
 
-        $managerRole = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'sanctum']);
+        $managerRole = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'sanctum']);
       $managerRole->givePermissionTo(array_merge($employee_permissions, $manager_permissions));
 
-        $employeeRole = Role::firstOrCreate(['name' => 'employee', 'guard_name' => 'sanctum']);
+        $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'sanctum']);
 
         $employeeRole->givePermissionTo($employee_permissions);
         }
