@@ -19,7 +19,6 @@ class ReviewService
 
         return PerformanceReview::with(['cycle', 'employee'])
             ->when($user->hasRole('Manager'), function ($query) use ($user) {
-                
                 $query->where('reviewer_id', $user->employee?->id);
             })
             ->paginate(15);
@@ -95,8 +94,7 @@ class ReviewService
         if (!$employee) {
             return collect();
         }
-
-       
+        
         return PerformanceReview::with(['cycle', 'employee'])
             ->where('employee_id', $employee->id)
             ->whereHas('cycle', function ($q) {

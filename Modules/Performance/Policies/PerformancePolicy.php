@@ -45,25 +45,22 @@ class PerformancePolicy
         return false;
     }
 
-    public function createReview($authUser, Employee $targetUser, ?PerformanceCycle $cycle = null): bool
+    public function createReview($authUser, Employee $targetUser,PerformanceCycle $cycle): bool
     {
-        if (!$authUser->hasRole('Manager')) {
+        if (!$authUser->hasRole('Manager','sanctum')) {
             return false;
         }
-
         $isDirectManager = $authUser->employee?->id == $targetUser->manager_id;
-        
-        
         $isCycleActive = $cycle ? $cycle->status === 'Active' : PerformanceCycle::where('status', 'Active')->exists();
-
         return $isDirectManager && $isCycleActive;
+
     }
 
     public function updateReview($authUser, PerformanceReview $target): bool
     {
         if ($authUser->hasRole('Manager') && 
             $authUser->employee?->id == $target->reviewer_id &&
-            $target->cycle?->status === 'Active') {
+            $target->cycle?->status == 'Active') {
             return true;
         }
 
@@ -72,6 +69,6 @@ class PerformancePolicy
 
     public function performanceReviews($authUser): bool
     {
-        return $authUser->hasRole('Hr_admin') || $authUser->hasRole('Manager');
+        return $authUser->hasRole('Hr_admin','sanctum') || $authUser->hasRole('Manager','sanctum');
     }
 }

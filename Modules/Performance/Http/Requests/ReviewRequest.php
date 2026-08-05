@@ -13,6 +13,7 @@ class ReviewRequest extends FormRequest
     {
         return [
             'employee_id'          => ['required', 'exists:employees,id'],
+            'reviewer_id'          => ['required', 'exists:employees,id'],
             'performance_cycle_id' => ['required', 'exists:performance_cycles,id'],
             'score'                => ['required', 'integer', 'between:1,5'],
             'comments'             => ['required', 'string', 'max:255', new Filter()],
@@ -21,8 +22,8 @@ class ReviewRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-       
-        if (auth('sancutm')->check() && auth('sanctum')->user()->employee) {
+
+        if (auth('sanctum')->check() && auth('sanctum')->user()->employee) {
             $this->merge([
                 'reviewer_id' => auth('sanctum')->user()->employee->id,
             ]);

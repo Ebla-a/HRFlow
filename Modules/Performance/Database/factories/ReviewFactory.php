@@ -30,10 +30,11 @@ class ReviewFactory extends Factory
         return [
             'employee_id' => Employee::factory(),
             'reviewer_id' => Employee::factory(),
-            'cycle_id'    => PerformanceCycle::factory()->state(['status' => 'Active']),
+            'performance_cycle_id'    => PerformanceCycle::factory()->state(['status' => 'Active']),
             'status'      => $this->faker->randomElement(['Draft', 'Reviewed']),
             'score'       => $this->faker->numberBetween(1, 5),
             'comments'    => $this->faker->paragraph(),
+            'reviewed_at'=>now()->setTimestamp(now()->timestamp)
         ];
 
     }

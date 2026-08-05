@@ -95,7 +95,7 @@ class PerformanceController extends Controller
      */
     public function MyReviews(): JsonResponse
     {
-        $this->authorize('viewMyReviews', PerformanceReview::class);
+        $this->authorize('viewMyReviews',PerformanceReview::class);
         $data = $this->reviewService->myReviews();
 
         return $this->success(
@@ -141,8 +141,9 @@ class PerformanceController extends Controller
     {
         $validated = $request->validated();
         $targetEmployee = Employee::findOrFail($validated['employee_id']);
+        $cycle=PerformanceCycle::findOrFail($validated['performance_cycle_id']);
 
-        $this->authorize('createReview', $targetEmployee);
+        $this->authorize('createReview', [$targetEmployee, $cycle]);
 
         $dto = CreateReviewDTO::fromRequest($validated);
         $data = $this->reviewService->createReview($dto);

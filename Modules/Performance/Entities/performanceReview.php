@@ -22,6 +22,10 @@ class PerformanceReview extends Model
     
     protected $table = 'performance_reviews';
     
+    
+    protected $casts = [
+    'reviewed_at' => 'datetime:Y-m-d H:i:s',
+    ];
 
     protected static function newFactory()
     {

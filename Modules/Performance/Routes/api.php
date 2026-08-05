@@ -37,19 +37,19 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
         
     Route::get('/performance-reviews', [PerformanceController::class, 'ShowReviews'])
-        ->middleware('permission:view.reviews.department|view.reviews.all')
+        ->middleware(['permission:view.reviews.department|view.reviews.all','role:Hr_admin|Manager'])
         ->name('ShowReviews');
 
 
     Route::post('/performance-reviews', [PerformanceController::class, 'CreateReview'])
-        ->middleware('permission:create.review.employee.own.department')
+        ->middleware(['permission:create.review.employee.own.department','role:Manager'])
         ->name('CreateReview');
 
     Route::put('/performance-reviews/{id}', [PerformanceController::class, 'UpdateReview'])
-        ->middleware('permission:update.review.employee.own.department')
+        ->middleware(['permission:update.review.employee.own.department','role:Manager'])
         ->name('UpdateReview');
 
     Route::get('/employees/{id}/performance', [PerformanceController::class, 'EmployeeReviews'])
-        ->middleware('permission:view.reviews.department|view.reviews.all')
+        ->middleware(['permission:view.reviews.department|view.reviews.all','role:Hr_admin|Manager'])
         ->name('EmployeeReviews');
 });
