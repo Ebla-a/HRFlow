@@ -12,6 +12,12 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
 
     protected array $data = [];
 
+    protected int $minDays;
+    public function __construct(int $minDays = 3)
+    {
+        $this->minDays = $minDays;
+    }
+    
     public function setData(array $data): static
     {
         $this->data = $data;
@@ -30,7 +36,7 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
         $start = Carbon::parse($startDate);
         $end   = Carbon::parse($value);
 
-        if ($end->diffInDays($start) < 3) {
+        if ($end->isBefore($start) || $start->diffInDays($end) < $this->minDays){
             $fail('end_date.minimum_days_after');
         }
     }

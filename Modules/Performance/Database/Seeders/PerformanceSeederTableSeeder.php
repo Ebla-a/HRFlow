@@ -5,8 +5,8 @@ namespace Modules\Performance\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\performanceCycle;
+use Modules\Performance\Entities\performanceReview;
 use Modules\User\Entities\User;
 
 class PerformanceSeederTableSeeder extends Seeder
@@ -20,22 +20,22 @@ class PerformanceSeederTableSeeder extends Seeder
     public function run(): void
     {
 
-        Performance_cycle::factory()->count(5)->create();
+        PerformanceCycle::factory()->count(5)->create();
         $employees = Employee::all();
         if ($employees->count() < 2) {
             $employees = Employee::factory()->count(10)->create();
         }
 
-        $activeCycles = performance_cycle::where('status', 'Active')->get();
+        $activeCycles = performanceCycle::where('status', 'Active')->get();
         if ($activeCycles->isEmpty()) {
-            $activeCycles = performance_cycle::factory()->count(3)->create(['status' => 'Active']);
+            $activeCycles = performanceCycle::factory()->count(3)->create(['status' => 'Active']);
         }
 
         for ($i = 0; $i < 20; $i++) {
             $employee = $employees->random();
             $reviewer = $employees->where('id', '!=', $employee->id)->random();
 
-            Performance_review::factory()->create([
+            PerformanceReview::factory()->create([
                 'employee_id' => $employee->id,
                 'reviewer_id' => $reviewer->id,
                 'cycle_id'    => $activeCycles->random()->id,

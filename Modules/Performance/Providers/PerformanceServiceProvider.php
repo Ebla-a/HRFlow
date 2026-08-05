@@ -4,7 +4,9 @@ namespace Modules\Performance\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-
+use Illuminate\Support\Facades\Gate;
+use Modules\Performance\Policies\PerformancePolicy;
+use Modules\Performance\Entities\PerformanceCycle;
 class PerformanceServiceProvider extends ServiceProvider
 {
     /**
@@ -28,6 +30,7 @@ class PerformanceServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        Gate::policy(PerformanceCycle::class, PerformancePolicy::class);
     }
 
     /**

@@ -16,15 +16,15 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         ->name('ShowCycles');
 
     Route::post('/performance-cycles', [PerformanceController::class, 'CreateCycle'])
-        ->middleware('permission:create.performance.cycle')
+        ->middleware(['permission:create.performance.cycle','role:Hr_admin'])
         ->name('CreateCycle');
 
     Route::post('/performance-cycles/{id}/activate', [PerformanceController::class, 'ActivateCycle'])
-        ->middleware('permission:update.performance.cycle')
+        ->middleware(['permission:update.performance.cycle','role:Hr_admin'])
         ->name('ActivateCycle');
 
     Route::post('/performance-cycles/{id}/close', [PerformanceController::class, 'CloseCycle'])
-        ->middleware('permission:update.performance.cycle')
+        ->middleware(['permission:update.performance.cycle','role:Hr_admin'])
         ->name('CloseCycles');
 
 
@@ -32,9 +32,10 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     
 
     Route::get('/performance-reviews/my', [PerformanceController::class, 'MyReviews'])
-        ->middleware('permission:view.performance.reviews.own')
+        ->middleware(['permission:view.performance.reviews.own','role:Employee'])
         ->name('MyReviews');
 
+        
     Route::get('/performance-reviews', [PerformanceController::class, 'ShowReviews'])
         ->middleware('permission:view.reviews.department|view.reviews.all')
         ->name('ShowReviews');

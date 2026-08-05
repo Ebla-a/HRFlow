@@ -3,17 +3,19 @@
 namespace Modules\Performance\Policies;
 
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\Performance_cycle;
-use Modules\Performance\Entities\Performance_review;
+use Modules\Performance\Entities\PerformanceCycle;
+use Modules\Performance\Entities\PerformanceReview;
 
 class PerformancePolicy
 {
+    
     public function viewCycles($authUser): bool
     {
-        return $authUser->hasRole('Hr_admin') || 
-               $authUser->hasRole('Manager')  || 
-               $authUser->hasRole('Employee');
+        return  $authUser->hasRole('Hr_admin') || 
+                $authUser->hasRole('Manager')  || 
+                $authUser->hasRole('Employee');
     }
+
 
     public function createCycle($authUser): bool
     {
@@ -43,7 +45,7 @@ class PerformancePolicy
         return false;
     }
 
-    public function createReview($authUser, Employee $targetUser, ?Performance_cycle $cycle = null): bool
+    public function createReview($authUser, Employee $targetUser, ?PerformanceCycle $cycle = null): bool
     {
         if (!$authUser->hasRole('Manager')) {
             return false;
@@ -51,13 +53,13 @@ class PerformancePolicy
 
         $isDirectManager = $authUser->employee?->id == $targetUser->manager_id;
         
-       
-        $isCycleActive = $cycle ? $cycle->status === 'Active' : Performance_cycle::where('status', 'Active')->exists();
+        
+        $isCycleActive = $cycle ? $cycle->status === 'Active' : PerformanceCycle::where('status', 'Active')->exists();
 
         return $isDirectManager && $isCycleActive;
     }
 
-    public function updateReview($authUser, Performance_review $target): bool
+    public function updateReview($authUser, PerformanceReview $target): bool
     {
         if ($authUser->hasRole('Manager') && 
             $authUser->employee?->id == $target->reviewer_id &&

@@ -11,8 +11,8 @@ use Modules\Performance\Services\v1\PerformanceService;
 use Modules\Performance\Services\v1\ReviewService;
 use Modules\Performance\Transformers\PerformanceResource;
 use Modules\Performance\Transformers\ReviewResource;
-use Modules\Performance\Entities\Performance_cycle;
-use Modules\Performance\Entities\Performance_review;
+use Modules\Performance\Entities\PerformanceCycle;
+use Modules\Performance\Entities\PerformanceReview;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\DTO\CreateCycleDTO;
 use Modules\Performance\DTO\CreateReviewDTO;
@@ -33,7 +33,7 @@ class PerformanceController extends Controller
      */
     public function ShowCycles(): JsonResponse
     {
-        $this->authorize('viewCycles', Performance_cycle::class);
+        $this->authorize('viewCycles', PerformanceCycle::class);
         $data = $this->performanceService->show();
 
         return $this->success(
@@ -48,7 +48,7 @@ class PerformanceController extends Controller
      */
     public function CreateCycle(CycleRequest $request): JsonResponse
     {
-        $this->authorize('createCycle', Performance_cycle::class);
+        $this->authorize('createCycle', PerformanceCycle::class);
         $dto = CreateCycleDTO::fromRequest($request->validated());
         $data = $this->performanceService->create($dto);
 
@@ -60,11 +60,12 @@ class PerformanceController extends Controller
     }
 
     /**
-     * @param Performance_cycle $id
+     * @param PerformanceCycle $id
      * @return JsonResponse
      */
-    public function ActivateCycle(Performance_cycle $id): JsonResponse
+    public function ActivateCycle(PerformanceCycle $id): JsonResponse
     {
+        
         $this->authorize('updateCycle', $id);
         $data = $this->performanceService->activate($id);
 
@@ -75,10 +76,10 @@ class PerformanceController extends Controller
     }
 
     /**
-     * @param Performance_cycle $id
+     * @param PerformanceCycle $id
      * @return JsonResponse
      */
-    public function CloseCycle(Performance_cycle $id): JsonResponse
+    public function CloseCycle(PerformanceCycle $id): JsonResponse
     {
         $this->authorize('updateCycle', $id);
         $data = $this->performanceService->close($id);
@@ -94,7 +95,7 @@ class PerformanceController extends Controller
      */
     public function MyReviews(): JsonResponse
     {
-        $this->authorize('viewMyReviews', Performance_review::class);
+        $this->authorize('viewMyReviews', PerformanceReview::class);
         $data = $this->reviewService->myReviews();
 
         return $this->success(
@@ -123,7 +124,7 @@ class PerformanceController extends Controller
      */
     public function ShowReviews(): JsonResponse
     {
-        $this->authorize('performanceReviews', Performance_review::class);
+        $this->authorize('performanceReviews', PerformanceReview::class);
         $data = $this->reviewService->showReviews();
 
         return $this->success(
@@ -155,10 +156,10 @@ class PerformanceController extends Controller
 
     /**
      * @param UpdateReviewRequest $request
-     * @param Performance_review $id
+     * @param PerformanceReview $id
      * @return JsonResponse
      */
-    public function UpdateReview(UpdateReviewRequest $request, Performance_review $id): JsonResponse
+    public function UpdateReview(UpdateReviewRequest $request, PerformanceReview $id): JsonResponse
     {
         $this->authorize('updateReview', $id);
 
