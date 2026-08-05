@@ -14,7 +14,7 @@ class JobTitleFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'         => fake()->jobTitle(),
+             'title' => $this->faker->unique()->jobTitle(),
             'grade'         => fake()->randomElement(['junior', 'med', 'senior', 'lead','manager']),
             'department_id' => Department::factory(),
             'description'   => fake()->sentence(10),

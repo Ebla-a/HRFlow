@@ -31,6 +31,7 @@ return new class extends Migration
                 'parent_id',
                 'manager_id'
             ]);
+
             $table->index('name');
 
         });
