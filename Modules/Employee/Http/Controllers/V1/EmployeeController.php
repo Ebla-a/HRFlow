@@ -3,8 +3,6 @@
 namespace Modules\Employee\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
-
-
 use Modules\Employee\App\Actions\HireEmployeeAction;
 use Modules\Employee\App\Actions\UpdateEmployeeAction;
 use Modules\Employee\App\Actions\TerminateEmployeeAction;
@@ -26,6 +24,9 @@ class EmployeeController extends Controller
         protected EmployeeService $employeeService
     ) {}
 
+    /**
+     * Display a paginated list of employees.
+     */
     public function index(EmployeeFilterRequest $request)
     {
         $this->authorize('viewAny', Employee::class);
@@ -35,6 +36,9 @@ class EmployeeController extends Controller
         return EmployeeListResource::collection($employees);
     }
 
+    /**
+     * Store a newly created employee.
+     */
     public function store(StoreEmployeeRequest $request, HireEmployeeAction $action)
     {
         $this->authorize('create', Employee::class);
@@ -45,6 +49,9 @@ class EmployeeController extends Controller
         return new EmployeeResource($employee);
     }
 
+    /**
+     * Display the specified employee.
+     */
     public function show(Employee $employee)
     {
         $this->authorize('view', $employee);
@@ -52,6 +59,9 @@ class EmployeeController extends Controller
         return new EmployeeResource($this->employeeService->show($employee));
     }
 
+    /**
+     * Update the specified employee.
+     */
     public function update(UpdateEmployeeRequest $request, Employee $employee, UpdateEmployeeAction $action)
     {
         $this->authorize('update', $employee);
@@ -62,6 +72,9 @@ class EmployeeController extends Controller
         return new EmployeeResource($updatedEmployee);
     }
 
+    /**
+     * Terminate the specified employee.
+     */
     public function terminate(TerminateEmployeeRequest $request, Employee $employee, TerminateEmployeeAction $action)
     {
         $this->authorize('terminate', $employee);
@@ -72,6 +85,9 @@ class EmployeeController extends Controller
         return new EmployeeResource($terminatedEmployee);
     }
 
+    /**
+     * Display the authenticated employee profile.
+     */
     public function me()
     {
         $employee = auth('sanctum')->user()->employee;

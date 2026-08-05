@@ -31,7 +31,7 @@ class PayrollRunController extends Controller
 
     public function store(StorePayrollRunRequest $request, CreatePayrollRunAction $action): JsonResponse
     {
-        $this->authorize('create', PayrollRun::class);
+        $this->authorize('create.payroll.run', PayrollRun::class);
 
         $validated = $request->validated();
 
