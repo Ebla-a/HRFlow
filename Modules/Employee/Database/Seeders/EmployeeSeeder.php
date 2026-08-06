@@ -15,7 +15,7 @@ class EmployeeSeeder extends Seeder
         $department = Department::first();
         $jobTitle   = JobTitle::first();
 
-        // 1. vreate HR Admin
+        // 1. Create HR Admin
         $hrUser = User::where('email', 'hr@company.com')->first();
         if ($hrUser) {
             Employee::firstOrCreate(

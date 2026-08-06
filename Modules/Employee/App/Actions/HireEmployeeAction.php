@@ -6,7 +6,7 @@ use Modules\Employee\App\DTOs\CreateEmployeeDTO;
 
 use Modules\Employee\Events\EmployeeHired;
 use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -32,6 +32,10 @@ class HireEmployeeAction
                 'password' => Hash::make($tempPassword),
                 'is_active' => true,
             ]);
+            
+            if (method_exists($user, 'assignRole')) {
+                $user->assignRole('Employee');
+            }
 
             $employeeData = array_merge($dto->toArray(), [
                 'user_id' => $user->id,
