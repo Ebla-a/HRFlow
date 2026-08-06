@@ -38,9 +38,9 @@ class RolesAndPermissionsSeeder extends Seeder
 'employees.view.all','employee.create','employee.update','employee.change.status',
 
 'department.create','department.update','department.delete','departments.view.all',
-'departments.assign-manager','departments.force-delete','departments.restore',
+'departments.assign-manager','department.force-delete','department.restore',
 
-'jobtitle.create','jobtitle.update','jobtitle.delete','jobtitles.view.all','jobtitles.restore',
+'jobtitle.create','jobtitle.update','jobtitle.delete','jobtitles.view.all','jobtitle.restore',
 'leave.type.create','leave.type.update','leave.type.delete','leave.types.view.all',
 'leave.requests.view.all',
 

@@ -3,6 +3,9 @@
 namespace Modules\Organization\Http\Requests\V1\Department;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Rules\PreventCircularDepartmentReference;
 
 class StoreDepartmentRequest extends FormRequest
 {
@@ -13,6 +16,8 @@ class StoreDepartmentRequest extends FormRequest
      */
     public function rules()
     {
+        $departmentId = $this->route('department')?->id ?? $this->route('id');
+
 
       return [
             'name' => [
@@ -32,7 +37,7 @@ class StoreDepartmentRequest extends FormRequest
             'parent_id' => [
                 'nullable',
                 'integer',
-                'exists:departments,id',
+                'exists:departments,id',new PreventCircularDepartmentReference($departmentId),
             ],
 
             'manager_id' => [
@@ -58,4 +63,7 @@ class StoreDepartmentRequest extends FormRequest
     {
         return true;
     }
+
+
+
 }

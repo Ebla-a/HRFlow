@@ -2,7 +2,8 @@
 
 namespace Modules\Organization\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
-use Modules\Organization\DTO\V1\JobTitleDTO;
+use Modules\Organization\DTO\V1\StoreJobTitleDto;
+use Modules\Organization\DTO\V1\UpdateJobTitleDto;
 use Modules\Organization\Http\Requests\V1\JobTitle\StoreJobTitleRequest;
 use Modules\Organization\Http\Requests\V1\JobTitle\UpdateJobTitleRequest;
 use Modules\Organization\Services\V1\JobTitleService;
@@ -35,14 +36,13 @@ public function __construct(
      */
     public function store(StoreJobTitleRequest $request)
     {
-        $dto = JobTitleDTO::fromRequest($request->validated());
+        $dto = StoreJobTitleDto::fromRequest($request->validated());
         $jobTitle = $this->jobTitleService->createJobTitle($dto);
 
         return $this->success([
             'status' => true,
-            'message' => 'Job title created successfully.',
             'data' => new JobTitleResource($jobTitle),
-        ], 201);
+        ], 'Job title created successfully',201);
     }
     /**
      * Summary of update
@@ -53,7 +53,7 @@ public function __construct(
     public function update(UpdateJobTitleRequest $request, int $id)
     {
 
-            $dto = JobTitleDTO::fromRequest($request->validated());
+            $dto = UpdateJobTitleDto::fromRequest($request->validated());
             $jobTitle = $this->jobTitleService->updateJobTitle($id, $dto);
 
             return $this->success([

@@ -2,20 +2,21 @@
 
 namespace Modules\Employee\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Models\User;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
 use Modules\Employee\App\Enums\Gender;
-use Carbon\Carbon;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
     'user_id',
@@ -37,7 +38,7 @@ use Carbon\Carbon;
     'termination_reason',
 ])]
 class Employee extends Model
-{
+{ 
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -133,7 +134,7 @@ class Employee extends Model
     {
         return $this->hasOne(Department::class, 'manager_id');
     }
-}
+
     public function leaveRequests()
    {
      return $this->hasMany(

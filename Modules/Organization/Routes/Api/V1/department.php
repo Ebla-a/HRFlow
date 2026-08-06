@@ -9,10 +9,10 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/departments', [DepartmentController::class, 'index']);
 
     Route::post('/departments', [DepartmentController::class, 'store'])
-        ->middleware('role:Hr_admin');
+        ->middleware('role:hr_admin');
 
     Route::get('/departments/{id}', [DepartmentController::class, 'show'])
-        ->middleware('role:Hr_admin|manager');
+        ->middleware('role:hr_admin|manager');
 
     Route::put('/departments/{id}', [DepartmentController::class, 'update'])
         ->middleware('permission:department.update');
@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 
         Route::post('departments/{id}/restore', [DepartmentController::class, 'restore'])
-        ->middleware('permission:departments.restore');
+        ->middleware('permission:department.restore');
 
 
     Route::put('departments/{id}/assign-manager', [DepartmentController::class, 'assignManager'])

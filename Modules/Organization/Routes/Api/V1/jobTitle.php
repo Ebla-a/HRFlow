@@ -18,5 +18,5 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         ->middleware('permission:jobtitle.delete');
 
           Route::post('job-titles/{id}/restore', [JobTitleController::class, 'restore'])
-        ->middleware('permission:jobtitles.restore');
+        ->middleware('permission:jobtitle.restore');
 });

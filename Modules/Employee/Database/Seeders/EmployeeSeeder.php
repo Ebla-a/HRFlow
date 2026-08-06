@@ -2,11 +2,12 @@
 
 namespace Modules\Employee\Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Modules\Employee\Entities\Employee;
-use App\Models\User;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
+
 
 class EmployeeSeeder extends Seeder
 {
