@@ -81,15 +81,19 @@ class EmployeeDocumentController extends Controller
     {
         $this->authorize('viewAny', [EmployeeDocument::class, $document->employee]);
 
-        $disk = Storage::disk($document->disk);
-
-        if (!$disk->exists($document->file_path)) {
-            abort(404, 'File not found.');
+        $diskName = $document->disk ?? 'local';
+        
+        if (!Storage::disk($diskName)->exists($document->file_path)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found on local storage.'
+            ], 404);
         }
 
-        return response()->download(
-            $disk->path($document->file_path),
-            $document->original_name
+
+        return Storage::disk($diskName)->download(
+            $document->file_path,
+            $document->original_name ?? basename($document->file_path)
         );
     }
 }

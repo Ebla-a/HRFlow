@@ -1,7 +1,7 @@
 <?php
 namespace Modules\Employee\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 
 class EmployeePolicy

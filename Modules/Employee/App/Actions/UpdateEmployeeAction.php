@@ -36,7 +36,6 @@ class UpdateEmployeeAction
                 if (isset($data['first_name']) || isset($data['last_name'])) {
                     $firstName = $data['first_name'] ?? $employee->first_name;
                     $lastName = $data['last_name'] ?? $employee->last_name;
-                    $userData['name'] = trim("{$firstName} {$lastName}");
                 }
 
                 if (isset($data['email'])) {
