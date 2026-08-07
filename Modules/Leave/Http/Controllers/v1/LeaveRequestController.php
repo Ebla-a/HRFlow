@@ -17,17 +17,24 @@ class LeaveRequestController extends Controller
     ) {
     }
 
-    public function index()
-    {
-        $this->authorize('approveHR', LeaveRequest::class);
+   public function index()
+{
+    $this->authorize('viewAny', LeaveRequest::class);
 
-        return LeaveRequestResource::collection(
-            LeaveRequest::with([
-                'employee.user',
-                'leaveType'
-            ])->paginate()
-        );
+    $user = auth('sanctum')->user();
+
+    $query = LeaveRequest::with([
+        'employee.user',
+        'leaveType'
+    ]);
+
+   
+    if (!$user->hasPermissionTo('leave.requests.view.all')) {
+        $query->where('employee_id', $user->employee?->id);
     }
+
+    return LeaveRequestResource::collection($query->paginate());
+}
 
     public function store(StoreLeaveRequestRequest $request) 
     {
@@ -36,11 +43,19 @@ class LeaveRequestController extends Controller
            LeaveRequest::class
        );
 
+       if (!auth('sanctum')->user()->employee) {
+
+            return $this->error("User is not associated with an employee record",422);
+         
+       }
+
+       $request->merge([
+           'employee_id' => auth('sanctum')->user()->employee->id
+       ]);
 
        $dto = LeaveRequestDTO::fromRequest(
            $request
        );
-
 
        $leaveRequest = $this->service->create(
            $dto
@@ -115,4 +130,3 @@ class LeaveRequestController extends Controller
       );
    }
 }
- 

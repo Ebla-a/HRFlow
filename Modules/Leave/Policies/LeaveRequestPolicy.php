@@ -2,104 +2,79 @@
 
 namespace Modules\Leave\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Leave\Entities\LeaveRequest;
 use Modules\Leave\Enums\LeaveRequestStatusEnum;
 
 class LeaveRequestPolicy
 {
     /**
-     * Employee can create leave request
+     * Determine whether the user can view any leave requests.
      */
-    public function create(User $user): bool
+    public function viewAny(User $user): bool
     {
-        return $user->employee !== null;
+        return $user->hasPermissionTo('leave.requests.view.all') 
+            || $user->hasPermissionTo('view.leave.request.own')
+            || $user->hasPermissionTo('view.leave.request.department');
     }
 
     /**
-     * User can view leave request
+     * Determine whether the user can view the specific leave request.
      */
-    public function view(
-        User $user,
-        LeaveRequest $leaveRequest
-    ): bool {
-
-        // HR can view all requests
-        if ($user->hasRole('Hr_admin')) {
+    public function view(User $user, LeaveRequest $leaveRequest): bool
+    {
+        if ($user->hasPermissionTo('leave.requests.view.all')) {
             return true;
         }
 
-        // Employee can view his own request
-        return $user->employee?->id
-            === $leaveRequest->employee_id;
+        if ($user->hasPermissionTo('view.leave.request.own')) {
+            return $user->employee?->id === $leaveRequest->employee_id;
+        }
+
+        return $user->hasPermissionTo('view.leave.request');
+    }
+
+    /**
+     * Determine whether the user can create leave requests.
+     */
+    public function create(User $user): bool
+    {
+        return $user->hasPermissionTo('create.leave.request');
     }
 
     /**
      * Manager approval
      */
-    public function approveManager(
-        User $user,
-        LeaveRequest $leaveRequest
-    ): bool {
-
-        // only pending requests
+    public function approveManager(User $user, LeaveRequest $leaveRequest): bool
+    {
         if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
             return false;
         }
 
-        // must be manager
-        if (!$user->hasRole('Manager')) {
-            return false;
-        }
-
-        if (!$user->employee) {
-            return false;
-        }
-
-        // only direct manager can approve
-        return $leaveRequest->employee?->manager_id
-            === $user->employee->id;
+        return $user->hasPermissionTo('leave.approve');
     }
 
     /**
      * HR approval
      */
-    public function approveHR(
-        User $user,
-        LeaveRequest $leaveRequest
-    ): bool {
-
-        // only pending requests
+    public function approveHR(User $user, LeaveRequest $leaveRequest): bool
+    {
         if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
             return false;
         }
 
-        return $user->hasRole('Hr_admin');
+        return $user->hasPermissionTo('leave.requests.view.all') || $user->hasPermissionTo('leave.approve');
     }
 
     /**
      * Reject request
      */
-    public function reject(
-        User $user,
-        LeaveRequest $leaveRequest
-    ): bool {
-
-        // only pending requests
+    public function reject(User $user, LeaveRequest $leaveRequest): bool
+    {
         if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
             return false;
         }
 
-        if ($user->hasRole('Hr_admin')) {
-            return true;
-        }
-
-        if ($user->hasRole('Manager')) {
-
-            return $leaveRequest->employee?->manager_id
-                === $user->employee?->id;
-        }
-
-        return false;
+        return $user->hasPermissionTo('leave.reject');
     }
-} 
+}
