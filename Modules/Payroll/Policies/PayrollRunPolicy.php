@@ -1,7 +1,7 @@
 <?php
 namespace Modules\Payroll\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Payroll\Entities\PayrollRun;
 
 class PayrollRunPolicy
