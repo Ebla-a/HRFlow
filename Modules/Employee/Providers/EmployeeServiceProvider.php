@@ -5,7 +5,7 @@ namespace Modules\Employee\Providers;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Modules\Employee\Observers\EmployeeObserver;
+
 
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Policies\EmployeePolicy;
@@ -24,8 +24,6 @@ class EmployeeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Employee::observe(EmployeeObserver::class);
-        Gate::policy(Employee::class, EmployeePolicy::class);
         
         $this->app->register(EventServiceProvider::class);
         $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');

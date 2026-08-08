@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class MinimumDaysAfter implements ValidationRule, DataAwareRule
 {
-
     protected array $data = [];
 
     public function setData(array $data): static
@@ -17,21 +16,19 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
         $this->data = $data;
         return $this;
     }
-    /**
-     * Determine if the validation rule passes.
-     */
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!isset($this->data['start_date'])) {
+        if (empty($this->data['start_date'])) {
             return;
         }
-        $startDate = $this->data['start_date'];
 
-        $start = Carbon::parse($startDate);
+        $start = Carbon::parse($this->data['start_date']);
         $end   = Carbon::parse($value);
 
-        if ($end->diffInDays($start) < 3) {
-            $fail('end_date.minimum_days_after');
+  
+        if ($end->lessThan($start->copy()->addDays(3))) {
+            $fail('The end date must be at least 3 days after the start date.');
         }
     }
 }
