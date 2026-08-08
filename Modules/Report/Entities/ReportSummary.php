@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
-    'report_type',
-    'month',
-    'year',
-    'data',
-    'generated_at',
+   'report_type',
+        'month',
+        'year',
+        'data',
+        'generated_at',
 ])]
 final class ReportSummary extends Model
 {

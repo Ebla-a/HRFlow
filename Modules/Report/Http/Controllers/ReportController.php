@@ -7,6 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Report\Services\ReportService;
 use Modules\Payroll\Entities\PayrollRun;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Modules\Report\Exports\AttendanceReportExport;
 
 class ReportController extends Controller
 {
@@ -84,6 +86,58 @@ public function generate(Request $request, string $type): JsonResponse
         return response()->json([
             'success' => true,
             'data' => $data,
+        ]);
+    }
+/**
+     * Export report to Excel format.
+     *
+     * @param Request $request
+     * @param string $type
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+   /**
+     * Export report to Excel format.
+     *
+     * @param Request $request
+     * @param string $type
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    /**
+     * Export report to Excel format.
+     *
+     * @param Request $request
+     * @param string $type
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportExcel(Request $request, string $type)
+    {
+        $month = (int) $request->query('month', now()->month);
+        $year = (int) $request->query('year', now()->year);
+
+        $reportData = $this->reportService->generate($type, $month, $year);
+        $fileName = "{$type}_report_{$year}_{$month}.xlsx";
+
+        // تجهيز الصفوف
+        $rows = [];
+        if (isset($reportData['records']) && is_array($reportData['records'])) {
+            $rows = $reportData['records'];
+        } elseif (isset($reportData['data']) && is_array($reportData['data'])) {
+            $rows = is_array(reset($reportData['data'])) ? $reportData['data'] : [$reportData['data']];
+        } elseif (is_array($reportData)) {
+            $rows = is_array(reset($reportData)) ? $reportData : [$reportData];
+        }
+
+        // إرجاع StreamDownload عبر Laravel لتفادي طباعة البيانات في الكونسول
+        return response()->streamDownload(function () use ($rows) {
+            $writer = \Spatie\SimpleExcel\SimpleExcelWriter::streamDownload('php://output');
+            
+            if (!empty($rows)) {
+                $writer->addRows($rows);
+            }
+            
+            $writer->close();
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
 }
