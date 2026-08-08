@@ -38,6 +38,9 @@ final class EmployeeReportService
             ->whereMonth('termination_date', $month)
             ->count();
 
+        $avgHeadcount = $totalEmployees > 0 ? $totalEmployees : 1;
+        $turnoverRate = round(($terminations / $avgHeadcount) * 100, 2);
+
         return [
             'period' => "{$year}-{$month}",
             'month' => $month,
@@ -51,6 +54,7 @@ final class EmployeeReportService
                 'hires' => $hires,
                 'terminations' => $terminations,
                 'net_change' => $hires - $terminations,
+                'turnover_rate' => $turnoverRate . '%',
             ],
             'generated_at' => now()->toDateTimeString(),
         ];
