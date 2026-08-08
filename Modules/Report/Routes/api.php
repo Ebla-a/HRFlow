@@ -1,23 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Report\Http\Controllers\ReportController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+Route::middleware('auth:sanctum')->prefix('report')->group(function () {
 
-Route::middleware('auth:api')->prefix('report')->group(function () {
-    
-    Route::post('/payroll/generate/{run}', [ReportController::class,'generatePayroll']);
+    Route::post('/payroll/generate/{run}', [ReportController::class, 'generatePayroll']);
+
+
+    Route::get('/{type}/export', [ReportController::class, 'exportExcel']);
 
     // List all report summaries for a type
     Route::get('/{type}', [ReportController::class, 'index']);
