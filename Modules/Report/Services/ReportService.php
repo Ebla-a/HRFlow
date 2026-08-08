@@ -71,4 +71,31 @@ final class ReportService
     {
         return $this->storeService->list($reportType, $year);
     }
+
+
+public function toExportArray(mixed $reportData): array
+{
+   
+    if (!is_array($reportData)) {
+        return [
+            ['Result' => (string) $reportData]
+        ];
+    }
+
+    if (isset($reportData[0]) && is_array($reportData[0])) {
+        return $reportData;
+    }
+
+  
+    $rows = [];
+    foreach ($reportData as $key => $value) {
+        if (is_array($value)) {
+            $rows[] = $value;
+        } else {
+            $rows[] = ['Metric' => $key, 'Value' => $value];
+        }
+    }
+
+    return $rows;
+}
 }
