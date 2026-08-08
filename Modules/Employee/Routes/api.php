@@ -10,14 +10,13 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     
     Route::get('/employees/me', [EmployeeController::class, 'me']); 
 
-    Route::get('/employees', [EmployeeController::class, 'index'])
-        ->middleware('permission:employees.view.all');
+    Route::get('/employees', [EmployeeController::class, 'index']) 
+     ->middleware('permission:employees.view.all');
 
     Route::post('/employees', [EmployeeController::class, 'store'])
         ->middleware('permission:employee.create');
 
-    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])
-        ->middleware('permission:employees.view.all');
+    Route::get('/employees/{employee}', [EmployeeController::class, 'show']);
 
     Route::put('/employees/{employee}', [EmployeeController::class, 'update'])
         ->middleware('permission:employee.update');
@@ -27,8 +26,8 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 
     // --- Employee Documents Routes ---
     
-    Route::get('/employees/{employee}/documents', [EmployeeDocumentController::class, 'index'])
-        ->middleware('permission:view.documents.employee.all');
+    Route::get('/employees/{employee}/documents', [EmployeeDocumentController::class, 'index']);
+        
 
     Route::post('/employees/{employee}/documents', [EmployeeDocumentController::class, 'store'])
         ->middleware('permission:upload.documents.employee.all');

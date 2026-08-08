@@ -19,15 +19,16 @@ class ReviewRequest extends FormRequest
         ];
     }
 
-    protected function prepareForValidation(): void
-    {
-       
-        if (auth('sancutm')->check() && auth('sanctum')->user()->employee) {
-            $this->merge([
-                'reviewer_id' => auth('sanctum')->user()->employee->id,
-            ]);
-        }
+   protected function prepareForValidation(): void
+{
+    $user = auth('sanctum')->user() ?? auth()->user();
+
+    if ($user && $user->employee) {
+        $this->merge([
+            'reviewer_id' => $user->employee->id,
+        ]);
     }
+}
 
     public function messages(): array
     {

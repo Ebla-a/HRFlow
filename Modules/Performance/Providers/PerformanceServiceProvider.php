@@ -3,7 +3,10 @@
 namespace Modules\Performance\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Facades\Gate;
+use Modules\Performance\Policies\PerformancePolicy;
+use Modules\Employee\Entities\Employee;
+
 
 class PerformanceServiceProvider extends ServiceProvider
 {
@@ -18,16 +21,37 @@ class PerformanceServiceProvider extends ServiceProvider
     protected $moduleNameLower = 'performance';
 
     /**
+     * The policy mappings for the module.
+     *
+     * @var array<class-string, class-string>
+     */
+  
+
+    /**
      * Boot the application events.
      *
      * @return void
      */
     public function boot()
     {
+        Gate::policy(Employee::class, PerformancePolicy::class);
+        $this->registerPolicies();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
+        
+        $this->registerPolicies();
+    }
+
+    /**
+     * Register module policies.
+     *
+     * @return void
+     */
+    public function registerPolicies()
+    {
+      
     }
 
     /**
