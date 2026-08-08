@@ -47,4 +47,7 @@ final class AttendanceReportService
             'generated_at' => now()->toDateTimeString(),
         ];
     }
+
+
+
 }

@@ -89,7 +89,7 @@ public function generate(Request $request, string $type): JsonResponse
         ]);
     }
 
-    /**
+   /**
      * Export report to Excel format.
      *
      * @param Request $request
@@ -102,25 +102,17 @@ public function generate(Request $request, string $type): JsonResponse
         $year = (int) $request->query('year', now()->year);
 
         $reportData = $this->reportService->generate($type, $month, $year);
+        $rows = $this->reportService->toExportArray($reportData);
+
         $fileName = "{$type}_report_{$year}_{$month}.xlsx";
-
-        $rows = [];
-        if (isset($reportData['records']) && is_array($reportData['records'])) {
-            $rows = $reportData['records'];
-        } elseif (isset($reportData['data']) && is_array($reportData['data'])) {
-            $rows = is_array(reset($reportData['data'])) ? $reportData['data'] : [$reportData['data']];
-        } elseif (is_array($reportData)) {
-            $rows = is_array(reset($reportData)) ? $reportData : [$reportData];
-        }
-
 
         return response()->streamDownload(function () use ($rows) {
             $writer = \Spatie\SimpleExcel\SimpleExcelWriter::streamDownload('php://output');
-            
+
             if (!empty($rows)) {
                 $writer->addRows($rows);
             }
-            
+
             $writer->close();
         }, $fileName, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
