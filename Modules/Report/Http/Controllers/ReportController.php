@@ -88,20 +88,7 @@ public function generate(Request $request, string $type): JsonResponse
             'data' => $data,
         ]);
     }
-/**
-     * Export report to Excel format.
-     *
-     * @param Request $request
-     * @param string $type
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
-   /**
-     * Export report to Excel format.
-     *
-     * @param Request $request
-     * @param string $type
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
+
     /**
      * Export report to Excel format.
      *
@@ -117,7 +104,6 @@ public function generate(Request $request, string $type): JsonResponse
         $reportData = $this->reportService->generate($type, $month, $year);
         $fileName = "{$type}_report_{$year}_{$month}.xlsx";
 
-        // تجهيز الصفوف
         $rows = [];
         if (isset($reportData['records']) && is_array($reportData['records'])) {
             $rows = $reportData['records'];
@@ -127,7 +113,7 @@ public function generate(Request $request, string $type): JsonResponse
             $rows = is_array(reset($reportData)) ? $reportData : [$reportData];
         }
 
-        // إرجاع StreamDownload عبر Laravel لتفادي طباعة البيانات في الكونسول
+
         return response()->streamDownload(function () use ($rows) {
             $writer = \Spatie\SimpleExcel\SimpleExcelWriter::streamDownload('php://output');
             
