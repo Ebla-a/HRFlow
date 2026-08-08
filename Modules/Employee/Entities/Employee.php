@@ -165,5 +165,10 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeDocument::class);
     }
+
+    public function salaryStructure()
+{
+    return $this->hasOne(\Modules\Payroll\Entities\SalaryStructure::class);
+}
     
 }

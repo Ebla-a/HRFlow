@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Leave\Entities\LeaveType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Modules\Leave\Enums\LeaveRequestStatusEnum;
 use Modules\Employee\Entities\Employee;
  
@@ -88,10 +88,10 @@ use Modules\Employee\Entities\Employee;
     * @param Builder $query
     * @return Builder
     */
-   public function scopeApproved(Builder $query): Builder
-{
-    return $query->where('status', LeaveRequestStatusEnum::APPROVED);
-}
+public function scopeApproved(Builder $query): Builder
+    {
+        return $query->where('status', 'approved');
+    }
 
 /**
  * For unpaid leaves only

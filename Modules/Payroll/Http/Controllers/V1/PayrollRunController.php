@@ -5,25 +5,30 @@ namespace Modules\Payroll\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 use Modules\Payroll\App\Actions\PayrollRun\CreatePayrollRunAction;
 use Modules\Payroll\App\Actions\PayrollRun\FinalizePayrollRunAction;
 use Modules\Payroll\App\Actions\PayrollRun\ProcessPayrollRunAction;
 use Modules\Payroll\App\DTOs\PayrollRunDTO;
 use Modules\Payroll\Entities\PayrollRun;
 use Modules\Payroll\Http\Requests\StorePayrollRunRequest;
-
 use Modules\Payroll\Http\Resources\V1\PayrollRunResource;
 use Modules\Payroll\Services\GetPayrollSummaryService;
 
-
 class PayrollRunController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $this->authorize('viewAny', PayrollRun::class);
 
-        $runs = PayrollRun::query()->latest()->paginate(15);
+        $query = PayrollRun::query()->latest();
+
+        // إذا طلب المستخدم تفاصيل إضافية عبر الـ Query Parameter مثل: ?include=processedBy,finalizedBy
+        if ($request->has('include')) {
+            $relations = explode(',', $request->input('include'));
+            $query->with($relations);
+        }
+
+        $runs = $query->paginate(15);
 
         return response()->json(PayrollRunResource::collection($runs)->response()->getData(true));
     }
@@ -41,6 +46,7 @@ class PayrollRunController extends Controller
         );
 
         $run = $action->execute($dto);
+        $run->load(['processedBy', 'finalizedBy']);
 
         return response()->json([
             'message' => 'Payroll run created successfully.',
@@ -53,6 +59,7 @@ class PayrollRunController extends Controller
         $this->authorize('process', $payrollRun);
 
         $run = $action->execute($payrollRun, $request->user()->id);
+        $run->load(['processedBy', 'payslips.employee', 'payslips.deductions']);
 
         return response()->json([
             'message' => 'Payroll run processed successfully.',
@@ -65,6 +72,7 @@ class PayrollRunController extends Controller
         $this->authorize('finalize', $payrollRun);
 
         $run = $action->execute($payrollRun, $request->user()->id);
+        $run->load(['finalizedBy']);
 
         return response()->json([
             'message' => 'Payroll run finalized successfully.',
