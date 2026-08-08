@@ -2,125 +2,125 @@
 
 namespace Modules\Performance\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 use Modules\Performance\Policies\PerformancePolicy;
-use Modules\Employee\Entities\Employee;
-
+use Modules\Performance\Policies\ReviewPolicy;
 
 class PerformanceServiceProvider extends ServiceProvider
 {
-    /**
-     * @var string $moduleName
-     */
     protected $moduleName = 'Performance';
 
-    /**
-     * @var string $moduleNameLower
-     */
     protected $moduleNameLower = 'performance';
 
-    /**
-     * The policy mappings for the module.
-     *
-     * @var array<class-string, class-string>
-     */
-  
-
-    /**
-     * Boot the application events.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
-        Gate::policy(Employee::class, PerformancePolicy::class);
         $this->registerPolicies();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-        
-        $this->registerPolicies();
+
+        $this->loadMigrationsFrom(
+            module_path($this->moduleName, 'Database/Migrations')
+        );
     }
 
-    /**
-     * Register module policies.
-     *
-     * @return void
-     */
-    public function registerPolicies()
-    {
-      
-    }
-
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
     }
 
-    /**
-     * Register config.
-     *
-     * @return void
-     */
-    protected function registerConfig()
+    protected function registerPolicies(): void
     {
-        $this->publishes([
-            module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
-        ], 'config');
-        $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+        Gate::policy(
+            Performance_cycle::class,
+            PerformancePolicy::class
+        );
+
+        Gate::policy(
+            Performance_review::class,
+            ReviewPolicy::class
         );
     }
 
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    public function registerViews()
+    protected function registerConfig(): void
     {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-
-        $sourcePath = module_path($this->moduleName, 'Resources/views');
-
         $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-module-views']);
+            module_path(
+                $this->moduleName,
+                'Config/config.php'
+            ) => config_path(
+                $this->moduleNameLower . '.php'
+            ),
+        ], 'config');
 
-        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
+        $this->mergeConfigFrom(
+            module_path(
+                $this->moduleName,
+                'Config/config.php'
+            ),
+            $this->moduleNameLower
+        );
     }
 
-    /**
-     * Register translations.
-     *
-     * @return void
-     */
-    public function registerTranslations()
+    public function registerViews(): void
     {
-        $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
+        $viewPath = resource_path(
+            'views/modules/' . $this->moduleNameLower
+        );
+
+        $sourcePath = module_path(
+            $this->moduleName,
+            'Resources/views'
+        );
+
+        $this->publishes([
+            $sourcePath => $viewPath,
+        ], [
+            'views',
+            $this->moduleNameLower . '-module-views',
+        ]);
+
+        $this->loadViewsFrom(
+            array_merge(
+                $this->getPublishableViewPaths(),
+                [$sourcePath]
+            ),
+            $this->moduleNameLower
+        );
+    }
+
+    public function registerTranslations(): void
+    {
+        $langPath = resource_path(
+            'lang/modules/' . $this->moduleNameLower
+        );
 
         if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
+            $this->loadTranslationsFrom(
+                $langPath,
+                $this->moduleNameLower
+            );
+
             $this->loadJsonTranslationsFrom($langPath);
         } else {
-            $this->loadTranslationsFrom(module_path($this->moduleName, 'Resources/lang'), $this->moduleNameLower);
-            $this->loadJsonTranslationsFrom(module_path($this->moduleName, 'Resources/lang'));
+            $resourcePath = module_path(
+                $this->moduleName,
+                'Resources/lang'
+            );
+
+            $this->loadTranslationsFrom(
+                $resourcePath,
+                $this->moduleNameLower
+            );
+
+            $this->loadJsonTranslationsFrom($resourcePath);
         }
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
+    public function provides(): array
     {
         return [];
     }
@@ -128,11 +128,22 @@ class PerformanceServiceProvider extends ServiceProvider
     private function getPublishableViewPaths(): array
     {
         $paths = [];
-        foreach (\Config::get('view.paths') as $path) {
-            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
-                $paths[] = $path . '/modules/' . $this->moduleNameLower;
+
+        foreach (config('view.paths') as $path) {
+            if (
+                is_dir(
+                    $path .
+                    '/modules/' .
+                    $this->moduleNameLower
+                )
+            ) {
+                $paths[] = $path .
+                    '/modules/' .
+                    $this->moduleNameLower;
             }
         }
+
         return $paths;
     }
 }
+

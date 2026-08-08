@@ -20,6 +20,8 @@ class User extends Authenticatable
 {
      use HasRoles, HasFactory, Notifiable,HasApiTokens;
 
+     protected $guard_name = 'sanctum';
+
 
     /**
      * @return array{email_verified_at: string, is_active: string, password: string}
