@@ -9,6 +9,12 @@ use Modules\Performance\Rules\Filter;
 
 class ReviewRequest extends FormRequest
 {
+
+ public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return [
@@ -21,7 +27,7 @@ class ReviewRequest extends FormRequest
 
    protected function prepareForValidation(): void
 {
-    $user = auth('sanctum')->user() ?? auth()->user();
+    $user = auth('sanctum')->user() ?? auth('sanctum')->user();
 
     if ($user && $user->employee) {
         $this->merge([
@@ -56,8 +62,5 @@ class ReviewRequest extends FormRequest
         ], 422));
     }
 
-    public function authorize(): bool
-    {
-        return true;
-    }
+   
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Payroll\App\Listeners;
+namespace Modules\Payroll\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Payroll\Events\PayrollFinalized;

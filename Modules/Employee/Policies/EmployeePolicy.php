@@ -1,8 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Modules\Employee\Policies;
 
-use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
+use Modules\User\Entities\User;
 
 class EmployeePolicy
 {
@@ -10,7 +13,7 @@ class EmployeePolicy
     {
         return $user->hasAnyPermission([
             'employees.view.all',
-            'view.department.employees.own'
+            'view.department.employees.own',
         ], 'sanctum');
     }
 
@@ -21,7 +24,8 @@ class EmployeePolicy
         }
 
         if ($user->hasPermissionTo('view.department.employees.own', 'sanctum')) {
-            return $user->employee && $user->employee->department_id === $employee->department_id;
+            return $user->employee !== null
+                && $user->employee->department_id === $employee->department_id;
         }
 
         if ($user->hasPermissionTo('employee.view.own.profile', 'sanctum')) {
