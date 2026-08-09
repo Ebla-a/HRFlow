@@ -5,7 +5,7 @@ namespace Modules\Performance\Policies;
 use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\Entities\Performance_cycle;
-use Modules\Performance\Entities\Performance_review;
+use Modules\Performance\Entities\PerformanceReview;
 
 /**
  * Class PerformancePolicy
@@ -115,7 +115,7 @@ public function createReview(User $authUser, Employee $targetEmployee, ?Performa
         }
 
         // 6. Ensure duplicate reviews are prevented within the same cycle
-        $alreadyReviewed = Performance_review::where('employee_id', $targetEmployee->id)
+        $alreadyReviewed = PerformanceReview::where('employee_id', $targetEmployee->id)
             ->where('reviewer_id', $managerEmployee->id)
             ->where('performance_cycle_id', $activeCycle->id)
             ->exists();

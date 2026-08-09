@@ -4,7 +4,7 @@ namespace Modules\Payroll\Http\Resources\V2;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Payroll\Http\Resources\V1\PayslipResource;
+use Modules\Employee\Http\Resources\V1\EmployeeResource;
 
 class PayrollRunResource extends JsonResource
 {
@@ -12,27 +12,16 @@ class PayrollRunResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'period' => [
-                'month' => $this->month,
-                'year' => $this->year,
-                'formatted' => sprintf('%02d/%d', $this->month, $this->year),
-            ],
-            'status' => $this->status,
-            'notes' => $this->notes,
-            'audit' => [
-                'processed_by' => $this->whenLoaded('processedBy', fn () => [
-                    'id' => $this->processedBy->id,
-                    'name' => $this->processedBy->name,
-                ]),
-                'processed_at' => $this->processed_at?->toIso8601String(),
-                'finalized_by' => $this->whenLoaded('finalizedBy', fn () => [
-                    'id' => $this->finalizedBy->id,
-                    'name' => $this->finalizedBy->name,
-                ]),
-                'finalized_at' => $this->finalized_at?->toIso8601String(),
-            ],
-            'payslips' => PayslipResource::collection($this->whenLoaded('payslips')),
-            'created_at' => $this->created_at?->toIso8601String(),
+            'employee_id' => $this->employee_id,
+            'payroll_run_id' => $this->payroll_run_id,
+            'basic_salary' => $this->basic_salary,
+            'total_allowances' => $this->total_allowances,
+            'total_deductions' => $this->total_deductions,
+            'net_salary' => $this->net_salary,
+            'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'deductions' => PayslipDeductionResource::collection($this->whenLoaded('deductions')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }
