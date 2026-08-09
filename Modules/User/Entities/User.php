@@ -19,6 +19,7 @@ use Modules\User\Database\Factories\UserFactory;
 class User extends Authenticatable
 {
      use HasRoles, HasFactory, Notifiable,HasApiTokens;
+    protected $guard_name = 'sanctum';
 
 
     /**

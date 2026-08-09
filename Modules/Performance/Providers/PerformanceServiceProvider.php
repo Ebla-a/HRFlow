@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Modules\Performance\Policies\PerformancePolicy;
 use Modules\Employee\Entities\Employee;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 
 
 class PerformanceServiceProvider extends ServiceProvider
@@ -35,6 +37,8 @@ class PerformanceServiceProvider extends ServiceProvider
     public function boot()
     {
         Gate::policy(Employee::class, PerformancePolicy::class);
+        Gate::policy(Performance_cycle::class, PerformancePolicy::class);
+        Gate::policy(Performance_review::class, PerformancePolicy::class);
         $this->registerPolicies();
         $this->registerTranslations();
         $this->registerConfig();
