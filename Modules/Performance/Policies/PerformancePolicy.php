@@ -5,13 +5,13 @@ namespace Modules\Performance\Policies;
 use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\Entities\Performance_cycle;
-use Modules\Performance\Entities\Performance_review;
+use Modules\Performance\Entities\PerformanceReview;
 
 /**
  * Class PerformancePolicy
  * 
  * Handles access control for performance management features, including
- * evaluation cycles and employee review creation.
+ * evaluation cycles and employee review creation based purely on permissions.
  */
 class PerformancePolicy
 {
@@ -23,31 +23,29 @@ class PerformancePolicy
      */
     public function viewCycles(User $authUser): bool
     {
-        return true;
+        return $authUser->hasPermissionTo('view.performance.cycle.all');
     }
 
     /**
      * Determine whether the user can create a performance cycle.
-     * Exclusive to HR Admin.
      *
      * @param User $authUser
      * @return bool
      */
     public function createCycle(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin') || $authUser->hasPermissionTo('create.performance.cycle');
+        return $authUser->hasPermissionTo('create.performance.cycle');
     }
 
     /**
      * Determine whether the user can update (activate/close) a performance cycle.
-     * Exclusive to HR Admin.
      *
      * @param User $authUser
      * @return bool
      */
     public function updateCycle(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin') || $authUser->hasPermissionTo('update.performance.cycle');
+        return $authUser->hasPermissionTo('update.performance.cycle');
     }
 
     /**
@@ -58,7 +56,7 @@ class PerformancePolicy
      */
     public function viewMyReviews(User $authUser): bool
     {
-        return true;
+        return $authUser->hasPermissionTo('view.performance.reviews.own');
     }
 
     /**
@@ -69,75 +67,58 @@ class PerformancePolicy
      */
     public function viewReviews(User $authUser): bool
     {
-        return $authUser->hasRole('Hr_admin') || 
-               $authUser->hasRole('Manager') || 
-               $authUser->hasPermissionTo('view.reviews.all') || 
+        return $authUser->hasPermissionTo('view.reviews.all') || 
                $authUser->hasPermissionTo('view.reviews.department');
     }
 
     /**
      * Determine whether the logged-in user can submit a review for a specific employee.
-     * 
-     * Requirements according to HRFlow spec:
-     * 1. HR Admins are bypassed for system administrative override.
-     * 2. Reviewer must have an associated employee profile.
-     * 3. Target employee must be a direct report (`manager_id`).
-     * 4. The selected performance cycle must be currently 'Active'.
-     * 5. One evaluation per employee per manager in the same cycle.
      *
      * @param User $authUser
      * @param Employee $targetEmployee
      * @param Performance_cycle|null $cycle
      * @return bool
      */
-    public function createReview(User $authUser, Employee $targetEmployee, ?Performance_cycle $cycle = null): bool
+public function createReview(User $authUser, Employee $targetEmployee, ?Performance_cycle $cycle = null): bool
     {
-        // 1. Bypass check for HR Admin roles
-        if ($authUser->hasRole('Hr_admin')) {
+        // 1. Check direct permission for creating review in department
+        $hasPermission = $authUser->hasPermissionTo('create.review.employee.own.department') ||
+                         $authUser->hasPermissionTo('view.reviews.all'); // HR Admin override via permission
+
+        if (!$hasPermission) {
+            return false;
+        }
+
+        // 2. HR with 'view.reviews.all' can review anyone without manager constraint
+        if ($authUser->hasPermissionTo('view.reviews.all')) {
             return true;
         }
 
-        // 2. Ensure the authenticated user has a linked employee record
+        // 3. Ensure the authenticated user has a linked employee record
         $managerEmployee = $authUser->employee;
         if (!$managerEmployee) {
             return false;
         }
 
-        // 3. Verify target employee reports directly to this manager
+        // 4. Verify target employee reports directly to this manager
         $isDirectManager = (int) $targetEmployee->manager_id === (int) $managerEmployee->id;
 
-        // 4. Verify the performance cycle status is Active
-        $cycleId = request('performance_cycle_id');
-        $isCycleActive = $cycle 
-            ? $cycle->status === 'Active' 
-            : Performance_cycle::where('status', 'Active')->where('id', $cycleId)->exists();
+        // 5. Verify the performance cycle status is Active
+        $activeCycle = $cycle;
+        if (!$activeCycle) {
+            $cycleId = request('performance_cycle_id');
+            $activeCycle = Performance_cycle::where('id', $cycleId)->first();
+        }
 
-        // 5. Ensure duplicate reviews are prevented within the same cycle
-        $alreadyReviewed = Performance_review::where('employee_id', $targetEmployee->id)
-            ->where('reviewer_id', $managerEmployee->id)
-            ->where('performance_cycle_id', $cycleId)
-            ->exists();
-
-        return $isDirectManager && $isCycleActive && !$alreadyReviewed;
-    }
-
-    /**
-     * Determine whether the user can update an existing performance review prior to cycle closure.
-     *
-     * @param User $authUser
-     * @param Performance_review $review
-     * @return bool
-     */
-    public function updateReview(User $authUser, Performance_review $review): bool
-    {
-        $managerEmployee = $authUser->employee;
-        if (!$managerEmployee) {
+        if (!$activeCycle || $activeCycle->status !== 'Active') {
             return false;
         }
 
-        $isReviewer = (int) $review->reviewer_id === (int) $managerEmployee->id;
-        $isCycleActive = $review->cycle && $review->cycle->status === 'Active';
+        // 6. Ensure duplicate reviews are prevented within the same cycle
+        $alreadyReviewed = PerformanceReview::where('employee_id', $targetEmployee->id)
+            ->where('reviewer_id', $managerEmployee->id)
+            ->where('performance_cycle_id', $activeCycle->id)
+            ->exists();
 
-        return $isReviewer && $isCycleActive;
-    }
-}
+        return $isDirectManager && !$alreadyReviewed;
+    }}

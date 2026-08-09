@@ -2,52 +2,28 @@
 
 namespace Modules\Payroll\App\Actions\Payslip;
 
-use Modules\Payroll\Entities\Payslip;
+use Modules\Payroll\Models\Payslip;
+use Illuminate\Support\Collection;
+use Modules\Payroll\Entities\Payslip as EntitiesPayslip;
 
-final class GeneratePayslipAction
+class GeneratePayslipAction
 {
-    public function execute(Payslip $payslip): array
+    public function execute($payslipId)
     {
-        $payslip->loadMissing([
-            'employee.department',
-            'employee.jobTitle',
-            'payrollRun',
-            'deductions'
-        ]);
+        $payslip = EntitiesPayslip::findOrFail($payslipId);
 
-        return [
-            'payslip_id' => $payslip->id,
-            'period' => [
-                'month' => $payslip->payrollRun->month,
-                'year' => $payslip->payrollRun->year,
-            ],
-            'employee' => [
-                'id' => $payslip->employee->id,
-                'full_name' => $payslip->employee->full_name,
-                'employee_number' => $payslip->employee->employee_number,
-                'department' => $payslip->employee->department?->name,
-                'job_title' => $payslip->employee->jobTitle?->name,
-            ],
-            'allowances' => [
-                'basic_salary' => $payslip->basic_salary,
-                'housing_allowance' => $payslip->housing_allowance,
-                'transport_allowance' => $payslip->transport_allowance,
-                'other_allowance' => $payslip->other_allowance,
-                'gross_salary' => $payslip->gross_salary,
-            ],
-            'deductions' => [
-                'unpaid_leave_days' => $payslip->unpaid_leave_days,
-                'unpaid_leave_deduction' => $payslip->unpaid_leave_deduction,
-                'manual_deductions_total' => $payslip->deductions,
-                'items' => $payslip->deductions->map(fn ($item) => [
-                    'id' => $item->id,
-                    'type' => $item->type,
-                    'amount' => $item->amount,
-                    'description' => $item->description,
-                ]),
-            ],
-            'net_salary' => $payslip->net_salary,
-            'status' => $payslip->payrollRun->status,
-        ];
+        if (is_string($payslip->deductions)) {
+            $payslip->deductions = collect(json_decode($payslip->deductions, true));
+        } elseif (is_array($payslip->deductions)) {
+            $payslip->deductions = collect($payslip->deductions);
+        } elseif (!($payslip->deductions instanceof Collection)) {
+            $payslip->deductions = collect();
+        }
+
+        $payslip->deductions = $payslip->deductions->map(function ($deduction) {
+            return is_array($deduction) ? (object) $deduction : $deduction;
+        });
+
+        return $payslip;
     }
 }

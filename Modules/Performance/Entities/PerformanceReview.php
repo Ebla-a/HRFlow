@@ -15,7 +15,7 @@ use Modules\Performance\Database\Factories\ReviewFactory;
         'score',
         'comments',
         'reviewed_at'])]
-class Performance_review extends Model
+class PerformanceReview extends Model
 {
     use HasFactory;
     

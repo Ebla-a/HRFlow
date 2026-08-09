@@ -35,7 +35,7 @@ class EmployeeSeeder extends Seeder
                 'is_active' => true,
             ]
         );
-        // ربط دور Hr_admin بـ guard sanctum
+        
         $hrRole = Role::where('name', 'Hr_admin')->where('guard_name', 'sanctum')->first();
         if ($hrRole) {
             $hrUser->assignRole($hrRole);
