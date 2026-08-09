@@ -68,13 +68,3 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'role:Hr_admin'])->group(functi
         ->middleware('permission:permissions.revoke')
         ->name('permissions.revoke');
 });
-// Route::middleware('auth:sanctum')->get('/debug-me', function () {
-//     $user = auth()->user();
-//     return response()->json([
-//         'user_id'         => $user->id,
-//         'email'           => $user->email,
-//         'roles'           => $user->getRoleNames(),
-//         'all_permissions' => $user->getAllPermissions()->pluck('name'),
-//         'can_view_cycles' => $user->can('view.performance.cycle.all'),
-//     ]);
-// });

@@ -10,8 +10,12 @@ use Modules\Payroll\App\Actions\PayrollRun\FinalizePayrollRunAction;
 use Modules\Payroll\App\Actions\PayrollRun\ProcessPayrollRunAction;
 use Modules\Payroll\App\DTOs\PayrollRunDTO;
 use Modules\Payroll\Entities\PayrollRun;
+use Modules\Payroll\Entities\Payslip;
 use Modules\Payroll\Http\Requests\StorePayrollRunRequest;
 use Modules\Payroll\Http\Resources\V1\PayrollRunResource;
+
+use Modules\Payroll\Http\Resources\V1\PayslipResource as V1PayslipResource;
+
 use Modules\Payroll\Services\GetPayrollSummaryService;
 
 class PayrollRunController extends Controller
@@ -22,7 +26,6 @@ class PayrollRunController extends Controller
 
         $query = PayrollRun::query()->latest();
 
-        // إذا طلب المستخدم تفاصيل إضافية عبر الـ Query Parameter مثل: ?include=processedBy,finalizedBy
         if ($request->has('include')) {
             $relations = explode(',', $request->input('include'));
             $query->with($relations);
@@ -87,5 +90,19 @@ class PayrollRunController extends Controller
         return response()->json([
             'data' => $service->getSummary($payrollRun),
         ]);
+    }
+
+   public function payslips(Request $request, PayrollRun $payrollRun): JsonResponse
+    {
+        $query = $payrollRun->payslips()->with(['employee', 'deductions']);
+
+        if ($request->has('include')) {
+            $relations = explode(',', $request->input('include'));
+            $query->with($relations);
+        }
+
+        $payslips = $query->paginate(15);
+
+        return response()->json(V1PayslipResource::collection($payslips)->response()->getData(true));
     }
 }

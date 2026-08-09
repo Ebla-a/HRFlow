@@ -4,7 +4,7 @@ namespace Modules\Payroll\Http\Resources\V2;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Modules\Payroll\Http\Resources\V2\PayslipDeductionResource;
+use Modules\Employee\Http\Resources\V1\EmployeeResource;
 
 class PayslipResource extends JsonResource
 {
@@ -12,25 +12,16 @@ class PayslipResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'employee' => $this->whenLoaded('employee', fn () => [
-                'id' => $this->employee->id,
-                'full_name' => $this->employee->full_name,
-                'employee_number' => $this->employee->employee_number,
-            ]),
-            'salary_breakdown' => [
-                'basic_salary' => (float) $this->basic_salary,
-                'housing_allowance' => (float) $this->housing_allowance,
-                'transport_allowance' => (float) $this->transport_allowance,
-                'other_allowance' => (float) $this->other_allowance,
-                'gross_salary' => (float) $this->gross_salary,
-            ],
-            'deductions_breakdown' => [
-                'unpaid_leave_days' => $this->unpaid_leave_days,
-                'unpaid_leave_deduction' => (float) $this->unpaid_leave_deduction,
-                'manual_deductions' => (float) $this->deductions,
-                'items' => PayslipDeductionResource::collection($this->whenLoaded('deductions')),
-            ],
-            'net_salary' => (float) $this->net_salary,
+            'employee_id' => $this->employee_id,
+            'payroll_run_id' => $this->payroll_run_id,
+            'basic_salary' => $this->basic_salary,
+            'total_allowances' => $this->total_allowances,
+            'total_deductions' => $this->total_deductions,
+            'net_salary' => $this->net_salary,
+            'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'deductions' => $this->whenLoaded('deductions', fn() => PayslipDeductionResource::collection($this->deductions)),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

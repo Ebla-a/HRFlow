@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Modules\Performance\Entities\Performance_cycle;
 use Modules\Performance\Entities\Performance_review;
+use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Policies\PerformancePolicy;
 use Modules\Performance\Policies\ReviewPolicy;
 
@@ -39,11 +40,11 @@ class PerformanceServiceProvider extends ServiceProvider
             PerformancePolicy::class
         );
 
-        Gate::policy(
-            Performance_review::class,
-            ReviewPolicy::class
-        );
-    }
+
+    Gate::policy(Performance_cycle::class, PerformancePolicy::class);
+    Gate::policy(PerformanceReview::class, PerformancePolicy::class);
+}
+    
 
     protected function registerConfig(): void
     {

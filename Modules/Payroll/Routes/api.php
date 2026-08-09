@@ -7,28 +7,49 @@ use Modules\Payroll\Http\Controllers\V1\SalaryStructureController;
 
 Route::prefix('v1/payroll')->middleware(['auth:sanctum'])->group(function () {
     
-    // Salary strucuer
-    // Route::prefix('salary-structures')->group(function () {
-    //     Route::get('/', [SalaryStructureController::class, 'index']);
-    //     Route::post('/', [SalaryStructureController::class, 'store']);
-    //     Route::put('/{id}', [SalaryStructureController::class, 'update']);
-    // });
-
-    // payroll run
-    Route::prefix('runs')->group(function () {
-        Route::get('/', [PayrollRunController::class, 'index']);
-        Route::post('/', [PayrollRunController::class, 'store']);
-        Route::post('/{payrollRun}/process', [PayrollRunController::class, 'process']);
-        Route::post('/{payrollRun}/finalize', [PayrollRunController::class, 'finalize']);
-        Route::get('/{payrollRun}/summary', [PayrollRunController::class, 'summary']);
-        Route::get('/{payrollRun}/payslips', [PayrollRunController::class, 'payslips']); // قائمة القسائم للدورة
+    // Salary Structures
+    Route::prefix('salary-structures')->group(function () {
+        Route::get('/', [SalaryStructureController::class, 'index'])
+            ->middleware('permission:view.structure.salary.all');
+            
+        Route::post('/', [SalaryStructureController::class, 'store'])
+            ->middleware('permission:create.structure.salary');
+            
+        Route::put('/{salaryStructure}', [SalaryStructureController::class, 'update'])
+            ->middleware('permission:update.structure.salary');
     });
 
-    // payslip
+    // Payroll Run
+    Route::prefix('runs')->group(function () {
+        Route::get('/', [PayrollRunController::class, 'index'])
+            ->middleware('permission:view_payroll_runs');
+            
+        Route::post('/', [PayrollRunController::class, 'store'])
+            ->middleware('permission:create.payroll.run');
+            
+        Route::post('/{payrollRun}/process', [PayrollRunController::class, 'process'])
+            ->middleware('permission:create.payroll.run');
+            
+        Route::post('/{payrollRun}/finalize', [PayrollRunController::class, 'finalize'])
+            ->middleware('permission:finalize.payroll.run');
+            
+        Route::get('/{payrollRun}/summary', [PayrollRunController::class, 'summary'])
+            ->middleware('permission:view_payroll_runs');
+            
+        Route::get('/{payrollRun}/payslips', [PayrollRunController::class, 'payslips'])
+            ->middleware('permission:view.payslip.all');
+    });
+
+    // Payslip
     Route::prefix('payslips')->group(function () {
-        Route::get('/my', [PayslipController::class, 'myPayslips']); // قسائم راتبي للموظف
-        Route::get('/{payslip}', [PayslipController::class, 'show']);
-        Route::post('/{payslip}/deductions', [PayslipController::class, 'addDeduction']);
+        Route::get('/my', [PayslipController::class, 'myPayslips'])
+            ->middleware('permission:view.payslip.own');
+            
+        Route::get('/{payslip}', [PayslipController::class, 'show'])
+            ->middleware('permission:view.payslip.all|view.payslip.own');
+            
+        Route::post('/{payslip}/deductions', [PayslipController::class, 'addDeduction'])
+            ->middleware('permission:update.payslip');
     });
 
 });
