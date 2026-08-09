@@ -16,6 +16,7 @@ use Modules\Performance\Entities\Performance_review;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\DTO\CreateCycleDTO;
 use Modules\Performance\DTO\CreateReviewDTO;
+use Modules\Performance\Entities\PerformanceReview;
 
 class PerformanceController extends Controller
 {
@@ -94,7 +95,7 @@ class PerformanceController extends Controller
      */
     public function MyReviews(): JsonResponse
     {
-        $this->authorize('viewMyReviews', Performance_review::class);
+        $this->authorize('viewMyReviews', PerformanceReview::class);
         $data = $this->reviewService->myReviews();
 
         return $this->success(
@@ -123,7 +124,7 @@ class PerformanceController extends Controller
      */
     public function ShowReviews(): JsonResponse
     {
-        $this->authorize('performanceReviews', Performance_review::class);
+        $this->authorize('performanceReviews', PerformanceReview::class);
         $data = $this->reviewService->showReviews();
 
         return $this->success(
@@ -136,12 +137,17 @@ class PerformanceController extends Controller
      * @param ReviewRequest $request
      * @return JsonResponse
      */
-  public function CreateReview(ReviewRequest $request): JsonResponse
+    public function CreateReview(ReviewRequest $request)
     {
-       
 
         $validated = $request->validated();
-        $targetEmployee = Employee::findOrFail($validated['employee_id']);
+        $targetEmployee = Employee::findOrFail($request->employee_id);
+
+        $this->authorize('createReview', [PerformanceReview::class, $targetEmployee]);
+
+
+
+
         $cycle = Performance_cycle::find($validated['performance_cycle_id']);
 
         $this->authorize('createReview', [$targetEmployee, $cycle]);
@@ -160,20 +166,20 @@ class PerformanceController extends Controller
 
     /**
      * @param UpdateReviewRequest $request
-     * @param Performance_review $id
+     * @param PerformanceReview $PerformanceReview
      * @return JsonResponse
      */
-    public function UpdateReview(UpdateReviewRequest $request, Performance_review $id): JsonResponse
+    public function UpdateReview(UpdateReviewRequest $request, PerformanceReview $PerformanceReview): JsonResponse
     {
-        $this->authorize('updateReview', $id);
+        $this->authorize('updateReview', $PerformanceReview);
 
         $dto = CreateReviewDTO::fromRequest(array_merge($request->validated(), [
-            'employee_id'          => $id->employee_id,
-            'performance_cycle_id' => $id->performance_cycle_id,
-            'reviewer_id'          => $id->reviewer_id,
+            'employee_id'          => $PerformanceReview->employee_id,
+            'performance_cycle_id' => $PerformanceReview->performance_cycle_id,
+            'reviewer_id'          => $PerformanceReview->reviewer_id,
         ]));
 
-        $data = $this->reviewService->updateReview($dto, $id);
+        $data = $this->reviewService->updateReview($dto, $PerformanceReview);
 
         return $this->success(
             new ReviewResource($data),
