@@ -9,6 +9,11 @@ use Modules\Performance\Entities\Performance_cycle;
 use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Policies\PerformancePolicy;
 
+use Modules\Employee\Entities\Employee;
+
+
+
+
 
 class PerformanceServiceProvider extends ServiceProvider
 {
@@ -18,9 +23,10 @@ class PerformanceServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        
-    Gate::policy(Performance_cycle::class, PerformancePolicy::class);
-    Gate::policy(PerformanceReview::class, PerformancePolicy::class);
+
+        Gate::policy(Employee::class, PerformancePolicy::class);
+        Gate::policy(Performance_cycle::class, PerformancePolicy::class);
+        Gate::policy(PerformanceReview::class, PerformancePolicy::class);
 
         $this->registerPolicies();
         $this->registerTranslations();
