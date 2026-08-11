@@ -39,7 +39,7 @@ class AttendanceReportExportTest extends TestCase
         $hrUser->assignRole($role);
 
         $response = $this->actingAs($hrUser, 'sanctum')
-                         ->get('/api/report/attendance/export?month=8&year=2026');
+                         ->get('/api/v1/reports/attendance/export?month=8&year=2026');
 
     
         $response->assertStatus(200);

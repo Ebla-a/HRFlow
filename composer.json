@@ -11,7 +11,9 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "nwidart/laravel-modules": "10.0",
+        "phpoffice/phpspreadsheet": "^5.9",
         "predis/predis": "^3.5",
+        "rap2hpoutre/fast-excel": "^5.14",
         "spatie/laravel-permission": "^8.3",
         "spatie/simple-excel": "^3.10"
     },

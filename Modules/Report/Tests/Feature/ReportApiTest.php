@@ -14,10 +14,10 @@ class ReportApiTest extends TestCase
             ->values()
             ->all();
 
-        $this->assertContains('api/report/{type}', $uris);
-        $this->assertContains('api/report/{type}/show', $uris);
-        $this->assertContains('api/report/{type}/generate', $uris);
-        $this->assertContains('api/report/payroll/generate/{run}', $uris);
+        $this->assertContains('api/v1/reports/{type}', $uris);
+        $this->assertContains('api/v1/reports/{type}/show', $uris);
+        $this->assertContains('api/v1/reports/{type}/generate', $uris);
+        $this->assertContains('api/v1/reports/payroll/generate/{run}', $uris);
     }
 
     public function test_report_routes_use_generate_controller_action(): void
@@ -25,7 +25,7 @@ class ReportApiTest extends TestCase
         $routes = Route::getRoutes()->getRoutes();
 
         $generate = collect($routes)->first(
-            fn ($route) => $route->uri() === 'api/report/{type}/generate'
+            fn ($route) => $route->uri() === 'api/v1/reports/{type}/generate'
         );
 
         $this->assertNotNull($generate);

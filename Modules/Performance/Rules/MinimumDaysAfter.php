@@ -23,6 +23,10 @@ class MinimumDaysAfter implements ValidationRule, DataAwareRule
             return;
         }
 
+        if (!strtotime($this->data['start_date']) || !strtotime($value)) {
+            return;
+        }
+        
         $start = Carbon::parse($this->data['start_date']);
         $end   = Carbon::parse($value);
 

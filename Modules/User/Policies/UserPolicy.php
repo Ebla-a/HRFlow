@@ -2,7 +2,7 @@
 
 namespace Modules\User\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 
 class UserPolicy
 {
@@ -11,19 +11,22 @@ class UserPolicy
      */
     public function viewAny(User $authUser): bool
     {
+      {
         return $authUser->hasAnyPermission([
-            'users.view.all',
+            'view.users.all',
             'view.department.employees.own',
-            'user.view.own.profile'
+            'employee.view.own.profile'
         ], 'sanctum');
+      }
     }
+
 
     /**
      * Determine whether the user can view a specific user.
      */
     public function view(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasPermissionTo('users.view.all', 'sanctum')) {
+        if ($authUser->hasPermissionTo('view.users.all', 'sanctum')) {
             return true;
         }
 
@@ -44,7 +47,7 @@ class UserPolicy
      */
     public function updateEmail(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasPermissionTo('users.manage.all', 'sanctum')) {
+        if ($authUser->hasPermissionTo('update.user', 'sanctum')) { 
             return true;
         }
 
@@ -61,7 +64,7 @@ class UserPolicy
      */
     public function updateAvatar(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasPermissionTo('users.manage.all', 'sanctum')) {
+        if ($authUser->hasPermissionTo('update.user', 'sanctum') || $authUser->hasPermissionTo('users.manage.all', 'sanctum')) {
             return true;
         }
 
