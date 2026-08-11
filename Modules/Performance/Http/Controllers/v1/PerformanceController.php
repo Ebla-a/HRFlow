@@ -110,7 +110,7 @@ class PerformanceController extends Controller
      */
     public function EmployeeReviews(Employee $id): JsonResponse
     {
-        $this->authorize('viewEmployeeReviews', $id);
+        $this->authorize('viewReviews', $id);
         $data = $this->reviewService->employeeReviews($id);
 
         return $this->success(
@@ -124,7 +124,7 @@ class PerformanceController extends Controller
      */
     public function ShowReviews(): JsonResponse
     {
-        $this->authorize('performanceReviews', PerformanceReview::class);
+        $this->authorize('viewReviews', PerformanceReview::class);
         $data = $this->reviewService->showReviews();
 
         return $this->success(
@@ -137,32 +137,31 @@ class PerformanceController extends Controller
      * @param ReviewRequest $request
      * @return JsonResponse
      */
-    public function CreateReview(ReviewRequest $request)
-    {
+    public function CreateReview(ReviewRequest $request): JsonResponse
+   {
+    $validated = $request->validated();
 
-        $validated = $request->validated();
-        $targetEmployee = Employee::findOrFail($request->employee_id);
+    $targetEmployee = Employee::findOrFail($validated['employee_id']);
 
-        $this->authorize('createReview', [PerformanceReview::class, $targetEmployee]);
+    $cycle = Performance_cycle::findOrFail(
+        $validated['performance_cycle_id']
+    );
 
+    $this->authorize('createReview', [
+        $targetEmployee,
+        $cycle,
+    ]);
 
+    $dto = CreateReviewDTO::fromRequest($validated);
 
+    $data = $this->reviewService->createReview($dto);
 
-        $cycle = Performance_cycle::find($validated['performance_cycle_id']);
-
-        $this->authorize('createReview', [$targetEmployee, $cycle]);
-
-
-
-        $dto = CreateReviewDTO::fromRequest($validated);
-        $data = $this->reviewService->createReview($dto);
-
-        return $this->success(
-            new ReviewResource($data),
-            "Performance review created successfully.",
-            201
-        );
-    }
+    return $this->success(
+        new ReviewResource($data),
+        "Performance review created successfully.",
+        201
+    );
+   }
 
     /**
      * @param UpdateReviewRequest $request

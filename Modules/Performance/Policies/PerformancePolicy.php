@@ -65,11 +65,34 @@ class PerformancePolicy
      * @param User $authUser
      * @return bool
      */
-    public function viewReviews(User $authUser): bool
-    {
-        return $authUser->hasPermissionTo('view.reviews.all') || 
-               $authUser->hasPermissionTo('view.reviews.department');
+    public function viewReviews(User $authUser, ?Employee $targetEmployee = null): bool
+{
+    // HR/Admin can view all reviews
+    if ($authUser->hasPermissionTo('view.reviews.all')) {
+        return true;
     }
+
+    // Manager must have department permission
+    if (!$authUser->hasPermissionTo('view.reviews.department')) {
+        return false;
+    }
+
+    // General performance reviews list
+    if (!$targetEmployee) {
+        return true;
+    }
+
+    // Manager must have an employee record
+    $managerEmployee = $authUser->employee;
+
+    if (!$managerEmployee) {
+        return false;
+    }
+
+    // Manager can only view employees from his department
+    return (int) $managerEmployee->department_id ===
+           (int) $targetEmployee->department_id;
+}
 
     /**
      * Determine whether the logged-in user can submit a review for a specific employee.
@@ -121,4 +144,49 @@ public function createReview(User $authUser, Employee $targetEmployee, ?Performa
             ->exists();
 
         return $isDirectManager && !$alreadyReviewed;
-    }}
+    }
+
+    /** 
+     *  Update an existing performance review. 
+     *  
+     *  Manager: 
+     * - Must have update.review.employee.own.department * 
+     * - Must be the reviewer who created the review * 
+     * *
+     * HR: 
+     * - Can update any review if they have view.reviews.all 
+     */
+
+    public function updateReview(
+         User $authUser,
+          PerformanceReview $review 
+    ): bool { 
+        /* 
+        * HR/Admin override.
+         */ 
+        if ($authUser->hasPermissionTo('view.reviews.all')) { 
+            return true;
+         } 
+         /* 
+         * Manager must have update permission.
+         */ 
+    if (!$authUser->hasPermissionTo( 
+        'update.review.employee.own.department' 
+        )) { 
+            return false;
+            } 
+            /* 
+            * Manager must have an Employee record. 
+            */
+        $managerEmployee = $authUser->employee; 
+        
+    if (!$managerEmployee) { 
+        return false; 
+        } 
+    /* 
+    * Only the manager who created the review 
+    * can update it. 
+    */ 
+    return (int) $review->reviewer_id === (int) $managerEmployee->id; 
+    } 
+}
