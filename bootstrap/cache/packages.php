@@ -59,6 +59,13 @@
       0 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     ),
   ),
+  'rap2hpoutre/fast-excel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
+    ),
+  ),
   'spatie/laravel-permission' => 
   array (
     'providers' => 

@@ -22,6 +22,9 @@ class RolesAndPermissionsSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $hrPermissions = [
+            'users.manage.all',
+            'roles.manage',
+            'permissions.manage',
             'roles.create',
             'roles.delete',
             'roles.grant',

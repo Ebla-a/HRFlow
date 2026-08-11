@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Report\Services;
 
 use Modules\Performance\Entities\performance_review;
+use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Enums\PerformanceReviewStatus;
 
 final class PerformanceReportService
@@ -16,7 +17,7 @@ final class PerformanceReportService
      */
     public function build(int $year): array
     {
-        $reviews = performance_review::query()
+        $reviews = PerformanceReview::query()
             ->whereYear('reviewed_at', $year)
             ->get();
 

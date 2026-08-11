@@ -7,6 +7,9 @@
             "email": "n.widart@gmail.com"
         }
     ],
+    "require": {
+        "rap2hpoutre/fast-excel": "^5.0"
+    },
     "extra": {
         "laravel": {
             "providers": [],

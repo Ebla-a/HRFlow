@@ -73,7 +73,9 @@ class UserService
      */
     public function deactivateUserAccount(User $user): User
     {
-        $user->when($user->is_active, fn (User $u) => $u->update(['is_active' => false]));
+        if ($user->is_active) {
+            $user->update(['is_active' => false]);
+        }
 
         return $user;
     }
@@ -83,7 +85,9 @@ class UserService
      */
     public function activateUserAccount(User $user): User
     {
-        $user->when(! $user->is_active, fn (User $u) => $u->update(['is_active' => true]));
+        if (! $user->is_active) {
+            $user->update(['is_active' => true]);
+        }
 
         return $user;
     }
