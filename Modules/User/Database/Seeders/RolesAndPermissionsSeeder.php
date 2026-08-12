@@ -116,6 +116,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete.report',
             'view.reports.all',
             'export.report',
+
+        'view.exchange.rates',
         ];
 
         $managerPermissions = [

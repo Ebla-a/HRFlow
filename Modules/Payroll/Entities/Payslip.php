@@ -23,6 +23,10 @@ use Modules\Employee\Entities\Employee;
     'unpaid_leave_deduction',
     'unpaid_leave_days',
     'net_salary',
+    'currency',
+    'exchange_rate_used',
+    'exchange_rate_date',
+    'exchange_rate_provider'
 ])]
 final class Payslip extends Model
 {

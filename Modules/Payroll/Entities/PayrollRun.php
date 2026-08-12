@@ -21,6 +21,10 @@ use Modules\Payroll\App\Enums\PayrollRunStatus;
     'processed_by',
     'finalized_at',
     'finalized_by',
+    'currency',
+    'exchange_rate',
+    'exchange_rate_date',
+    'exchange_rate_provider',
 ])]
 final class PayrollRun extends Model
 {
@@ -36,6 +40,8 @@ final class PayrollRun extends Model
             'status' => PayrollRunStatus::class,
             'processed_at' => 'datetime',
             'finalized_at' => 'datetime',
+            'exchange_rate' => 'decimal:8',
+           'exchange_rate_date' => 'date',
         ];
     }
 /**
