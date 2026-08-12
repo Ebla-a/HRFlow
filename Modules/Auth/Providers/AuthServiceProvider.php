@@ -5,11 +5,14 @@ namespace Modules\Auth\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\Event;
-use Modules\Auth\App\Services\AuthService;
-use Modules\Auth\App\Events\PasswordChanged;
-use Modules\Auth\App\Listeners\LogoutOtherDevices;
-use Modules\Auth\App\Listeners\LogPasswordChange;
-use Modules\Auth\App\Listeners\SendPasswordChangedNotification;
+use Modules\Auth\Services\AuthService;
+use Modules\Auth\Events\PasswordChanged;
+use Modules\Auth\Listeners\LogoutOtherDevices;
+use Modules\Auth\Listeners\LogPasswordChange;
+use Modules\Auth\Listeners\SendPasswordChangedNotification;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,6 +33,21 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+          RateLimiter::for('auth-strict', function (Request $request) {
+            return Limit::perMinute(5)->by(
+                $request->ip() . '|' . strtolower((string) $request->input('email'))
+            );
+        });
+
+       
+        RateLimiter::for('auth-api', function (Request $request) {
+            return Limit::perMinute(60)->by(
+                $request->user()?->id ?: $request->ip()
+            );
+        });
+
+
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
@@ -58,9 +76,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(RouteServiceProvider::class);
-        $this->app->singleton(AuthService::class);
-
+        $this->app->register(RouteServiceProvider::class); 
     }
 
     /**

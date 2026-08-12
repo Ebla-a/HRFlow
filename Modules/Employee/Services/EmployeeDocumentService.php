@@ -22,7 +22,7 @@ class EmployeeDocumentService
             'uploaded_by' => $uploaderId,
             'title' => $title,
             'type' => $type,
-            'disk' => 'public',
+            'disk'          => $disk,
             'file_path' => $path,
             'original_name' => $file->getClientOriginalName(),
             'mime_type' => $file->getClientMimeType(),

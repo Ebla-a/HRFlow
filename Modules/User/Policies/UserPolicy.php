@@ -2,42 +2,40 @@
 
 namespace Modules\User\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 
 class UserPolicy
 {
     /**
-     * HR Admin: see all
-     * Manager: only his department users
-     * Employee: see himself only
+     * Determine whether the user can view any users.
      */
     public function viewAny(User $authUser): bool
     {
-        return $authUser->hasRole('HR Admin')
-            || $authUser->hasRole('Manager')
-            || $authUser->hasRole('Employee');
+      {
+        return $authUser->hasAnyPermission([
+            'view.users.all',
+            'view.department.employees.own',
+            'employee.view.own.profile'
+        ], 'sanctum');
+      }
     }
 
+
     /**
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the user can view a specific user.
      */
     public function view(User $authUser, User $targetUser): bool
     {
-        // HR Admin sees everything
-        if ($authUser->hasRole('HR Admin')) {
+        if ($authUser->hasPermissionTo('view.users.all', 'sanctum')) {
             return true;
         }
 
-        // Manager sees employees in his department only
-        if ($authUser->hasRole('Manager')) {
+        if ($authUser->hasPermissionTo('view.department.employees.own', 'sanctum')) {
             return $authUser->employee?->department_id !== null
                 && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
 
-        // Employee sees only himself
-        if ($authUser->hasRole('Employee')) {
+        if ($authUser->hasPermissionTo('user.view.own.profile', 'sanctum')) {
             return $authUser->id === $targetUser->id;
         }
 
@@ -45,20 +43,15 @@ class UserPolicy
     }
 
     /**
-     *  email updating
-     * HR Admin: allow
-     * Manager: his department users only
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the user can update the target user's email.
      */
     public function updateEmail(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasRole('HR Admin')) {
+        if ($authUser->hasPermissionTo('update.user', 'sanctum')) { 
             return true;
         }
 
-        if ($authUser->hasRole('Manager')) {
+        if ($authUser->hasPermissionTo('view.department.employees.own', 'sanctum')) {
             return $authUser->employee?->department_id !== null
                 && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
@@ -67,14 +60,11 @@ class UserPolicy
     }
 
     /**
-     *  updating avatar profile
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the user can update the target user's avatar.
      */
     public function updateAvatar(User $authUser, User $targetUser): bool
     {
-        if ($authUser->hasRole('HR Admin')) {
+        if ($authUser->hasPermissionTo('update.user', 'sanctum') || $authUser->hasPermissionTo('users.manage.all', 'sanctum')) {
             return true;
         }
 
@@ -82,7 +72,7 @@ class UserPolicy
             return true;
         }
 
-        if ($authUser->hasRole('Manager')) {
+        if ($authUser->hasPermissionTo('view.department.employees.own', 'sanctum')) {
             return $authUser->employee?->department_id !== null
                 && $authUser->employee?->department_id === $targetUser->employee?->department_id;
         }
@@ -91,21 +81,34 @@ class UserPolicy
     }
 
     /**
-     * activate account only HR Admin
-     * @param User $authUser
-     * @return bool
+     * Determine whether the user can activate a user account.
      */
     public function activate(User $authUser): bool
     {
-        return $authUser->hasRole('HR Admin');
+        return $authUser->hasPermissionTo('users.manage.all', 'sanctum');
     }
+
     /**
-     * deactivate account only HR Admin
-     * @param User $authUser
-     * @return bool
+     * Determine whether the user can deactivate a user account.
      */
     public function deactivate(User $authUser): bool
     {
-        return $authUser->hasRole('HR Admin');
+        return $authUser->hasPermissionTo('users.manage.all', 'sanctum');
+    }
+
+    /**
+     * Determine whether the user can manage roles.
+     */
+    public function manageRoles(User $authUser): bool
+    {
+        return $authUser->hasPermissionTo('roles.manage', 'sanctum');
+    }
+
+    /**
+     * Determine whether the user can manage permissions.
+     */
+    public function managePermissions(User $authUser): bool
+    {
+        return $authUser->hasPermissionTo('permissions.manage', 'sanctum');
     }
 }

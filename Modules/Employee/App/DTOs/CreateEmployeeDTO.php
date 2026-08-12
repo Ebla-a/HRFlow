@@ -2,7 +2,7 @@
 
 namespace Modules\Employee\App\DTOs;
 
-use Modules\Employee\App\Http\Requests\V1\StoreEmployeeRequest;
+use Modules\Employee\Http\Requests\StoreEmployeeRequest;
 
 class CreateEmployeeDTO
 {

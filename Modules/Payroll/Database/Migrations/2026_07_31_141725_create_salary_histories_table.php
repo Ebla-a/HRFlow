@@ -23,8 +23,15 @@ return new class extends Migration
             $table->foreignId('changed_by')
                 ->constrained('users')
                 ->restrictOnDelete();
+            $table->text('note')->nullable();
 
             $table->timestamps();
+
+
+            $table->index([
+                'employee_id',
+                'effective_date',
+            ]);
         });
     }
 

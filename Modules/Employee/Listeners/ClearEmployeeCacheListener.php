@@ -2,14 +2,14 @@
 
 namespace Modules\Employee\Listeners;
 
-use Modules\Employee\App\Events\EmployeeUpdated;
-use Modules\Employee\App\Events\EmployeeTerminated;
+
+
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Cache;
-use Modules\Employee\App\Events\EmployeeHired;
-use Modules\Employee\Events\EmployeeHired as EventsEmployeeHired;
-use Modules\Employee\Events\EmployeeTerminated as EventsEmployeeTerminated;
-use Modules\Employee\Events\EmployeeUpdated as EventsEmployeeUpdated;
+
+use Modules\Employee\Events\EmployeeHired ;
+use Modules\Employee\Events\EmployeeTerminated;
+use Modules\Employee\Events\EmployeeUpdated;
 
 class ClearEmployeeCacheListener implements ShouldQueue
 {
@@ -17,7 +17,7 @@ class ClearEmployeeCacheListener implements ShouldQueue
      * @param EmployeeUpdated|EmployeeTerminated $event
      * @return void
      */
-    public function handle(EventsEmployeeHired|EventsEmployeeUpdated|EventsEmployeeTerminated $event): void
+    public function handle(EmployeeHired|EmployeeUpdated|EmployeeTerminated $event): void
     {
         $employee = $event->employee;
 

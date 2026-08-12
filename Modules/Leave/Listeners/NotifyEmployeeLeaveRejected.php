@@ -2,10 +2,11 @@
 
 namespace Modules\Leave\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Leave\Events\LeaveRequestRejected;
 use Modules\Leave\Notifications\LeaveRejectedNotification;
 
-class NotifyEmployeeLeaveRejected
+class NotifyEmployeeLeaveRejected implements ShouldQueue
 {
     public function handle(
         LeaveRequestRejected $event

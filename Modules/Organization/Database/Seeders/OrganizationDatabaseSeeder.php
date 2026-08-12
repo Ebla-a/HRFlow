@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Modules\Employee\Entities\Employee;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
+use Modules\User\Entities\User;
 
 class OrganizationDatabaseSeeder extends Seeder
 {
@@ -19,27 +20,32 @@ class OrganizationDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-$techDept = Department::firstOrCreate(
+        $techDept = Department::firstOrCreate(
             ['code' => 'DEP-IT'],
-            ['name' => 'IT & Technology', 'is_active' => true,]
+            ['name' => 'IT & Technology', 'is_active' => true]
         );
 
         $hrDept = Department::firstOrCreate(
             ['code' => 'DEP-HR'],
-            ['name' => 'Human Resources', 'is_active' => true, ]
+            ['name' => 'Human Resources', 'is_active' => true]
         );
 
         $softwareDept = Department::firstOrCreate(
             ['code' => 'DEP-DEV'],
-            ['name' => 'Software Development', 'parent_id' => $techDept->id, 'is_active' => true,]
+            ['name' => 'Software Development', 'parent_id' => $techDept->id, 'is_active' => true]
         );
 
         $infrastructureDept = Department::firstOrCreate(
             ['code' => 'DEP-OPS'],
-            ['name' => 'Network & Infrastructure', 'parent_id' => $techDept->id, 'is_active' => true, ]
+            ['name' => 'Network & Infrastructure', 'parent_id' => $techDept->id, 'is_active' => true]
         );
 
        
+        $managerUser = User::where('email', 'manager@company.com')->first();
+        if ($managerUser && $managerUser->employee) {
+            $techDept->update(['manager_id' => $managerUser->employee->id]);
+        }
+
         $definedJobTitles = [
             [
                 'title'         => 'Backend Developer',
@@ -79,7 +85,6 @@ $techDept = Department::firstOrCreate(
                 array_merge($job, ['is_active' => true])
             );
         }
-
 
         $randomSubDepartments = Department::factory()
             ->count(5)

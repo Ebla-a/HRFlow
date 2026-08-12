@@ -9,40 +9,43 @@ use Modules\Employee\Entities\Employee;
 
 class EmployeeService
 {
-   /**
-    * @param array $filters
-    * @param int $perPage
-    * @return \Illuminate\Pagination\LengthAwarePaginator<int, Employee>
-    */
-   public function getPaginatedEmployees(array $filters, int $perPage = 15): LengthAwarePaginator
+    /**
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator<int, Employee>
+     */
+    public function getPaginatedEmployees(array $filters, int $perPage = 15): LengthAwarePaginator
     {
-       //Generate a unique cache key based on the filters and the page
-       $page = request('page', 1);
+        $page = request('page', 1);
         $cacheKey = "employees_page_{$page}_" . md5(json_encode($filters) . $perPage);
 
-       return Cache::tags(['employees'])->remember($cacheKey, now()->addMinutes(30), function () use ($filters, $perPage) {
-        return Employee::query()
-            ->with(['user', 'department', 'jobTitle', 'manager'])
-            ->when(!empty($filters['search']), fn ($q) => $this->applySearch($q, $filters['search']))
-            ->when(!empty($filters['department_id']), fn ($q) => $q->where('department_id', $filters['department_id']))
-            ->when(!empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
-            ->when(
-                !empty($filters['sort_by']),
-                fn ($q) => $this->applySorting($q, $filters['sort_by'], $filters['direction'] ?? 'asc'),
-                fn ($q) => $q->latest()
-            )
-            ->paginate($perPage);
-    });
+        return Cache::tags(['employees'])->remember($cacheKey, now()->addMinutes(30), function () use ($filters, $perPage) {
+            return Employee::query()
+                ->with(['user', 'department', 'jobTitle', 'manager'])
+                ->when(!empty($filters['search']), fn ($q) => $this->applySearch($q, $filters['search']))
+                ->when(!empty($filters['department_id']), fn ($q) => $q->where('department_id', $filters['department_id']))
+                ->when(!empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
+                ->when(
+                    !empty($filters['sort_by']),
+                    fn ($q) => $this->applySorting($q, $filters['sort_by'], $filters['direction'] ?? 'asc'),
+                    fn ($q) => $q->latest()
+                )
+                ->paginate($perPage);
+        });
     }
+
     /**
-     * get employee derailes
+     * get employee details
      * @param Employee $employee
      * @return Employee
      */
     public function show(Employee $employee): Employee
     {
-        return Cache::tags(['employees', "employee_{$employee->id}"])->remember("employee_profile_{$employee->id}", now()->addHours(24), function () use ($employee) {
-        return $employee->load(['user', 'department', 'jobTitle', 'manager', 'documents']);
+        $cacheKey = "employee_profile_{$employee->id}";
+
+        return Cache::tags(['employees', "employee_{$employee->id}"])->remember($cacheKey, now()->addHours(24), function () use ($employee) {
+            $employee->load(['user', 'department', 'jobTitle', 'manager', 'documents']);
+            return $employee;
         });
     }
 

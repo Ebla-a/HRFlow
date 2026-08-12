@@ -15,6 +15,8 @@ use Modules\Attendance\DTOs\CheckAttendanceDTO;
 use Modules\Attendance\DTOs\FilterAttendanceDTO;
 use Modules\Attendance\DTOs\UpdateAttendanceDTO;
 use Modules\Attendance\DTOs\FilterAttendanceLogDTO;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 
 /**
@@ -23,7 +25,7 @@ use Modules\Attendance\DTOs\FilterAttendanceLogDTO;
 class AttendanceController extends Controller
 {
     public function __construct(
-        private AttendanceService $service
+        private AttendanceService $attendanceService
     ) {}
     /**
      * Summary of index
@@ -35,7 +37,7 @@ class AttendanceController extends Controller
         $dto = FilterAttendanceDTO::fromRequest($request);
 
         return AttendanceResource::collection(
-            $this->service->filter($dto)
+            $this->attendanceService->filter($dto)
         );
     }
     /**
@@ -54,14 +56,25 @@ class AttendanceController extends Controller
      * @param CheckAttendanceRequest $request
      * @return AttendanceResource
      */
-    public function check(CheckAttendanceRequest $request)  
+    public function check(CheckAttendanceRequest $request): JsonResponse
     {
-        $dto = CheckAttendanceDTO::fromRequest($request);
 
-        $attendance = $this->service->check($dto);
+        $this->authorize('create', Attendance::class);
 
-        return new AttendanceResource($attendance);
+        $dto = new CheckAttendanceDTO(
+            employeeId: $request->input('employee_id'),
+            type: $request->input('type')
+        );
+
+        $attendance = $this->attendanceService->check($dto);
+
+        return Controller::success(
+            new AttendanceResource($attendance),
+            'Attendance record created successfully',
+            201
+        );
     }
+
 
     /**
      * Summary of update
@@ -75,21 +88,84 @@ class AttendanceController extends Controller
     ) {
         $dto = UpdateAttendanceDTO::fromRequest($request);
 
-        $attendance = $this->service->update($attendance, $dto);
+        $attendance = $this->attendanceService->update($attendance, $dto);
 
         return new AttendanceResource($attendance);
     }
-        /**
-         * Summary of logs
-         * @param FilterAttendanceLogRequest $request
-         * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-         */
-        public function logs(FilterAttendanceLogRequest $request)
-     {
-    $dto = FilterAttendanceLogDTO::fromRequest($request);
+    /**
+     * Summary of logs
+     * @param FilterAttendanceLogRequest $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function logs(FilterAttendanceLogRequest $request)
+    {
+        $dto = FilterAttendanceLogDTO::fromRequest($request);
 
-    $logs = $this->service->logs($dto);
+        $logs = $this->attendanceService->logs($dto);
 
-    return AttendanceLogResource::collection($logs);
-  }
-   }
+        return AttendanceLogResource::collection($logs);
+    }
+
+    /**
+     * Fetch personal attendance history for the authenticated user.
+     * Access: Employee (attendence.view.own)
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function myAttendance(Request $request): JsonResponse
+    {
+
+        $this->authorize('viewOwn', Attendance::class);
+
+        $employeeId = $request->user()->employee?->id;
+
+        $attendances = Attendance::query()
+            ->where('employee_id', $employeeId)
+            ->latest('attendance_date')
+            ->paginate($request->get('per_page', 15));
+
+
+        return $this->success(
+            [
+                $attendances,
+                'Personal attendance records retrieved successfully'
+            ]
+        );
+    }
+
+
+    /**
+     * Display the monthly attendance summary.
+     * Access: Manager / HR Admin
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function summary(Request $request): JsonResponse
+    {
+        $this->authorize('viewSummary', Attendance::class);
+
+        $month = $request->get('month', now()->format('Y-m'));
+
+        $summary = Attendance::query()
+            ->selectRaw("
+            COUNT(id) as total_records,
+            SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) as total_present,
+            SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as total_absent,
+            SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as total_late,
+            SUM(CASE WHEN status = 'on_leave' THEN 1 ELSE 0 END) as total_on_leave,
+            SUM(CASE WHEN status = 'holiday' THEN 1 ELSE 0 END) as total_holiday,
+            SUM(worked_minutes) as total_worked_minutes,
+            SUM(late_minutes) as total_late_minutes,
+            SUM(overtime_minutes) as total_overtime_minutes
+        ")
+            ->whereRaw("DATE_FORMAT(attendance_date, '%Y-%m') = ?", [$month])
+            ->first();
+
+        return Controller::success(
+            $summary,
+            'Attendance summary retrieved successfully'
+        );
+    }
+}

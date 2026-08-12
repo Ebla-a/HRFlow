@@ -64,6 +64,11 @@
     'providers' => 
     array (
       0 => 'Pest\\Laravel\\PestServiceProvider',
+  'rap2hpoutre/fast-excel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
     ),
   ),
   'spatie/laravel-permission' => 

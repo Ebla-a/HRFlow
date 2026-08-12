@@ -3,11 +3,16 @@
 namespace Modules\Payroll\App\Exceptions;
 
 use Exception;
+use Modules\Payroll\App\DTOs\PayrollRunDTO;
 
 final class PayrollAlreadyExistsException extends Exception
 {
-    public function __construct()
+    public function __construct(?PayrollRunDTO $dto = null)
     {
-        parent::__construct('Payroll run already exists for the selected month.');
+        $message = $dto 
+            ? "Payroll run already exists for {$dto->year}-{$dto->month} selected month" 
+            : "Payroll run already exists for the selected month";
+
+        parent::__construct($message);
     }
 }

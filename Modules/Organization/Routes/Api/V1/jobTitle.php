@@ -1,4 +1,5 @@
 <?php
+
 namespace Modules\Organization\Routes\Api\V1;
 
 use Illuminate\Support\Facades\Route;
@@ -6,7 +7,9 @@ use Modules\Organization\Http\Controllers\V1\JobTitleController;
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
-   Route::get('/job-titles', [JobTitleController::class, 'index']);
+
+    Route::get('/job-titles', [JobTitleController::class, 'index'])
+        ->middleware('permission:jobtitles.view.all');
 
     Route::post('/job-titles', [JobTitleController::class, 'store'])
         ->middleware('permission:jobtitle.create');

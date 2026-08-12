@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('performance')->group(function() {
-    Route::get('/', 'PerformanceController@index');
-});
+// Route::prefix('performance')->group(function() {
+//     Route::get('/', 'PerformanceController@index');
+// });

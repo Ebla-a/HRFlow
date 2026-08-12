@@ -2,10 +2,11 @@
 
 namespace Modules\Leave\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Modules\Leave\Events\LeaveRequestApproved;
 use Modules\Leave\Notifications\LeaveApprovedNotification;
 
-class NotifyEmployeeLeaveApproved
+class NotifyEmployeeLeaveApproved implements ShouldQueue
 {
     /**
      * Handle the event.

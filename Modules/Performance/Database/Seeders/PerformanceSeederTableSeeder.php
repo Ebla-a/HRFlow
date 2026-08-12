@@ -3,43 +3,50 @@
 namespace Modules\Performance\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\performance_cycle;
-use Modules\Performance\Entities\performance_review;
-use Modules\User\Entities\User;
+use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\Performance_review;
 
 class PerformanceSeederTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-
     public function run(): void
     {
+       
+        $activeCycles = Performance_cycle::where('status', 'Active')->get();
+        if ($activeCycles->isEmpty()) {
+            $activeCycles = Performance_cycle::factory()->count(2)->create(['status' => 'Active']);
+        }
 
-        Performance_cycle::factory()->count(5)->create();
+   
         $employees = Employee::all();
         if ($employees->count() < 2) {
             $employees = Employee::factory()->count(10)->create();
         }
 
-        $activeCycles = performance_cycle::where('status', 'Active')->get();
-        if ($activeCycles->isEmpty()) {
-            $activeCycles = performance_cycle::factory()->count(3)->create(['status' => 'Active']);
+       
+        $manager = $employees->first();
+        $subordinates = $employees->where('id', '!=', $manager->id);
+
+        foreach ($subordinates as $subordinate) {
+            $subordinate->update(['manager_id' => $manager->id]);
         }
 
-        for ($i = 0; $i < 20; $i++) {
-            $employee = $employees->random();
-            $reviewer = $employees->where('id', '!=', $employee->id)->random();
-
-            Performance_review::factory()->create([
-                'employee_id' => $employee->id,
-                'reviewer_id' => $reviewer->id,
-                'cycle_id'    => $activeCycles->random()->id,
-            ]);
+     
+        foreach ($activeCycles as $cycle) {
+            foreach ($subordinates->take(5) as $employee) {
+                Performance_review::firstOrCreate(
+                    [
+                        'employee_id'          => $employee->id,
+                        'performance_cycle_id' => $cycle->id,
+                    ],
+                    [
+                        'reviewer_id' => $manager->id,
+                        'status'      => 'Draft',
+                        'score'       => rand(1, 5),
+                        'comments'    => 'Sample review comment generated automatically.',
+                    ]
+                );
+            }
         }
     }
 }

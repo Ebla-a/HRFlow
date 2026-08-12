@@ -10,10 +10,15 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use App\Models\User;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
 use Modules\Employee\App\Enums\Gender;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Employee\Database\Factories\EmployeeFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
 use Spatie\Permission\Traits\HasRoles;
@@ -38,7 +43,8 @@ use Spatie\Permission\Traits\HasRoles;
     'termination_reason',
 ])]
 class Employee extends Model
-{ 
+{
+    use SoftDeletes,HasFactory;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -47,6 +53,13 @@ class Employee extends Model
         'birth_date' => 'date',
         'termination_date' => 'date',
     ];
+
+
+
+    protected static function newFactory(): EmployeeFactory
+    {
+        return EmployeeFactory::new();
+    }
 
     /**
      * get full name
@@ -105,7 +118,7 @@ class Employee extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class,);
+        return $this->belongsTo(Department::class);
     }
     /**
      * @return BelongsTo<JobTitle, Employee>
@@ -122,7 +135,7 @@ class Employee extends Model
         return $this->belongsTo(self::class, 'manager_id');
     }
     /**
-     * @return HasMany<Employee, Employee>
+     * @return HasMany<Employee, Employee> 
      */
     public function subordinates(): HasMany
     {
@@ -156,4 +169,10 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeDocument::class);
     }
+
+    public function salaryStructure()
+{
+    return $this->hasOne(\Modules\Payroll\Entities\SalaryStructure::class);
+}
+    
 }
