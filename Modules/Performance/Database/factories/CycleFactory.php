@@ -4,7 +4,7 @@ namespace Modules\Performance\Database\Factories;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Modules\Performance\Entities\performance_cycle;
+use Modules\Performance\Entities\PerformanCeycle;
 
 
 class CycleFactory extends Factory
@@ -15,7 +15,7 @@ class CycleFactory extends Factory
      *
      * @var string
      */
-    protected $model = \Modules\Performance\Entities\Performance_cycle::class;
+    protected $model = \Modules\Performance\Entities\PerformanceCycle::class;
 
 
     /**

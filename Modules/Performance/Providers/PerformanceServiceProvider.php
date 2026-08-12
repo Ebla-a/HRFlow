@@ -4,16 +4,10 @@ namespace Modules\Performance\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Modules\Performance\Entities\Performance_cycle;
-
+use Modules\Employee\Entities\Employee;
+use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Policies\PerformancePolicy;
-
-use Modules\Employee\Entities\Employee;
-
-
-
-
 
 class PerformanceServiceProvider extends ServiceProvider
 {
@@ -23,10 +17,27 @@ class PerformanceServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        /*
+         * Register Performance policies.
+         */
+        Gate::policy(
+            PerformanceCycle::class,
+            PerformancePolicy::class
+        );
 
-        Gate::policy(Employee::class, PerformancePolicy::class);
-        Gate::policy(Performance_cycle::class, PerformancePolicy::class);
-        Gate::policy(PerformanceReview::class, PerformancePolicy::class);
+        Gate::policy(
+            PerformanceReview::class,
+            PerformancePolicy::class
+        );
+
+        /*
+         * Employee is also authorized through
+         * PerformancePolicy for performance-related actions.
+         */
+        Gate::policy(
+            Employee::class,
+            PerformancePolicy::class
+        );
 
         $this->registerPolicies();
         $this->registerTranslations();
@@ -34,7 +45,10 @@ class PerformanceServiceProvider extends ServiceProvider
         $this->registerViews();
 
         $this->loadMigrationsFrom(
-            module_path($this->moduleName, 'Database/Migrations')
+            module_path(
+                $this->moduleName,
+                'Database/Migrations'
+            )
         );
     }
 
@@ -45,9 +59,8 @@ class PerformanceServiceProvider extends ServiceProvider
 
     protected function registerPolicies(): void
     {
-       
+        //
     }
-    
 
     protected function registerConfig(): void
     {
@@ -134,20 +147,15 @@ class PerformanceServiceProvider extends ServiceProvider
         $paths = [];
 
         foreach (config('view.paths') as $path) {
-            if (
-                is_dir(
-                    $path .
-                    '/modules/' .
-                    $this->moduleNameLower
-                )
-            ) {
-                $paths[] = $path .
-                    '/modules/' .
-                    $this->moduleNameLower;
+            $moduleViewPath = $path .
+                '/modules/' .
+                $this->moduleNameLower;
+
+            if (is_dir($moduleViewPath)) {
+                $paths[] = $moduleViewPath;
             }
         }
 
         return $paths;
     }
 }
-

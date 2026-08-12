@@ -10,7 +10,7 @@ use Modules\Performance\Rules\Filter;
 class UpdateReviewRequest extends FormRequest
 {
 
-  public function authorize(): bool
+    public function authorize(): bool
     {
         return true;
     }
