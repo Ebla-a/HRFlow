@@ -2,10 +2,13 @@
 
 namespace Modules\Employee\Entities;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Employee\Database\Factories\EmployeeFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
     'user_id',
@@ -165,5 +169,10 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeDocument::class);
     }
+
+    public function salaryStructure()
+{
+    return $this->hasOne(\Modules\Payroll\Entities\SalaryStructure::class);
+}
     
 }

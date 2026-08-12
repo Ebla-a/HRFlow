@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\User\App\DTOs\UpdateAvatarData;
 use Modules\User\App\DTOs\UpdateEmailData;
-use Modules\User\App\Http\Requests\UpdateEmailRequest;
-use Modules\User\App\Http\Requests\UpdateProfileImageRequest;
+
+
 use Modules\User\Entities\User;
+use Modules\User\Http\Requests\UpdateEmailRequest as RequestsUpdateEmailRequest;
+use Modules\User\Http\Requests\UpdateProfileImageRequest;
 use Modules\User\Services\v1\UploadService;
 use Modules\User\Services\v1\UserService;
 use Modules\User\Transformers\UserResource;
@@ -49,7 +51,7 @@ class UserController extends Controller
     /**
      * Update the email address of a user.
      */
-    public function updateEmail(UpdateEmailRequest $request, User $user): JsonResponse
+    public function updateEmail(RequestsUpdateEmailRequest $request, User $user): JsonResponse
     {
         $this->authorize('updateEmail', $user);
         $dto = UpdateEmailData::fromArray([
@@ -70,6 +72,7 @@ class UserController extends Controller
      */
     public function updateProfileImage(UpdateProfileImageRequest $request, User $user): JsonResponse
     {
+        $this->authorize('updateAvatar', $user);
         $dto = UpdateAvatarData::fromArray($request->validated());
 
         $updatedUser = $this->uploadService->updateProfileImage($user, $dto);
@@ -99,7 +102,6 @@ class UserController extends Controller
      */
     public function activateUserAccount(User $user): JsonResponse
     {
-
         $this->authorize('activate', $user);
         $updatedUser = $this->userService->activateUserAccount($user);
 

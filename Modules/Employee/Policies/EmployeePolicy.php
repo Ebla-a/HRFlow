@@ -1,65 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Employee\Policies;
 
-use App\Models\User;
 use Modules\Employee\Entities\Employee;
+use Modules\User\Entities\User;
 
 class EmployeePolicy
 {
-    /**
-     * @param User $user
-     * @return bool
-     */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['HR Admin', 'Department Manager']);
+        return $user->hasAnyPermission([
+            'employees.view.all',
+            'view.department.employees.own',
+        ], 'sanctum');
     }
 
-    /**
-     * @param User $user
-     * @param Employee $employee
-     * @return bool
-     */
     public function view(User $user, Employee $employee): bool
     {
-        if ($user->hasRole('HR Admin')) {
+        if ($user->hasPermissionTo('employees.view.all', 'sanctum')) {
             return true;
         }
 
-        if ($user->hasRole('Department Manager')) {
-            return $user->employee && $user->employee->department_id === $employee->department_id;
+        if ($user->hasPermissionTo('view.department.employees.own', 'sanctum')) {
+            return $user->employee !== null
+                && $user->employee->department_id === $employee->department_id;
         }
 
-        return $user->id === $employee->user_id;
+        if ($user->hasPermissionTo('employee.view.own.profile', 'sanctum')) {
+            return $user->id === $employee->user_id;
+        }
+
+        return false;
     }
 
-    /**
-     * @param User $user
-     * @return bool
-     */
     public function create(User $user): bool
     {
-        return $user->hasRole('HR Admin');
+        return $user->hasPermissionTo('employee.create', 'sanctum');
     }
 
-    /**
-     * @param User $user
-     * @param Employee $employee
-     * @return bool
-     */
     public function update(User $user, Employee $employee): bool
     {
-        return $user->hasRole('HR Admin');
+        return $user->hasPermissionTo('employee.update', 'sanctum');
     }
 
-    /**
-     * @param User $user
-     * @param Employee $employee
-     * @return bool
-     */
     public function terminate(User $user, Employee $employee): bool
     {
-        return $user->hasRole('HR Admin');
+        return $user->hasPermissionTo('employee.change.status', 'sanctum');
     }
 }

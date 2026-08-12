@@ -10,27 +10,27 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'role:Hr_admin'])->group(functi
      * User Management
      */
     Route::get('/users', [UserController::class, 'index'])
-        ->middleware('permission:users.view')
+        ->middleware('permission:view.users.all')
         ->name('users.index');
 
     Route::get('/users/{user}', [UserController::class, 'show'])
-        ->middleware('permission:users.view.single')
+        ->middleware('permission:view.users.all')
         ->name('users.show');
 
     Route::put('/users/{user}/email', [UserController::class, 'updateEmail'])
-        ->middleware('permission:users.update.email')
+        ->middleware('permission:update.user')
         ->name('users.updateEmail');
 
     Route::post('/users/{user}/avatar', [UserController::class, 'updateProfileImage'])
-        ->middleware('permission:users.update.avatar')
+        ->middleware('permission:update.user')
         ->name('users.updateAvatar');
 
     Route::post('/users/{user}/deactivate', [UserController::class, 'deactivateUserAccount'])
-        ->middleware('permission:users.deactivate')
+        ->middleware('permission:user.inActive')
         ->name('users.deactivate');
 
     Route::post('/users/{user}/activate', [UserController::class, 'activateUserAccount'])
-        ->middleware('permission:users.activate')
+        ->middleware('permission:user.active')
         ->name('users.activate');
 
     /**

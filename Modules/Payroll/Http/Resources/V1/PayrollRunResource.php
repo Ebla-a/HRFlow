@@ -1,8 +1,11 @@
 <?php
+
 namespace Modules\Payroll\Http\Resources\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Employee\Http\Resources\V1\EmployeeResource;
+use Modules\Payroll\Http\Resources\V2\PayslipDeductionResource;
 
 class PayrollRunResource extends JsonResource
 {
@@ -10,13 +13,16 @@ class PayrollRunResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'month' => $this->month,
-            'year' => $this->year,
-            'status' => $this->status,
-            'notes' => $this->notes,
-            'processed_at' => $this->processed_at?->toIso8601String(),
-            'finalized_at' => $this->finalized_at?->toIso8601String(),
-            'created_at' => $this->created_at?->toIso8601String(),
+            'employee_id' => $this->employee_id,
+            'payroll_run_id' => $this->payroll_run_id,
+            'basic_salary' => $this->basic_salary,
+            'total_allowances' => $this->total_allowances,
+            'total_deductions' => $this->total_deductions,
+            'net_salary' => $this->net_salary,
+            'employee' => new EmployeeResource($this->whenLoaded('employee')),
+            'deductions' => PayslipDeductionResource::collection($this->whenLoaded('deductions')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

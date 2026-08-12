@@ -1,7 +1,7 @@
 <?php
 namespace Modules\Payroll\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Payroll\Entities\PayrollRun;
 
 class PayrollRunPolicy
@@ -19,7 +19,7 @@ class PayrollRunPolicy
 
     public function process(User $user, PayrollRun $payrollRun): bool
     {
-        return $user->can('process_payroll') && ! $payrollRun->isFinalized();
+        return $user->can('update.payroll.run') && ! $payrollRun->isFinalized();
     }
 
     public function create(User $user): bool

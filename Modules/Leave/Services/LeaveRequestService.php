@@ -124,7 +124,8 @@ class LeaveRequestService
             ]);
         }
     }
-        /**
+
+    /**
      * Check employee leave balance.
      */
     private function checkBalance(
@@ -171,7 +172,7 @@ class LeaveRequestService
 
     return DB::transaction(function () use ($leaveRequest) {
 
-        if ($leaveRequest->status !== 'pending') {
+        if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
 
             throw ValidationException::withMessages([
                 'status' => 'Leave request must be pending.',
@@ -181,7 +182,7 @@ class LeaveRequestService
         $leaveRequest->update([
             'manager_approval_status' => 'approved',
             'manager_approved_at' => now(),
-            'approved_by' => auth()->id(),
+            'approved_by' => auth('sanctum')->id(),
         ]);
 
         return $leaveRequest->refresh();
@@ -197,8 +198,7 @@ class LeaveRequestService
 
         return DB::transaction(function () use ($leaveRequest) {
 
-            if (
-                $leaveRequest->status === 'pending') {
+            if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
 
                 throw ValidationException::withMessages([
                     'status' => 'Leave request must be pending.',
@@ -217,7 +217,7 @@ class LeaveRequestService
            $leaveRequest->update([
                'hr_approval_status' => 'approved',
                'hr_approved_at' => now(),
-               'hr_approved_by' => auth()->id(),
+               'hr_approved_by' => auth('sanctum')->id(),
                'status' => LeaveRequestStatusEnum::APPROVED->value,
            ]);
 
@@ -274,10 +274,7 @@ class LeaveRequestService
         string $reason
     ): LeaveRequest {
 
-        if (
-            $leaveRequest->status
-            === LeaveRequestStatusEnum::APPROVED->value
-        ) {
+        if ($leaveRequest->status === LeaveRequestStatusEnum::APPROVED) {
             throw ValidationException::withMessages([
                 'status' => 'Approved request cannot be rejected.',
             ]);
@@ -290,4 +287,4 @@ class LeaveRequestService
 
         return $leaveRequest->refresh();
     }
-} 
+}

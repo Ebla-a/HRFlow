@@ -2,7 +2,6 @@
 
 namespace Modules\Payroll\App\Enums;
 
-namespace Modules\Payroll\App\Enums;
 
 enum PayslipStatus: string
 {
