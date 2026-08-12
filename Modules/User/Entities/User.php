@@ -12,12 +12,12 @@ use Laravel\Sanctum\HasApiTokens;
 use Modules\Employee\Entities\Employee;
 use Modules\User\Database\Factories\UserFactory;
 use Spatie\Permission\Traits\HasRoles;
-
 #[Fillable([
     'email',
     'password',
     'avatar_url',
     'is_active',
+    'email_verified_at',
 ])]
 #[Hidden([
     'password',
