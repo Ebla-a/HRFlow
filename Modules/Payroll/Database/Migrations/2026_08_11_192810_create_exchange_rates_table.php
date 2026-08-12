@@ -24,12 +24,12 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique([
+           $table->unique([
                 'from_currency',
                 'to_currency',
                 'rate_date',
                 'provider',
-            ]);
+            ], 'exchange_rates_uq');
 
             $table->index([
                 'from_currency',

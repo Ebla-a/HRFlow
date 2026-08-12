@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Payroll\App\Services;
+namespace Modules\Payroll\Services;
 
 use Modules\Payroll\App\DTOs\ExchangeRateDTO;
 

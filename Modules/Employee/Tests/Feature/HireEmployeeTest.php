@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Event;
 use Modules\Employee\App\Events\EmployeeHired;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
-use Modules\Department\Entities\Department;
-use Modules\Department\Entities\JobTitle;
+
 use App\Models\User;
+use Modules\Employee\Events\EmployeeHired as EventsEmployeeHired;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
 
 class HireEmployeeTest extends TestCase
 {
@@ -60,7 +62,7 @@ class HireEmployeeTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => 'new.employee@hrflow.test']);
         $this->assertDatabaseHas('employees', ['employee_number' => 'EMP-1001']);
 
-        Event::assertDispatched(EmployeeHired::class);
+        Event::assertDispatched(EventsEmployeeHired::class);
     }
 
     public function test_cannot_assign_job_title_from_another_department(): void

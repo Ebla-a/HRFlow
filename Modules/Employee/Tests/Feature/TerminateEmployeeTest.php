@@ -10,6 +10,7 @@ use Modules\Employee\App\Events\EmployeeTerminated;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use App\Models\User;
 use Modules\Employee\Entities\Employee;
+use Modules\Employee\Events\EmployeeTerminated as EventsEmployeeTerminated;
 
 class TerminateEmployeeTest extends TestCase
 {
@@ -57,6 +58,6 @@ class TerminateEmployeeTest extends TestCase
             'is_active' => false,
         ]);
 
-        Event::assertDispatched(EmployeeTerminated::class);
+        Event::assertDispatched(EventsEmployeeTerminated::class);
     }
 }
