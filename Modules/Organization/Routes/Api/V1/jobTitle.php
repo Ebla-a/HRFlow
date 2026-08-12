@@ -20,6 +20,6 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::delete('/job-titles/{id}', [JobTitleController::class, 'destroy'])
         ->middleware('permission:jobtitle.delete');
 
-    Route::post('/job-titles/{id}/restore', [JobTitleController::class, 'restore'])
-        ->middleware('permission:jobtitles.restore');
+          Route::post('job-titles/{id}/restore', [JobTitleController::class, 'restore'])
+        ->middleware('permission:jobtitle.restore');
 });

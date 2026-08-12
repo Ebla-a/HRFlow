@@ -2,6 +2,7 @@
 
 namespace Modules\Employee\Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Modules\Employee\Entities\Employee;
 use Modules\User\Entities\User;

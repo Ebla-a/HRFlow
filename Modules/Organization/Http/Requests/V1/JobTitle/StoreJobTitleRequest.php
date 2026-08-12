@@ -9,6 +9,30 @@ use Modules\Organization\Enums\JobTitleGrade;
 
 class StoreJobTitleRequest extends FormRequest
 {
+/**
+ * Summary of prepareForValidation
+ * @return void
+ */
+protected function prepareForValidation(): void
+    {
+        $mergeData = [];
+
+        if ($this->has('title') && is_string($this->title)) {
+            $mergeData['title'] = ucwords(strtolower(trim($this->title)));
+        }
+
+        if ($this->has('description')) {
+            $mergeData['description'] = $this->filled('description') ? trim($this->description) : null;
+        }
+
+        if ($this->has('is_active')) {
+            $mergeData['is_active'] = filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        }
+
+        if (! empty($mergeData)) {
+            $this->merge($mergeData);
+        }
+    }
     /**
      * Get the validation rules that apply to the request.
      *
