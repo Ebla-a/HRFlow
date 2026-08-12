@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Organization\DTO\V1\AssignManagerDTO;
 use Modules\Organization\DTO\V1\DepartmentDTO;
+use Modules\Organization\DTO\V1\StoreDepartmentDto;
+use Modules\Organization\DTO\V1\UpdateDepartmentDto;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Http\Requests\V1\Department\AssignManagerRequest;
 use Modules\Organization\Http\Requests\V1\Department\StoreDepartmentRequest;
@@ -51,14 +53,14 @@ class DepartmentController extends Controller
     {
         $this->authorize('create', Department::class);
 
-        $dto = DepartmentDTO::fromRequest($request->validated());
+        $dto = StoreDepartmentDto::fromRequest($request->validated());
         $department = $this->departmentService->createDepartment($dto);
 
         return $this->success([
             'status' => true,
-            'message' => 'Department created successfully.',
+
             'data' => new DepartmentResource($department),
-        ], 201);
+        ],  'Department created successfully.',201 );
     }
 
     /**
@@ -87,8 +89,14 @@ class DepartmentController extends Controller
     public function update(UpdateDepartmentRequest $request, int $id): JsonResponse
     {
 
-        $dto = DepartmentDTO::fromRequest($request->validated());
-        $department = $this->departmentService->updateDepartment($id, $dto);
+            $dto = UpdateDepartmentDto::fromRequest($request->validated());
+            $department = $this->departmentService->updateDepartment($id, $dto);
+
+            return $this->success([
+                'status' => true,
+                'message' => 'Department updated successfully.',
+                'data' => new DepartmentResource($department),
+            ]);
 
         return $this->success([
             'status' => true,

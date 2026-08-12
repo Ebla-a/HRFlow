@@ -12,20 +12,25 @@ use Illuminate\Database\Eloquent\Model;
         'start_date',
         'end_date',
         'status',])]
-class Performance_cycle extends Model
+class PerformanceCycle extends Model
 {
     use HasFactory;
 
     protected $table = 'performance_cycles';
+
+    protected $casts = [
+    'start_date' => 'datetime:Y-m-d H:i:s',
+    'end_date'   => 'datetime:Y-m-d H:i:s',
+    ];
 
     protected static function newFactory()
     {
         return CycleFactory::new();
     }
 
-  public function reviews()
+    public function reviews()
     {
-        return $this->hasMany(Performance_review::class, 'performance_cycle_id');
+        return $this->hasMany(PerformanceReview::class, 'performance_cycle_id');
     }
 
 

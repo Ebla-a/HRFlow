@@ -59,6 +59,11 @@
       0 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     ),
   ),
+  'pestphp/pest-plugin-laravel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Pest\\Laravel\\PestServiceProvider',
   'rap2hpoutre/fast-excel' => 
   array (
     'providers' => 

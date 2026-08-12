@@ -4,6 +4,8 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Modules\Organization\DTO\V1\AssignManagerDTO;
 use Modules\Organization\DTO\V1\DepartmentDTO;
+use Modules\Organization\DTO\V1\StoreDepartmentDto;
+use Modules\Organization\DTO\V1\UpdateDepartmentDto;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Repository\Contracts\DepartmentRepositoryInterface;
 use Modules\Organization\Transformers\V1\DepartmentResource;
@@ -76,10 +78,10 @@ class DepartmentService
     }
    /**
     * Summary of createDepartment
-    * @param DepartmentDTO $dto
+    * @param StoreDepartmentDto $dto
     * @return Department
     */
-   public function createDepartment(DepartmentDTO $dto): Department
+   public function createDepartment(StoreDepartmentDto $dto): Department
     {
         $department = $this->departmentRepository->create($dto->toArray());
         //cache invalidation
@@ -91,10 +93,10 @@ class DepartmentService
     /**
      * Summary of updateDepartment
      * @param int $id
-     * @param DepartmentDTO $dto
+     * @param UpdateDepartmentDto $dto
      * @return Department
      */
-    public function updateDepartment(int $id, DepartmentDTO $dto): Department
+    public function updateDepartment(int $id, UpdateDepartmentDto $dto): Department
     {
         $department = $this->getDepartmentDetails($id);
         $newDepartment = $this->departmentRepository->update($department, $dto->toArray());

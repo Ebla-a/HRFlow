@@ -4,6 +4,11 @@ namespace Modules\Performance\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Modules\Employee\Entities\Employee;
+use Modules\Performance\DTO\CreateCycleDTO;
+use Modules\Performance\DTO\CreateReviewDTO;
+use Modules\Performance\Entities\PerformanceCycle;
+use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Http\Requests\CycleRequest;
 use Modules\Performance\Http\Requests\ReviewRequest;
 use Modules\Performance\Http\Requests\UpdateReviewRequest;
@@ -11,178 +16,173 @@ use Modules\Performance\Services\v1\PerformanceService;
 use Modules\Performance\Services\v1\ReviewService;
 use Modules\Performance\Transformers\PerformanceResource;
 use Modules\Performance\Transformers\ReviewResource;
-use Modules\Performance\Entities\Performance_cycle;
-use Modules\Performance\Entities\Performance_review;
-use Modules\Employee\Entities\Employee;
-use Modules\Performance\DTO\CreateCycleDTO;
-use Modules\Performance\DTO\CreateReviewDTO;
-use Modules\Performance\Entities\PerformanceReview;
 
 class PerformanceController extends Controller
 {
-    public PerformanceService $performanceService;
-    public ReviewService $reviewService;
+    public function __construct(
+        public PerformanceService $performanceService,
+        public ReviewService $reviewService
+    ) {}
 
-    public function __construct(PerformanceService $performanceService, ReviewService $reviewService)
-    {
-        $this->performanceService = $performanceService;
-        $this->reviewService = $reviewService;
-    }
-
-    /**
-     * @return JsonResponse
-     */
     public function ShowCycles(): JsonResponse
     {
-        $this->authorize('viewCycles', Performance_cycle::class);
+        $this->authorize('viewCycles', PerformanceCycle::class);
+
         $data = $this->performanceService->show();
 
         return $this->success(
-            PerformanceResource::collection($data)->response()->getData(true),
-            "Performance cycles retrieved successfully."
+            PerformanceResource::collection($data)
+                ->response()
+                ->getData(true),
+            'Performance cycles retrieved successfully.'
         );
     }
 
-    /**
-     * @param CycleRequest $request
-     * @return JsonResponse
-     */
     public function CreateCycle(CycleRequest $request): JsonResponse
     {
-        $this->authorize('createCycle', Performance_cycle::class);
-        $dto = CreateCycleDTO::fromRequest($request->validated());
+        $this->authorize('createCycle', PerformanceCycle::class);
+
+        $dto = CreateCycleDTO::fromRequest(
+            $request->validated()
+        );
+
         $data = $this->performanceService->create($dto);
 
         return $this->success(
             new PerformanceResource($data),
-            "Performance cycle created successfully.",
+            'Performance cycle created successfully.',
             201
         );
     }
 
-    /**
-     * @param Performance_cycle $id
-     * @return JsonResponse
-     */
-    public function ActivateCycle(Performance_cycle $id): JsonResponse
+    public function ActivateCycle(PerformanceCycle $id): JsonResponse
     {
         $this->authorize('updateCycle', $id);
+
         $data = $this->performanceService->activate($id);
 
         return $this->success(
             new PerformanceResource($data),
-            "Performance cycle activated successfully."
+            'Performance cycle activated successfully.'
         );
     }
 
-    /**
-     * @param Performance_cycle $id
-     * @return JsonResponse
-     */
-    public function CloseCycle(Performance_cycle $id): JsonResponse
+    public function CloseCycle(PerformanceCycle $id): JsonResponse
     {
         $this->authorize('updateCycle', $id);
+
         $data = $this->performanceService->close($id);
 
         return $this->success(
             new PerformanceResource($data),
-            "Performance cycle closed successfully."
+            'Performance cycle closed successfully.'
         );
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function MyReviews(): JsonResponse
     {
-        $this->authorize('viewMyReviews', PerformanceReview::class);
+        $this->authorize(
+            'viewMyReviews',
+            PerformanceReview::class
+        );
+
         $data = $this->reviewService->myReviews();
 
         return $this->success(
-            ReviewResource::collection($data)->response()->getData(true),
-            "My reviews retrieved successfully."
+            ReviewResource::collection($data)
+                ->response()
+                ->getData(true),
+            'My reviews retrieved successfully.'
         );
     }
 
-    /**
-     * @param Employee $id
-     * @return JsonResponse
-     */
     public function EmployeeReviews(Employee $id): JsonResponse
     {
         $this->authorize('viewReviews', $id);
+
         $data = $this->reviewService->employeeReviews($id);
 
         return $this->success(
-            ReviewResource::collection($data)->response()->getData(true),
-            "Employee reviews retrieved successfully."
+            ReviewResource::collection($data)
+                ->response()
+                ->getData(true),
+            'Employee reviews retrieved successfully.'
         );
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function ShowReviews(): JsonResponse
     {
-        $this->authorize('viewReviews', PerformanceReview::class);
+        $this->authorize(
+            'viewReviews',
+            PerformanceReview::class
+        );
+
         $data = $this->reviewService->showReviews();
 
         return $this->success(
-            ReviewResource::collection($data)->response()->getData(true),
-            "Performance reviews retrieved successfully."
+            ReviewResource::collection($data)
+                ->response()
+                ->getData(true),
+            'Performance reviews retrieved successfully.'
         );
     }
 
-    /**
-     * @param ReviewRequest $request
-     * @return JsonResponse
-     */
     public function CreateReview(ReviewRequest $request): JsonResponse
-   {
-    $validated = $request->validated();
-
-    $targetEmployee = Employee::findOrFail($validated['employee_id']);
-
-    $cycle = Performance_cycle::findOrFail(
-        $validated['performance_cycle_id']
-    );
-
-    $this->authorize('createReview', [
-        $targetEmployee,
-        $cycle,
-    ]);
-
-    $dto = CreateReviewDTO::fromRequest($validated);
-
-    $data = $this->reviewService->createReview($dto);
-
-    return $this->success(
-        new ReviewResource($data),
-        "Performance review created successfully.",
-        201
-    );
-   }
-
-    /**
-     * @param UpdateReviewRequest $request
-     * @param PerformanceReview $PerformanceReview
-     * @return JsonResponse
-     */
-    public function UpdateReview(UpdateReviewRequest $request, PerformanceReview $PerformanceReview): JsonResponse
     {
-        $this->authorize('updateReview', $PerformanceReview);
+        $validated = $request->validated();
 
-        $dto = CreateReviewDTO::fromRequest(array_merge($request->validated(), [
-            'employee_id'          => $PerformanceReview->employee_id,
-            'performance_cycle_id' => $PerformanceReview->performance_cycle_id,
-            'reviewer_id'          => $PerformanceReview->reviewer_id,
-        ]));
+        $targetEmployee = Employee::findOrFail(
+            $validated['employee_id']
+        );
 
-        $data = $this->reviewService->updateReview($dto, $PerformanceReview);
+        $cycle = PerformanceCycle::findOrFail(
+            $validated['performance_cycle_id']
+        );
+
+        $this->authorize('createReview', [
+            $targetEmployee,
+            $cycle,
+        ]);
+
+        $dto = CreateReviewDTO::fromRequest($validated);
+
+        $data = $this->reviewService->createReview($dto);
 
         return $this->success(
             new ReviewResource($data),
-            "Performance review updated successfully."
+            'Performance review created successfully.',
+            201
+        );
+    }
+
+    public function UpdateReview(
+        UpdateReviewRequest $request,
+        PerformanceReview $performanceReview
+    ): JsonResponse {
+        $this->authorize(
+            'updateReview',
+            $performanceReview
+        );
+
+        $dto = CreateReviewDTO::fromRequest(
+            array_merge(
+                $request->validated(),
+                [
+                    'employee_id' => $performanceReview->employee_id,
+                    'performance_cycle_id' => $performanceReview->performance_cycle_id,
+                    'reviewer_id' => $performanceReview->reviewer_id,
+                ]
+            )
+        );
+
+        $data = $this->reviewService->updateReview(
+            $dto,
+            $performanceReview
+        );
+
+        return $this->success(
+            new ReviewResource($data),
+            'Performance review updated successfully.'
         );
     }
 }

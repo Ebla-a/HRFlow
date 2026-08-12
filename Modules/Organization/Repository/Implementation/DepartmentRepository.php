@@ -2,6 +2,7 @@
 namespace Modules\Organization\Repository\Implementation;
 
 use Illuminate\Support\Facades\DB;
+use Modules\Employee\Entities\Employee;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Repository\Contracts\DepartmentRepositoryInterface;
 
@@ -114,7 +115,10 @@ public function getTree()
         $department->update([
             'manager_id' => $managerId,
         ]);
-
+        
+       Employee::findOrFail($managerId)->update([
+            'department_id' => $departmentId,
+        ]);
         return $department->fresh(['manager']);
     }
 

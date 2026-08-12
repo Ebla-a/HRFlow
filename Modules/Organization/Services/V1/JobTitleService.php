@@ -2,6 +2,8 @@
 namespace Modules\Organization\Services\V1;
 use Illuminate\Support\Facades\Cache;
 use Modules\Organization\DTO\V1\JobTitleDTO;
+use Modules\Organization\DTO\V1\StoreJobTitleDto;
+use Modules\Organization\DTO\V1\UpdateJobTitleDto;
 use Modules\Organization\Entities\JobTitle;
 use Modules\Organization\Repository\Contracts\JobTitleRepositoryInterface;
 use Modules\Organization\Transformers\V1\JobTitleResource;
@@ -11,7 +13,7 @@ class JobTitleService
     public function __construct(
         protected JobTitleRepositoryInterface $jobTitleRepository
     ) {}
-   
+
     public function getAllJobTitles()
     {
 
@@ -53,10 +55,10 @@ class JobTitleService
     }
     /**
      * Summary of createJobTitle
-     * @param JobTitleDTO $dto
+     * @param StoreJobTitleDto $dto
      * @return JobTitle
      */
-    public function createJobTitle(JobTitleDTO $dto): JobTitle
+    public function createJobTitle(StoreJobTitleDto $dto): JobTitle
     {
         $jobTitle= $this->jobTitleRepository->create($dto->toArray());
         //invalidate the cache for job titles after creating a new job title
@@ -67,10 +69,10 @@ class JobTitleService
     /**
      * Summary of updateJobTitle
      * @param int $id
-     * @param JobTitleDTO $dto
+     * @param UpdateJobTitleDto $dto
      * @return JobTitle
      */
-    public function updateJobTitle(int $id, JobTitleDTO $dto): JobTitle
+    public function updateJobTitle(int $id, UpdateJobTitleDto $dto): JobTitle
     {
         $jobTitle = $this->jobTitleRepository->findById($id);
         $jobTitleNew= $this->jobTitleRepository->update($jobTitle, $dto->toArray());

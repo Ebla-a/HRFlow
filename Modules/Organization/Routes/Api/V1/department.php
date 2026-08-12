@@ -11,10 +11,10 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         ->middleware('permission:departments.view');
 
     Route::post('/departments', [DepartmentController::class, 'store'])
-        ->middleware('permission:departments.create'); 
+        ->middleware('role:hr_admin');
 
     Route::get('/departments/{id}', [DepartmentController::class, 'show'])
-        ->middleware('permission:departments.show');
+        ->middleware('role:hr_admin|manager');
 
     Route::put('/departments/{id}', [DepartmentController::class, 'update'])
         ->middleware('permission:departments.update');
