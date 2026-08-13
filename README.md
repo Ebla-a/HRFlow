@@ -373,7 +373,7 @@ The original system requirements also define event-driven behavior for employee 
 ## 1. Clone the Repository
 
 ```bash
-git clone <YOUR-HRFLOW-REPOSITORY-URL>
+git clone <[YOUR-HRFLOW-REPOSITORY-UR](https://github.com/Ebla-a/HRFlow)L>
 cd HRFlow
 ```
 
@@ -507,7 +507,7 @@ CACHE_STORE=
 QUEUE_CONNECTION=
 ```
 
-Environment-specific values should be configured inside `.env`.
+Environment-specific values should be configured inside `.env.example`.
 
 Never commit the actual `.env` file or production credentials to the repository.
 
@@ -1308,12 +1308,13 @@ Responsibilities include:
 
 ## Team Members
 
-| Role                            | Name          |
-| ------------------------------- | ------------- |
-| Team Leader / Backend Developer | Ebla Zyab Ali |
-| Backend Developer               | —             |
-| Backend Developer               | —             |
-| Backend Developer               | —             |
+| Role                            | Name                    |
+| ------------------------------- | -------------           |
+| Team Leader                     | Ebla Zyab Ali           |
+| Assistant                       |Kinda Alabdullah         |
+| Database Specialist /Backend    | Bedoor Ali Deep         |
+| Backend Developer               | Shahd Al Esami          |
+| Backend Developer               | Osama Mlikh             |
 
 ---
 
