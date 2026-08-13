@@ -1318,6 +1318,40 @@ Responsibilities include:
 
 ---
 
+
+# 🏆 Acknowledgments
+
+### 🎉 Special Thanks
+
+**Focal X Agency**
+
+For their commitment to student growth and learning opportunities.
+
+### 👨‍🏫 Mentors
+
+**Mr. Somar Kesen **
+
+- Technical guidance
+- Concept clarification
+- Inspirational mentorship
+
+**Mr. Youse Saleh **
+
+- Support throughout development
+
+### 👩‍💼 Supervisor
+
+**Mr. Bsher Al-Mahayni **
+
+
+### 🤝 Focal X Team
+
+For building and supporting this educational journey.
+
+### 👨‍💼 CEO & Founder
+
+**Alaa Darwish**
+
 # 🎯 Project Goals
 
 HRFlow aims to demonstrate a maintainable and production-oriented backend architecture through:
