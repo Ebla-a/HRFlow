@@ -2,7 +2,7 @@
 
 
 namespace Modules\Leave\Entities;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Leave\Entities\LeaveType;
