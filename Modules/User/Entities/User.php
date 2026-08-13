@@ -62,4 +62,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class);
     }
+
+          /**
+           * Summary of AiConversation
+           * @return \Illuminate\Database\Eloquent\Relations\HasMany<AiConversation, User>
+           */
+          public function AiConversation()
+    {
+        return $this->hasMany(AiConversation::class, 'user_id');
+    }
 }
