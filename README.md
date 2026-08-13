@@ -1027,6 +1027,11 @@ API development and testing are performed through a Postman Collection.
 
 The Postman Collection uses environment variables instead of hard-coded URLs and authentication tokens.
 
+
+The complete Postman API Collection is available here:
+
+[Download HRFlow Postman Collection](https://github.com/Ebla-a/HRFlow/blob/main/docs/HRFlow.postman_collection.json)
+
 ## Environment Variables
 
 ```text
@@ -1224,18 +1229,20 @@ Employees can access their own payslips but not other employees' payslips.
 
 # 📦 API Standards
 
-The API follows a consistent response structure:
+The API follows a consistent response structure for both successful and error responses.
+
+## Success Response Structure
 
 ```json
 {
     "status": true,
     "message": "Operation completed successfully.",
-    "data": {}
+    "data": {},
+    "meta": {} 
 }
 ```
 
 Error responses follow:
-
 ```json
 {
     "status": false,
@@ -1288,23 +1295,6 @@ The project specification also requires an ERD diagram and Postman Collection as
 ---
 
 # 👨‍💻 Development Team
-
-## Team Leader / Backend Developer
-
-**Ebla Zyab Ali**
-
-Responsibilities include:
-
-* Project architecture
-* Modular architecture
-* Backend development
-* API architecture
-* Core business logic
-* Security
-* Payroll architecture
-* Employee lifecycle
-* Code quality
-* Technical decisions
 
 ## Team Members
 
@@ -1371,11 +1361,8 @@ HRFlow aims to demonstrate a maintainable and production-oriented backend archit
 * Maintainable HR workflows
 
 ---
-## 📮 Postman Collection
 
-The complete Postman API Collection is available here:
 
-[Download HRFlow Postman Collection](https://github.com/Ebla-a/HRFlow/blob/main/docs/HRFlow.postman_collection.json)
 
 # ⭐ HRFlow
 
