@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Payroll\Contracts\ExchangeRateFetcherInterface;
 use Modules\Payroll\Entities\ExchangeRate;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 final class FetchLatestExchangeRatesJob implements ShouldQueue
@@ -61,6 +62,11 @@ final class FetchLatestExchangeRatesJob implements ShouldQueue
 
     public function failed(Throwable $exception): void
     {
-        report($exception);
+        Log::critical('Exchange Rate API failed after 3 retries.', [
+        'error' => $exception->getMessage(),
+        'base_currency' => $this->baseCurrency,
+    ]);
+
+    report($exception);
     }
 }
