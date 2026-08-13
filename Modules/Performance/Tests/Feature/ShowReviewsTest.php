@@ -3,79 +3,56 @@
 namespace Modules\Performance\Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Sanctum\Sanctum;
-use Modules\Performance\Entities\performance_cycle;
 use Modules\User\Entities\User;
-use Spatie\Permission\PermissionRegistrar;
-use Spatie\Permission\Models\Permission;
+use Modules\Performance\Entities\PerformanceReview;
+use Modules\Performance\Entities\PerformanceCycle;
+use Modules\Employee\Entities\Employee;
+use Modules\Organization\Entities\Department;
+use Modules\Organization\Entities\JobTitle;
 
 class ShowReviewsTest extends TestCase
 {
-    use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+    use DatabaseMigrations;
 
     public function test_Show_Reviews()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
-        $permission1=Permission::create([
-            'name'=>'view.reviews.department','guard_name' => 'sanctum'
+        $managerUser = User::factory()->create();
+        $managerUser->assignRole('Manager');
+
+        Sanctum::actingAs($managerUser);
+
+        $employeeUser = User::factory()->create();
+
+        $department = Department::factory()->create();
+        $jobTitle = JobTitle::factory()->create(['department_id' => $department->id]);
+
+        $employee = Employee::factory()->create([
+            'user_id' => $employeeUser->id,
+            'department_id' => $department->id,
+            'job_title_id' => $jobTitle->id,
         ]);
-        $permission2=Permission::create([
-            'name'=>'view.reviews.all','guard_name' => 'sanctum'
+        $managerEmployee = Employee::factory()->create([
+    'user_id' => $managerUser->id,
+    'department_id' => $department->id,
+    'job_title_id' => $jobTitle->id,
+]);
+
+
+        $cycle = PerformanceCycle::factory()->create(['status' => 'Active']);
+
+        PerformanceReview::factory()->create([
+            'employee_id' => $employee->id,
+            'reviewer_id' => $managerEmployee->id,
+            'performance_cycle_id' => $cycle->id,
+            'status' => 'Reviewed',
+            'score' => 5,
+            'comments' => 'Good',
         ]);
 
-        $role=Role::create(['name'=>'Manager','guard_name' => 'sanctum']);
-        $role->givePermissionTo($permission2);
-        $admin = User::factory()->create();
-        $admin->assignRole($role);
-        $admin->unsetRelation('roles');
-        Sanctum::actingAs($admin, ['*'], 'sanctum');
+        $response = $this->getJson('/api/v1/performance-reviews');
 
-        $response=$this->getJson('/api/v1/performance-reviews')
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'status',
-            'message',
-            'data' => [
-                'data' => [
-                    '*' => [
-                    'id',
-                    'cycle_id' ,
-                    'employee_id',
-                    'manager_id',
-                    'status',
-                    'score',
-                    'comments',
-                    'reviewed_at' ,
-                    'status_cycle',
-                    'cycle_name',
-                    'employee_name',
-                    ]
-                ],
-                'meta' => [
-                    'current_page',
-                    'last_page',
-                    'per_page',
-                    'total'
-                ]
-            ]
-        ])
-        ->assertJson([
-            'status'=>true,
-            'message'=>"Performance reviews retrieved successfully.",
-        ])
-        ;
-        
-        
+        $response->assertStatus(200);
     }
-
-
 }

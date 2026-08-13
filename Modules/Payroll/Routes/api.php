@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Payroll\Http\Controllers\V1\ExchangeRateController;
 use Modules\Payroll\Http\Controllers\V1\PayrollRunController;
 use Modules\Payroll\Http\Controllers\V1\PayslipController;
 use Modules\Payroll\Http\Controllers\V1\SalaryStructureController;
@@ -50,6 +51,13 @@ Route::prefix('v1/payroll')->middleware(['auth:sanctum'])->group(function () {
             
         Route::post('/{payslip}/deductions', [PayslipController::class, 'addDeduction'])
             ->middleware('permission:update.payslip');
+    });
+
+
+    // Exchange Rates
+    Route::prefix('exchange-rates')->group(function () {
+        Route::get('/', [ExchangeRateController::class, 'index'])
+            ->middleware('permission:view.exchange.rates'); 
     });
 
 });

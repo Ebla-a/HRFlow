@@ -5,11 +5,13 @@ namespace Modules\Employee\Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Laravel\Sanctum\Sanctum;
 
 use Modules\Employee\App\Events\EmployeeTerminated;
 use Modules\Employee\App\Enums\EmployeeStatus;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
+use Modules\Employee\Events\EmployeeTerminated as EventsEmployeeTerminated;
 
 class TerminateEmployeeTest extends TestCase
 {
@@ -21,11 +23,14 @@ class TerminateEmployeeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->seed(\Modules\User\Database\Seeders\RolesAndPermissionsSeeder::class);
 
         $this->hrAdmin = User::factory()->create();
-        $this->hrAdmin->assignRole('HR Admin');
+        $this->hrAdmin->guard_name = 'sanctum';
+        $this->hrAdmin->assignRole('Hr_admin');
 
         $user = User::factory()->create(['is_active' => true]);
+
         $this->employee = Employee::factory()->create([
             'user_id' => $user->id,
             'status' => EmployeeStatus::ACTIVE->value,
@@ -40,8 +45,8 @@ class TerminateEmployeeTest extends TestCase
             'termination_reason' => 'End of contract',
         ];
 
-        $response = $this->actingAs($this->hrAdmin)
-            ->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
+        Sanctum::actingAs($this->hrAdmin);
+       $response = $this->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('data.status', EmployeeStatus::TERMINATED->value);
@@ -57,6 +62,6 @@ class TerminateEmployeeTest extends TestCase
             'is_active' => false,
         ]);
 
-        Event::assertDispatched(EmployeeTerminated::class);
+        Event::assertDispatched(EventsEmployeeTerminated::class);
     }
 }

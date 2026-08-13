@@ -1,30 +1,109 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Organization\Routes\Api\V1;
 
 use Illuminate\Support\Facades\Route;
 use Modules\Organization\Http\Controllers\V1\DepartmentController;
 
-Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+Route::middleware('auth:sanctum')
+    ->prefix('v1')
+    ->group(function () {
 
-    Route::get('/departments', [DepartmentController::class, 'index'])
-        ->middleware('permission:departments.view');
+        /*
+         * =========================================================
+         * Department Listing
+         * =========================================================
+         */
 
-    Route::post('/departments', [DepartmentController::class, 'store'])
-        ->middleware('role:hr_admin');
+        Route::get('/departments', [
+            DepartmentController::class,
+            'index',
+        ])->middleware(
+            'permission:departments.view|departments.view.all'
+        );
 
-    Route::get('/departments/{id}', [DepartmentController::class, 'show'])
-        ->middleware('role:hr_admin|manager');
 
-    Route::put('/departments/{id}', [DepartmentController::class, 'update'])
-        ->middleware('permission:departments.update');
+        /*
+         * =========================================================
+         * Department Creation
+         * =========================================================
+         */
 
-    Route::delete('/departments/{id}', [DepartmentController::class, 'destroy'])
-        ->middleware('permission:departments.delete');
+        Route::post('/departments', [
+            DepartmentController::class,
+            'store',
+        ])->middleware(
+            'permission:departments.create'
+        );
 
-    Route::post('/departments/{id}/restore', [DepartmentController::class, 'restore'])
-        ->middleware('permission:departments.restore');
 
-    Route::put('/departments/{id}/assign-manager', [DepartmentController::class, 'assignManager'])
-        ->middleware('permission:departments.assign_manager');
-});
+        /*
+         * =========================================================
+         * Department Details
+         * =========================================================
+         */
+
+        Route::get('/departments/{id}', [
+            DepartmentController::class,
+            'show',
+        ]);
+
+
+        /*
+         * =========================================================
+         * Department Update
+         * =========================================================
+         */
+
+        Route::put('/departments/{id}', [
+            DepartmentController::class,
+            'update',
+        ])->middleware(
+            'permission:departments.update'
+        );
+
+
+        /*
+         * =========================================================
+         * Department Delete
+         * =========================================================
+         */
+
+        Route::delete('/departments/{id}', [
+            DepartmentController::class,
+            'destroy',
+        ])->middleware(
+            'permission:departments.delete'
+        );
+
+
+        /*
+         * =========================================================
+         * Department Restore
+         * =========================================================
+         */
+
+        Route::post('/departments/{id}/restore', [
+            DepartmentController::class,
+            'restore',
+        ])->middleware(
+            'permission:departments.restore'
+        );
+
+
+        /*
+         * =========================================================
+         * Assign Manager
+         * =========================================================
+         *
+         */
+
+        Route::put('/departments/{id}/assign-manager', [
+            DepartmentController::class,
+            'assignManager',
+        ])->middleware(
+            'permission:departments.assign-manager'
+        );
+    });

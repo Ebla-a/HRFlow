@@ -71,7 +71,7 @@ class DepartmentController extends Controller
     public function show(int $id): JsonResponse
     {
         $department = $this->departmentService->getDepartmentDetails($id);
-        //for enssure that the manager og this department can view the department details and also the hr_admin can view the department details
+     
 
         $this->authorize('view', $department);
 

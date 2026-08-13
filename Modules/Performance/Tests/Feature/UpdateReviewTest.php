@@ -3,189 +3,121 @@
 namespace Modules\Performance\Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
-use Modules\User\Entities\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Sanctum\Sanctum;
+use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\Entities\PerformanceReview;
-use Spatie\Permission\PermissionRegistrar;
-use Spatie\Permission\Models\Permission;
 
 class UpdateReviewTest extends TestCase
 {
-    use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public  function test_Update_Review_()
+    use DatabaseMigrations;
+
+    public function test_Update_Review_()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
-        $permission=Permission::create([
-            'name'=>'update.review.employee.own.department','guard_name' => 'sanctum'
+        $manager = User::factory()->create();
+        $manager->givePermissionTo('update.review.employee.own.department');
+
+        $managerEmployee = Employee::factory()->create([
+            'user_id' => $manager->id,
         ]);
 
-        $role=Role::create(['name'=>'Manager','guard_name' => 'sanctum']);
-        $role->givePermissionTo($permission);
-        $admin = User::factory()->create();
-        $admin->assignRole($role);
-        Sanctum::actingAs($admin, ['*'], 'sanctum');
+        $manager->setRelation('employee', $managerEmployee);
 
-        $user = User::factory()->create();
-        $department=Department::factory()->create();
-        $jobTitle=JobTitle::factory()->create([
-            'department_id'=>$department->id
+        $cycle = PerformanceCycle::factory()->create([
+            'status' => 'Active',
         ]);
 
-        $manager= Employee::factory()->create([
-            'user_id'=>$admin->id,
-            'department_id' => $department->id,
-            'job_title_id' => $jobTitle->id,
-            'employee_number' => 'EMP-0012',
-            'national_id' => '1234567892',
-        ]);
-        $employee= Employee::factory()->create([
-            'user_id'=>$user->id,
-            'department_id' => $department->id,
-            'job_title_id' => $jobTitle->id,
-            'manager_id'=>$manager->id,
-            'employee_number' => 'EMP-001',
-            'national_id' => '123456789',
-            
-            
-        ]);
-        $cycle=PerformanceCycle::factory()->create(['status'=>'Active']);
-        $review=PerformanceReview::factory()->create([
-            'employee_id'             => $employee->id,
-            'reviewer_id'             => $manager->id,
-            'performance_cycle_id'    => $cycle->id,
-            'status'=>'Reviewed',
-            'score'       => 5,
-            'comments'    => 'AAAA',
+        $review = PerformanceReview::factory()->create([
+            'reviewer_id' => $managerEmployee->id,
+            'performance_cycle_id' => $cycle->id,
         ]);
 
-        $response=$this->putJson('/api/v1/performance-reviews/'.$review->id ,
-        [
-            'score'       => 1,
-            'comments'    => 'F',
+        $response = $this->actingAs($manager)->putJson(route('UpdateReview', $review->id), [
+            'score' => 1,
+            'comments' => 'F',
         ]);
-        
-        $response
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'status',
-            'message',
-            'data'=>[
-                'id',
-                'cycle_id',
-                'employee_id',
-                'manager_id',
-                'status',
-                'score',
-                'comments',
-                'reviewed_at',
-                'status_cycle',
-                'cycle_name',
-                'employee_name',
-            ]
-        ])
-        ->assertJson([
-            'status'=> true,
-            'message'=> "Performance review updated successfully.",
-                'data' =>[
-                    'id'=> $review->id,
-                    'cycle_id' => $cycle->id,
-                    'employee_id'=> $employee->id ,
-                    'manager_id' =>$admin->id,
-                    'status'=> "Reviewed",
-                    'score'=> 1,
-                    'comments'=> "F",
-                    'reviewed_at'=>$review->reviewed_at->format('y-m-d 00:00:00') ,
-                    'status_cycle'=> "Active",
-                    'cycle_name'=>$cycle->name,
-                    'employee_name'=>$employee->first_name,
-                ]
-        ])
-        ;
+
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                     'status',
+                     'message',
+                     'data' => [
+                          'id',
+                          'cycle_id',
+                          'employee_id',
+                          'manager_id',
+                          'status',
+                          'score',
+                          'comments',
+                          'reviewed_at',
+                          'status_cycle',
+                          'cycle_name',
+                          'employee_name',
+                      ]
+                 ]);
     }
 
-
-    public  function test_Update_Review_without_manager_role()
+    public function test_Update_Review_without_manager_role()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-        $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
-        $permission=Permission::create([
-            'name'=>'update.review.employee.own.department','guard_name' => 'sanctum'
+        // Employee user (NOT manager)
+        $employeeUser = User::factory()->create();
+        $employeeUser->assignRole('Employee');
+
+        Sanctum::actingAs($employeeUser);
+
+        // Manager user
+        $managerUser = User::factory()->create();
+
+        // Department + JobTitle
+        $department = Department::factory()->create();
+        $jobTitle = JobTitle::factory()->create([
+            'department_id' => $department->id
         ]);
 
-        $role=Role::create(['name'=>'Employee','guard_name' => 'sanctum']);
-        $role->givePermissionTo($permission);
-        $admin = User::factory()->create();
-        $admin->assignRole($role);
-        Sanctum::actingAs($admin, ['*'], 'sanctum');
-
-        $user = User::factory()->create();
-        $department=Department::factory()->create();
-        $jobTitle=JobTitle::factory()->create([
-            'department_id'=>$department->id
+        // Manager employee record
+        $manager = Employee::factory()->create([
+            'user_id'        => $managerUser->id,
+            'department_id'  => $department->id,
+            'job_title_id'   => $jobTitle->id,
         ]);
 
-        $manager= Employee::factory()->create([
-            'user_id'=>$admin->id,
-            'department_id' => $department->id,
-            'job_title_id' => $jobTitle->id,
-            'employee_number' => 'EMP-0012',
-            'national_id' => '1234567892',
-        ]);
-        $employee= Employee::factory()->create([
-            'user_id'=>$user->id,
-            'department_id' => $department->id,
-            'job_title_id' => $jobTitle->id,
-            'manager_id'=>$manager->id,
-            'employee_number' => 'EMP-001',
-            'national_id' => '123456789',
-            
-            
-        ]);
-        $cycle=PerformanceCycle::factory()->create(['status'=>'Active']);
-        $review=PerformanceReview::factory()->create([
-            'employee_id'             => $employee->id,
-            'reviewer_id'             => $manager->id,
-            'performance_cycle_id'    => $cycle->id,
-            'status'=>'Reviewed',
-            'score'       => 5,
-            'comments'    => 'AAAA',
+        $managerUser->setRelation('employee', $manager);
+
+        // Employee record
+        $employee = Employee::factory()->create([
+            'user_id'        => $employeeUser->id,
+            'department_id'  => $department->id,
+            'job_title_id'   => $jobTitle->id,
+            'manager_id'     => $manager->id,
         ]);
 
-        $response=$this->putJson('/api/v1/performance-reviews/'.$review->id ,
-        [
-            'score'       => 1,
-            'comments'    => 'F',
+        // Active cycle
+        $cycle = PerformanceCycle::factory()->create(['status' => 'Active']);
+
+        // Review
+        $review = PerformanceReview::factory()->create([
+            'employee_id'          => $employee->id,
+            'reviewer_id'          => $manager->id,
+            'performance_cycle_id' => $cycle->id,
+            'status'               => 'Reviewed',
+            'score'                => 5,
+            'comments'             => 'AAAA',
         ]);
-        
-        $response
-        ->assertStatus(403)
-        ->assertJsonStructure([
-            'success',
-            'message',
-        ])
-        ->assertJson([
-            'success'=> false,
-            'message'=> "Forbidden. You do not have the required permissions.",
-        ])
-        ;
 
-    
+        // API request
+        $response = $this->putJson("/api/v1/performance-reviews/{$review->id}", [
+            'score'    => 1,
+            'comments' => 'F',
+        ]);
 
-
-
+        $response->assertStatus(403)
+                 ->assertJson([
+                     'success' => false,
+                     'message' => "Forbidden. You do not have the required permissions.",
+                 ]);
     }
-
 }

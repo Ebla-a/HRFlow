@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Modules\Employee\Entities\Employee;
 

@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\User\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\User\App\DTOs\UpdateAvatarData;
 use Modules\User\App\DTOs\UpdateEmailData;
-
-
 use Modules\User\Entities\User;
-use Modules\User\Http\Requests\UpdateEmailRequest as RequestsUpdateEmailRequest;
+use Modules\User\Http\Requests\UpdateEmailRequest;
 use Modules\User\Http\Requests\UpdateProfileImageRequest;
 use Modules\User\Services\v1\UploadService;
 use Modules\User\Services\v1\UserService;
@@ -28,20 +28,24 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         $this->authorize('viewAny', User::class);
+
         $users = $this->userService->allUsers();
 
         return $this->success(
-            UserResource::collection($users)->response()->getData(true),
+            UserResource::collection($users)
+                ->response()
+                ->getData(true),
             'Users retrieved successfully.'
         );
     }
 
     /**
-     * Display the specified user details.
+     * Display the specified user.
      */
     public function show(User $user): JsonResponse
     {
         $this->authorize('view', $user);
+
         return $this->success(
             new UserResource($user),
             'User retrieved successfully.'
@@ -49,17 +53,23 @@ class UserController extends Controller
     }
 
     /**
-     * Update the email address of a user.
+     * Update user email.
      */
-    public function updateEmail(RequestsUpdateEmailRequest $request, User $user): JsonResponse
-    {
+    public function updateEmail(
+        UpdateEmailRequest $request,
+        User $user
+    ): JsonResponse {
         $this->authorize('updateEmail', $user);
+
         $dto = UpdateEmailData::fromArray([
             'userId' => $user->id,
             'email' => $request->validated()['email'],
         ]);
 
-        $updatedUser = $this->userService->updateEmail($user, $dto);
+        $updatedUser = $this->userService->updateEmail(
+            $user,
+            $dto
+        );
 
         return $this->success(
             new UserResource($updatedUser),
@@ -68,14 +78,22 @@ class UserController extends Controller
     }
 
     /**
-     * Upload and update the profile avatar image for a user.
+     * Update user profile image.
      */
-    public function updateProfileImage(UpdateProfileImageRequest $request, User $user): JsonResponse
-    {
+    public function updateProfileImage(
+        UpdateProfileImageRequest $request,
+        User $user
+    ): JsonResponse {
         $this->authorize('updateAvatar', $user);
-        $dto = UpdateAvatarData::fromArray($request->validated());
 
-        $updatedUser = $this->uploadService->updateProfileImage($user, $dto);
+        $dto = UpdateAvatarData::fromArray(
+            $request->validated()
+        );
+
+        $updatedUser = $this->uploadService->updateProfileImage(
+            $user,
+            $dto
+        );
 
         return $this->success(
             new UserResource($updatedUser),
@@ -84,12 +102,15 @@ class UserController extends Controller
     }
 
     /**
-     * Deactivate a user account.
+     * Deactivate user account.
      */
-    public function deactivateUserAccount(User $user): JsonResponse
-    {
+    public function deactivateUserAccount(
+        User $user
+    ): JsonResponse {
         $this->authorize('deactivate', $user);
-        $updatedUser = $this->userService->deactivateUserAccount($user);
+
+        $updatedUser = $this->userService
+            ->deactivateUserAccount($user);
 
         return $this->success(
             new UserResource($updatedUser),
@@ -98,16 +119,29 @@ class UserController extends Controller
     }
 
     /**
-     * Activate a user account.
+     * Activate user account.
      */
-    public function activateUserAccount(User $user): JsonResponse
-    {
+    public function activateUserAccount(
+        User $user
+    ): JsonResponse {
         $this->authorize('activate', $user);
-        $updatedUser = $this->userService->activateUserAccount($user);
+
+        $updatedUser = $this->userService
+            ->activateUserAccount($user);
 
         return $this->success(
             new UserResource($updatedUser),
             'User activated successfully.'
         );
     }
+
+    /**
+ * Download user profile image.
+ */
+public function downloadProfileImage(User $user)
+{
+    $this->authorize('view', $user);
+
+    return $this->uploadService->downloadProfileImage($user);
+}
 }

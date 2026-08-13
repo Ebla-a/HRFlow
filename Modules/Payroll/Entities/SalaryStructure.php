@@ -18,6 +18,7 @@ use Modules\Payroll\Database\Factories\SalaryStructureFactory;
     'housing_allowance',
     'transport_allowance',
     'other_allowance',
+    'currency',
     'effective_date',
 ])]
 final class SalaryStructure extends Model

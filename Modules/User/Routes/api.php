@@ -33,6 +33,12 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'role:Hr_admin'])->group(functi
         ->middleware('permission:user.active')
         ->name('users.activate');
 
+
+    Route::get(
+        '/users/{user}/avatar',
+        [UserController::class, 'downloadProfileImage']
+    )->name('users.avatar.download');
+
     /**
      * HR Admin (Roles & Permissions)
      */

@@ -5,7 +5,7 @@ namespace Modules\Employee\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 
 

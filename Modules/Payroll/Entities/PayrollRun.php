@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Modules\Payroll\App\Enums\PayrollRunStatus;
 
@@ -21,6 +21,10 @@ use Modules\Payroll\App\Enums\PayrollRunStatus;
     'processed_by',
     'finalized_at',
     'finalized_by',
+    'currency',
+    'exchange_rate',
+    'exchange_rate_date',
+    'exchange_rate_provider',
 ])]
 final class PayrollRun extends Model
 {
@@ -36,6 +40,8 @@ final class PayrollRun extends Model
             'status' => PayrollRunStatus::class,
             'processed_at' => 'datetime',
             'finalized_at' => 'datetime',
+            'exchange_rate' => 'decimal:8',
+           'exchange_rate_date' => 'date',
         ];
     }
 /**

@@ -181,49 +181,32 @@ class PerformancePolicy
      * Managers can update only reviews they created.
      * Reviews can only be updated while the cycle is active.
      */
-    public function updateReview(
-        User $authUser,
-        PerformanceReview $review
-    ): bool {
-        /*
-         * HR/Admin override.
-         */
-        if ($authUser->hasPermissionTo('view.reviews.all')) {
-            return $review->cycle?->status === 'Active';
-        }
-
-        /*
-         * Manager must have update permission.
-         */
-        if (!$authUser->hasPermissionTo(
-            'update.review.employee.own.department'
-        )) {
-            return false;
-        }
-
-        /*
-         * Authenticated user must have an employee record.
-         */
-        $managerEmployee = $authUser->employee;
-
-        if (!$managerEmployee) {
-            return false;
-        }
-
-        /*
-         * Only the reviewer who created the review
-         * can update it.
-         */
-        if (
-            (int) $review->reviewer_id !==
-            (int) $managerEmployee->id
-        ) {
-            return false;
-        }
-
-        /*
-         * Reviews cannot be modified after the cycle is closed.
-         */
+ public function updateReview(User $authUser, PerformanceReview $review): bool
+{
+  
+    if ($authUser->hasPermissionTo('view.reviews.all')) {
         return $review->cycle?->status === 'Active';
     }
+
+    if (!$authUser->hasPermissionTo('update.review.employee.own.department')) {
+        return false;
+    }
+
+    
+    $managerEmployee = $authUser->employee;
+
+    if (!$managerEmployee) {
+        return false;
+    }
+
+
+    if ((int) $review->reviewer_id !== (int) $managerEmployee->id) {
+        return false;
+    }
+
+  
+    return $review->cycle?->status === 'Active';
+}
+
+
 }

@@ -41,14 +41,25 @@ class PerformanceSeederTableSeeder extends Seeder
         /*
          * Create employees with their related users.
          */
-        for ($i = 0; $i < $n; $i++) {
-            Employee::factory()->create([
-                'user_id' => User::factory()->create()->id,
-                'department_id' => $department->id,
-                'job_title_id' => $jobTitle->id,
-                'employee_number' => 'EMP-00' . ($i + 1),
-                'national_id' => '123456789' . $i,
-            ]);
+       for ($i = 0; $i < $n; $i++) {
+            Employee::firstOrCreate(
+                [
+                    'employee_number' => 'EMP-00' . ($i + 1)
+                ],
+                [
+                    'user_id' => User::factory()->create()->id,
+                    'department_id' => $department->id,
+                    'job_title_id' => $jobTitle->id,
+                    'first_name' => 'Employee',
+                    'last_name' => 'Test ' . ($i + 1),
+                    'national_id' => '123456789' . $i,
+                    'birth_date' => '1995-01-01',
+                    'gender' => 'male',
+                    'employment_type' => 'full_time',
+                    'status' => 'active',
+                    'hire_date' => now(),
+                ]
+            );
         }
 
         $employees = Employee::all();

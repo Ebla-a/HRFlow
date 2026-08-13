@@ -25,8 +25,8 @@ class EmployeeModelTest extends TestCase
 
     public function test_it_calculates_employee_age_correctly(): void
     {
-        $birthDate = Carbon::now()->subYears(23)->format('Y-m-d');
-        
+        $birthDate = Carbon::now()->subYears(23)->startOfDay()->format('Y-m-d');
+
         $employee = new Employee([
             'birth_date' => $birthDate,
         ]);
@@ -35,15 +35,15 @@ class EmployeeModelTest extends TestCase
     }
 
     public function test_it_calculates_years_of_service_correctly(): void
-    {
-        $hireDate = Carbon::now()->subYears(3)->format('Y-m-d');
+{
+    $hireDate = Carbon::now()->subYears(3)->startOfDay()->format('Y-m-d');
 
-        $employee = new Employee([
-            'hire_date' => $hireDate,
-        ]);
+    $employee = new Employee([
+        'hire_date' => $hireDate,
+    ]);
 
-        $this->assertEquals(3, $employee->years_of_service);
-    }
+    $this->assertEquals(3, $employee->years_of_service);
+}
 
     public function test_active_scope_filters_only_active_employees(): void
     {

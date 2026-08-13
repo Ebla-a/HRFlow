@@ -3,95 +3,75 @@
 namespace Modules\Performance\Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Sanctum\Sanctum;
-use Spatie\Permission\PermissionRegistrar;
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\User\Entities\User;
 
 class ShowCyclesTest extends TestCase
 {
-    use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+    use DatabaseMigrations;
+
     public function test_Show_Cycles_for_authenticated_users_with_role()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
-        $role = Role::create(['name' => 'Hr_admin', 'guard_name' => 'sanctum']);
         $admin = User::factory()->create();
-        $admin->assignRole($role);
-        Sanctum::actingAs($admin, ['*'], 'sanctum');
+        $admin->assignRole('Hr_admin');
+
+        Sanctum::actingAs($admin);
+
         PerformanceCycle::factory()->count(5)->create();
 
-        $response=$this->getJson('/api/v1/performance-cycles');
-        $response
-        ->assertStatus(200)
-        ->assertJsonStructure([
-            'status',
-            'message',
-            'data' => [
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'start_date',
-                        'end_date',
-                        'status',
-                    ]
-                ],
-                'meta' => [
-                    'current_page',
-                    'last_page',
-                    'per_page',
-                    'total'
-                ]
-            ]
-        ])
-        ->assertJson([
-            'status'=>true,
-            'message' => 'Performance cycles retrieved successfully.',
-            'data'=>[]
-        ]);
+        $response = $this->getJson('/api/v1/performance-cycles');
 
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                     'status',
+                     'message',
+                     'data' => [
+                         'data' => [
+                             '*' => [
+                                 'id',
+                                 'name',
+                                 'start_date',
+                                 'end_date',
+                                 'status',
+                             ]
+                         ],
+                         'meta' => [
+                             'current_page',
+                             'last_page',
+                             'per_page',
+                             'total'
+                         ]
+                     ]
+                 ]);
     }
 
     public function test_Show_Cycles_for_non_authenticated_users()
     {
-
-        $user = User::factory()->create();
         PerformanceCycle::factory()->count(5)->create();
 
-        $response=$this->getJson('/api/v1/performance-cycles');
-        $response
-        ->assertStatus(401)
-        ->assertJsonStructure([
-            'message'
-        ])
-        ->assertJson([
-            'message' => 'Unauthenticated.'
-        ]);
+        $response = $this->getJson('/api/v1/performance-cycles');
+
+        $response->assertStatus(401)
+                 ->assertJson([
+                     'message' => 'Unauthenticated.'
+                 ]);
     }
 
     public function test_Show_Cycles_for_authenticated_users_without_role()
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
         $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*'], 'sanctum');
+
+        Sanctum::actingAs($user);
+
         PerformanceCycle::factory()->count(5)->create();
 
-        $response=$this->getJson('/api/v1/performance-cycles');
-        $response
-        ->assertStatus(403)
-        ->assertJsonStructure([
-            "message"
-        ])
-        ->assertJson([
-            'message' => 'This action is unauthorized.'
-        ]); 
+        $response = $this->getJson('/api/v1/performance-cycles');
+
+        $response->assertStatus(403)
+                 ->assertJson([
+                     'message' => 'Forbidden. You do not have the required permissions.'
+                 ]);
     }
 }

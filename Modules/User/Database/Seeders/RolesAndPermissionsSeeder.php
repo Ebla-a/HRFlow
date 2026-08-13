@@ -43,6 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'employees.view.all',
             'employee.create',
+            'hire.employee',
             'employee.update',
             'employee.change.status',
 
@@ -116,6 +117,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete.report',
             'view.reports.all',
             'export.report',
+
+        'view.exchange.rates',
         ];
 
         $managerPermissions = [
