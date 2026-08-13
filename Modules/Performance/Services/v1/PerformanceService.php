@@ -2,8 +2,9 @@
 
 namespace Modules\Performance\Services\v1;
 
-use Modules\Performance\Entities\Performance_cycle;
+use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\DTO\CreateCycleDTO;
+use Modules\Performance\Exceptions\CycleEndedException;
 
 class PerformanceService
 {
@@ -12,16 +13,16 @@ class PerformanceService
      */
     public function show(int $perPage = 15)
     {
-        return Performance_cycle::query()->paginate($perPage);
+        return PerformanceCycle::query()->paginate($perPage);
     }
 
     /**
      * @param CreateCycleDTO $data
-     * @return Performance_cycle
+     * @return PerformanceCycle
      */
     public function create(CreateCycleDTO $data)
     {
-        return Performance_cycle::create([
+        return PerformanceCycle::create([
             'name'       => $data->name,
             'start_date' => $data->start_date,
             'end_date'   => $data->end_date,
@@ -30,21 +31,26 @@ class PerformanceService
     }
 
     /**
-     * @param Performance_cycle $cycle
-     * @return Performance_cycle
+     * @param PerformanceCycle $cycle
+     * @return PerformanceCycle
      */
-    public function activate(Performance_cycle $cycle)
+    public function activate(PerformanceCycle $cycle)
     {
+        if ($cycle->end_date->isPast()) {
+        throw new CycleEndedException
+        ('Cannot activate a performance cycle whose end date has passed.');
+    }
         $cycle->status = 'Active';
         $cycle->save();
         return $cycle;
+
     }
 
     /**
-     * @param Performance_cycle $cycle
-     * @return Performance_cycle
+     * @param PerformanceCycle $cycle
+     * @return PerformanceCycle
      */
-    public function close(Performance_cycle $cycle)
+    public function close(PerformanceCycle $cycle)
     {
         $cycle->status = 'Closed';
         $cycle->save();

@@ -1,105 +1,105 @@
 <?php
 
-namespace Modules\User\Tests\Featur;
+declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\WithFaker;
+namespace Modules\User\Tests\Feature;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Modules\User\Entities\User;
-use Spatie\Permission\Models\Role; 
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class RoleTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    use RefreshDatabase;
-
-    public function test_create_role()
+    public function test_create_role(): void
     {
-        Role::create(['name'=>"Hr_admin"]);
-        $admin=User::factory()->create();
+        $admin = User::factory()->create();
+
         $admin->assignRole('Hr_admin');
-        $user = User::factory()->create();
+
         Sanctum::actingAs($admin);
 
-        $response=$this->postJson('/api/v1/Hr/createRole',[
-            'role'=>"Employee"
-        ]);
+        $roleName = 'TestRole';
 
-        $response->assertStatus(200)
-        ->assertJsonStructure([
-                'status' ,
-                'message',
-                'data' ,
-            ])
-        ->assertJson([
-            'status'=>true,
-            'message'=>'Role created successfully',
-            'data'=>[]
-        ]);
+        $response = $this->postJson(
+            '/api/v1/roles',
+            [
+                'name' => $roleName,
+            ]
+        );
 
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'status' => true,
+                'message' => 'Role created successfully',
+                'data' => [],
+            ]);
+
+        $this->assertDatabaseHas('roles', [
+            'name' => $roleName,
+            'guard_name' => 'sanctum',
+        ]);
     }
 
-    public function test_create_existing_role()
+    public function test_create_existing_role(): void
     {
-        Role::create(['name'=>"Hr_admin"]);
-        Role::create(['name'=>"Employee"]);
-        $admin=User::factory()->create();
+        Role::create([
+            'name' => 'EmployeeTest',
+            'guard_name' => 'sanctum',
+        ]);
+
+        $admin = User::factory()->create();
+
         $admin->assignRole('Hr_admin');
+
         Sanctum::actingAs($admin);
 
-        $response=$this->postJson('/api/v1/Hr/createRole',[
-            'role'=>"Employee"
-        ]);
+        $response = $this->postJson(
+            '/api/v1/roles',
+            [
+                'name' => 'EmployeeTest',
+            ]
+        );
 
-        $response->assertStatus(422)
-        ->assertJsonStructure([
-                'status'  ,
-                'message' ,
-                'errors'  ,
-            ])
-        ->assertJson([
-            'status'  => false,
-            'message' => 'Validation error',
-            'errors'  => [
-                    'role' => ['A role with this name already exists.'],
-                ],
-        ]);
-
+      $response->assertStatus(422)
+    ->assertJson([
+        'success' => false,
+        'message' => 'Validation failed.',
+    ])
+    ->assertJsonValidationErrors([
+        'name',
+    ]);
     }
 
-    public function test_delete__role()
+    public function test_delete_role(): void
     {
-        Role::create(['name'=>"Hr_admin"]);
-        $role=Role::create(['name'=>"Employee"]);
-        $admin=User::factory()->create();
+        $role = Role::create([
+            'name' => 'DeleteTestRole',
+            'guard_name' => 'sanctum',
+        ]);
+
+        $admin = User::factory()->create();
+
         $admin->assignRole('Hr_admin');
+
         Sanctum::actingAs($admin);
 
-        $response=$this->postJson('/api/v1/Hr/deleteRole/'.$role->id);
+        $response = $this->deleteJson(
+            '/api/v1/roles/' . $role->id
+        );
 
-        $response->assertStatus(200)
-        ->assertJsonStructure([
-                'status'  ,
-                'message' ,
-                'data'  ,
-            ])
-        ->assertJson([
-            'status'  => true,
-            'message' => 'Role deleted successfully',
-            'data'  => [],
-        ]);
-        
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'status' => true,
+                'message' => 'Role deleted successfully',
+                'data' => [],
+            ]);
+
         $this->assertDatabaseMissing('roles', [
             'id' => $role->id,
         ]);
-
     }
-
-
 }

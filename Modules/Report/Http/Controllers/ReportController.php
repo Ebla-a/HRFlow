@@ -3,58 +3,148 @@
 namespace Modules\Report\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Modules\Report\Services\ReportService;
+use Modules\Payroll\Entities\PayrollRun;
+use Modules\Report\Exports\ReportExport;
+use Modules\Report\Exports\ReportExportSingleSheet;
 
 class ReportController extends Controller
 {
+    public function __construct(
+        private readonly ReportService $reportService
+    ) {}
+
     /**
-     * Display a listing of the resource.
-     * @return Response
+     * Generate a report summary on demand.
+     *
+     * @param string $type payroll|attendance|leave|performance|employees
+     * @return JsonResponse
      */
-    public function index()
+public function generate(Request $request, string $type): JsonResponse
     {
-        //
+        $month = (int) ($request->input('month', now()->month));
+        $year = (int) ($request->input('year', now()->year));
+
+        $data = $this->reportService->generate($type, $month, $year);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    public function generatePayroll(PayrollRun $run): JsonResponse
+    {
+    $data = $this->reportService->generatePayroll($run);
+
+    return response()->json([
+        'success' => true,
+        'data' => $data,
+      ]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Response
+     * Read a report summary for a given type/month/year.
+     *
+     * @param string $type
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function show(Request $request, string $type): JsonResponse
     {
-        //
+        $month = (int) ($request->input('month', now()->month));
+        $year = (int) ($request->input('year', now()->year));
+
+        $data = $this->reportService->read($type, $month, $year);
+
+        if ($data === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Report not found for this period. Generate it first.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
     }
 
     /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Response
+     * List all report summaries for a type.
+     *
+     * @param string $type
+     * @return JsonResponse
      */
-    public function show($id)
+    public function index(Request $request, string $type): JsonResponse
     {
-        //
+        $year = $request->has('year') ? (int) $request->input('year') : null;
+
+        $data = $this->reportService->listByType($type, $year);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
+public function exportExcel(Request $request, string $type)
+{
+    $month = (int) $request->query('month', now()->month);
+    $year = (int) $request->query('year', now()->year);
+
+    $reportData = $this->reportService->generate($type, $month, $year);
+
+    $rows = [];
+
+    foreach ($reportData as $key => $value) {
+
+        // Fix: convert Collections to arrays
+        if ($value instanceof \Illuminate\Support\Collection) {
+            $value = $value->toArray();
+        }
+
+        // Flatten arrays
+        if (is_array($value)) {
+            foreach ($value as $subKey => $subValue) {
+
+                if ($subValue instanceof \Illuminate\Support\Collection) {
+                    $subValue = $subValue->toArray();
+                }
+
+                if (is_array($subValue) || is_object($subValue)) {
+                    $subValue = json_encode($subValue, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+
+                $rows[] = [
+                    'Metric' => "{$key}.{$subKey}",
+                    'Value'  => $subValue ?? '—',
+                ];
+            }
+            continue;
+        }
+
+        if (is_object($value)) {
+            $value = json_encode((array) $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($value === null) {
+            $value = '—';
+        }
+
+        $rows[] = [
+            'Metric' => $key,
+            'Value'  => $value,
+        ];
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    return (new ReportExportSingleSheet($rows))
+        ->download("{$type}_report_{$year}_{$month}.xlsx");
+}
+
+
+
+
+
 }

@@ -6,9 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileImageRequest extends FormRequest
 {
-    public function authorize(): bool
+   public function authorize(): bool
     {
-        return $this->user()->can('update avatar');
+        return true;
     }
 
     public function rules(): array

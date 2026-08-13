@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Organization\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -11,74 +13,119 @@ class DepartmentPolicy
     use HandlesAuthorization;
 
     /**
-     * Create a new policy instance.
-     *
-     * @return void
+     * Determine whether the user can view the list of departments.
      */
-    public function __construct()
+    public function viewAny(User $user): bool
     {
-        //
+        return $user->hasPermissionTo('departments.view', 'sanctum')
+            || $user->hasPermissionTo('departments.view.all', 'sanctum');
     }
-      /**
-       * Summary of viewAny
-       * @param User $user
-       * @return bool
-       */
-      public function viewAny(User $user): bool
-    {
-        return $user->can('departments.view.all');
-    }
+
     /**
-     * Summary of view
-     * @param User $user
-     * @param Department $department
-     * @return bool
+     * Determine whether the user can view a specific department.
+     *
      */
     public function view(User $user, Department $department): bool
     {
-        //if user role =hr
-        if ($user->can('departments.view.all')) {
-            return true;
+        /*
+         * ---------------------------------------------------------
+         * 1. Detect whether this user is a manager.
+         * ---------------------------------------------------------
+         */
+        $isManager = $user->roles()
+            ->where('name', 'manager')
+            ->exists();
+
+        /*
+         * ---------------------------------------------------------
+         * 2. Managers can ONLY access their own department.
+         * --------------------------------------------------------
+         */
+        if ($isManager) {
+            $employee = $user->employee;
+
+            if ($employee === null) {
+                return false;
+            }
+
+            return (int) $department->manager_id === (int) $employee->id;
         }
-//if user has permission to view own department, check if the user is the manager of the department
-        return $department->manager_id && $user->employee?->id === $department->manager_id;
+
+      
+
+        return $user->hasPermissionTo('departments.show', 'sanctum')
+            || $user->hasPermissionTo('departments.view', 'sanctum')
+            || $user->hasPermissionTo('departments.view.all', 'sanctum');
     }
 
     /**
-     * Summary of delete
-     * @param User $user
-     * @param Department $department
-     * @return bool
+     * Determine whether the user can create departments.
      */
-    public function delete(User $user, Department $department): bool
+    public function create(User $user): bool
     {
-        if (! $user->can('department.delete')) {
+        return $user->hasPermissionTo(
+            'departments.create',
+            'sanctum'
+        );
+    }
+
+    /**
+     * Determine whether the user can update a department.
+     */
+    public function update(
+        User $user,
+        Department $department
+    ): bool {
+        return $user->hasPermissionTo(
+            'departments.update',
+            'sanctum'
+        );
+    }
+
+    /**
+     * Determine whether the user can delete a department.
+     */
+    public function delete(
+        User $user,
+        Department $department
+    ): bool {
+        if (! $user->hasPermissionTo(
+            'departments.delete',
+            'sanctum'
+        )) {
             return false;
         }
 
+        /*
+         * Do not allow deleting a department that still
+         * contains employees.
+         */
         return ! $department->employees()->exists();
     }
 
     /**
-     * Summary of create
-     * @param User $user
-     * @return bool
+     * Determine whether the user can restore a department.
      */
-    public function create(User $user): bool
-    {
-        return $user->can('department.create');
+    public function restore(
+        User $user,
+        Department $department
+    ): bool {
+        return $user->hasPermissionTo(
+            'departments.restore',
+            'sanctum'
+        );
     }
+
     /**
-     * Summary of update
-     * @param User $user
-     * @param Department $department
-     * @return bool
+     * Determine whether the user can assign a manager.
      */
-    public function update(User $user, Department $department): bool
-    {
-        return $user->can('department.update');
+    public function assignManager(
+        User $user,
+        Department $department
+    ): bool {
+        return $user->hasPermissionTo(
+            'departments.assign-manager',
+            'sanctum'
+        );
     }
-
-
-
 }

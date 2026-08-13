@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Payroll\App\Enums\SalaryField;
 
-
-#[Fillable([  'salary_history_id',
-        'field',
-        'old_amount',
-        'new_amount',])]
+#[Fillable([
+    'salary_history_id',
+    'field',
+    'old_amount',
+    'new_amount',
+])]
 final class SalaryHistoryItem extends Model
 {
     protected $table = 'salary_history_items';
@@ -26,12 +27,6 @@ final class SalaryHistoryItem extends Model
             'new_amount' => 'decimal:2',
         ];
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
 
     public function salaryHistory(): BelongsTo
     {

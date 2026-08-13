@@ -33,6 +33,8 @@ $table->foreignId('finalized_by')
     ->constrained('users')
     ->nullOnDelete();   
 
+    $table->text('note')->nullable();
+
             $table->timestamps();
 
             $table->unique([

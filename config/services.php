@@ -14,6 +14,31 @@ return [
     |
     */
 
+    'exchange_rate' => [
+    'base_url' => env(
+        'EXCHANGE_RATE_API_BASE_URL',
+        'https://api.frankfurter.app'
+    ),
+
+    'provider' => env(
+        'EXCHANGE_RATE_PROVIDER',
+        'frankfurter'
+    ),
+
+    'timeout' => (int) env(
+        'EXCHANGE_RATE_API_TIMEOUT',
+        10
+    ),
+],
+
+'payroll' => [
+    'base_currency' => env(
+        'PAYROLL_BASE_CURRENCY',
+        'USD'
+    ),
+],
+
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

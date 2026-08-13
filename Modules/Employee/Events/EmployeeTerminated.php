@@ -1,6 +1,5 @@
 <?php
-
-namespace Modules\Employee\App\Events;
+namespace Modules\Employee\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

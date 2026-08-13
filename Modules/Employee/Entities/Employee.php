@@ -2,7 +2,7 @@
 
 namespace Modules\Employee\Entities;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,10 +10,15 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
+
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\Employee\App\Enums\EmploymentType;
 use Modules\Employee\App\Enums\Gender;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Employee\Database\Factories\EmployeeFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Entities\JobTitle;
 use Spatie\Permission\Traits\HasRoles;
@@ -38,7 +43,8 @@ use Spatie\Permission\Traits\HasRoles;
     'termination_reason',
 ])]
 class Employee extends Model
-{ 
+{
+    use SoftDeletes, HasFactory, HasRoles;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -48,6 +54,13 @@ class Employee extends Model
         'termination_date' => 'date',
     ];
 
+
+
+    protected static function newFactory(): EmployeeFactory
+    {
+        return EmployeeFactory::new();
+    }
+
     /**
      * get full name
      * @return Attribute
@@ -55,7 +68,7 @@ class Employee extends Model
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn () => "{$this->first_name} {$this->last_name}"
+            get: fn() => "{$this->first_name} {$this->last_name}"
         );
     }
     /**
@@ -64,18 +77,23 @@ class Employee extends Model
     protected function age(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->birth_date ? Carbon::parse($this->birth_date)->age : null
+            get: fn() => $this->birth_date ? Carbon::parse($this->birth_date)->age : null
         );
     }
     /**
-     * @return Attribute
+
+     * @return float|int
      */
-    protected function yearsOfService(): Attribute
+    public function getYearsOfServiceAttribute(): int
     {
-        return Attribute::make(
-            get: fn () => $this->hire_date ? Carbon::parse($this->hire_date)->diffInYears(now()) : 0
-        );
+        if (!$this->hire_date) {
+            return 0;
+        }
+
+        return Carbon::parse($this->hire_date)->diffInYears(Carbon::now());
     }
+
+
     /**
      * @param Builder $query
      * @return Builder
@@ -105,7 +123,7 @@ class Employee extends Model
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class,);
+        return $this->belongsTo(Department::class);
     }
     /**
      * @return BelongsTo<JobTitle, Employee>
@@ -122,7 +140,7 @@ class Employee extends Model
         return $this->belongsTo(self::class, 'manager_id');
     }
     /**
-     * @return HasMany<Employee, Employee>
+     * @return HasMany<Employee, Employee> 
      */
     public function subordinates(): HasMany
     {
@@ -130,30 +148,35 @@ class Employee extends Model
     }
 
 
-       public function managedDepartment()
+    public function managedDepartment()
     {
         return $this->hasOne(Department::class, 'manager_id');
     }
 
     public function leaveRequests()
-   {
-     return $this->hasMany(
-        \Modules\Leave\Entities\LeaveRequest::class
-    );
-   }
+    {
+        return $this->hasMany(
+            \Modules\Leave\Entities\LeaveRequest::class
+        );
+    }
 
 
     public function leaveBalances()
-   {
-      return $this->hasMany(
-        \Modules\Leave\Entities\LeaveBalance::class
-    );
-   }
+    {
+        return $this->hasMany(
+            \Modules\Leave\Entities\LeaveBalance::class
+        );
+    }
     /**
      * @return HasMany<EmployeeDocument, Employee>
      */
     public function documents(): HasMany
     {
         return $this->hasMany(EmployeeDocument::class);
+    }
+
+    public function salaryStructure()
+    {
+        return $this->hasOne(\Modules\Payroll\Entities\SalaryStructure::class);
     }
 }

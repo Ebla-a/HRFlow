@@ -22,10 +22,12 @@ class ReviewResource extends JsonResource
             'status'=>$this->status,
             'score' => $this->score,
             'comments' => $this->comments,
-            'reviewed_at' => $this->reviewed_at,
-            'status_cycle'=>$this->cycle?->status,
-            'cycle_name'=>$this->cycle?->name,
-            'employee_name'=>$this->employee?->first_name,
+           'reviewed_at' => $this->reviewed_at
+    ? $this->reviewed_at->format('y-m-d 00:00:00')
+    : null,
+            'status_cycle'=>$this->cycle?->status         ?? 'Unassigned',
+            'cycle_name'=>$this->cycle?->name             ?? 'Unassigned',
+            'employee_name'=>$this->employee?->first_name ?? 'Unassigned',
         ];
     }
 }

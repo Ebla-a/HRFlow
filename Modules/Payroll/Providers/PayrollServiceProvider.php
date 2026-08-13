@@ -5,8 +5,17 @@ namespace Modules\Payroll\Providers;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Employee\App\Events\EmployeeHired;
-use Modules\Payroll\App\Listeners\CreateInitialSalaryStructure;
+use Illuminate\Support\Facades\Gate;
+use Modules\Employee\Events\EmployeeHired as EventsEmployeeHired;
+use Modules\Payroll\Contracts\ExchangeRateFetcherInterface;
+use Modules\Payroll\Contracts\ExchangeRateProviderInterface;
+use Modules\Payroll\Entities\PayrollRun;
+use Modules\Payroll\Entities\Payslip;
+use Modules\Payroll\Listeners\CreateInitialSalaryStructure;
+use Modules\Payroll\Policies\PayrollRunPolicy;
+use Modules\Payroll\Policies\PayslipPolicy;
+use Modules\Payroll\Services\ApiExchangeRateFetcher;
+use Modules\Payroll\Services\DatabaseExchangeRateProvider;
 
 class PayrollServiceProvider extends ServiceProvider
 {
@@ -28,9 +37,14 @@ class PayrollServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(
-            EmployeeHired::class,
+            EventsEmployeeHired::class,
             CreateInitialSalaryStructure::class
         );
+
+        Gate::policy(PayrollRun::class,PayrollRunPolicy::class);
+        Gate::policy(Payslip::class,PayslipPolicy::class);
+
+
 
         $this->registerTranslations();
         $this->registerConfig();
@@ -45,6 +59,8 @@ class PayrollServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(ExchangeRateProviderInterface::class, DatabaseExchangeRateProvider::class);
+        $this->app->bind(ExchangeRateFetcherInterface::class, ApiExchangeRateFetcher::class);
         $this->app->register(RouteServiceProvider::class);
     }
 

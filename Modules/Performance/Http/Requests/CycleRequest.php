@@ -10,6 +10,12 @@ use Modules\Performance\Rules\MinimumDaysAfter;
 
 class CycleRequest extends FormRequest
 {
+    
+    public function authorize(): bool
+    {
+        return true;
+    }
+    
     public function rules(): array
     {
         return [
@@ -44,8 +50,4 @@ class CycleRequest extends FormRequest
         ], 422));
     }
 
-    public function authorize(): bool
-    {
-        return true;
-    }
 }

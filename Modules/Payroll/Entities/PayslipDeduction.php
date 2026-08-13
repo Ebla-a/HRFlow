@@ -9,20 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Payroll\App\Enums\PayslipDeductionType;
 
-
-
-#[Fillable(['payslip_id',
-        'type',
-        'amount',
-        'description',])]
+#[Fillable([
+    'payslip_id',
+    'type',
+    'amount',
+    'description',
+])]
 final class PayslipDeduction extends Model
 {
     protected $table = 'payslip_deductions';
 
-
-    /**
-     * @return array{amount: string, type: string}
-     */
     protected function casts(): array
     {
         return [
@@ -31,15 +27,6 @@ final class PayslipDeduction extends Model
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return BelongsTo<Payslip, PayslipDeduction>
-     */
     public function payslip(): BelongsTo
     {
         return $this->belongsTo(Payslip::class);

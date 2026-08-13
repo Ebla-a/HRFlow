@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Modules\Employee\Database\Seeders\EmployeeDatabaseSeeder;
 use Modules\User\Database\Seeders\RolesAndPermissionsSeeder;
+use Modules\Employee\Database\Seeders\EmployeeSeeder;
+use Modules\Performance\Database\Seeders\PerformanceDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,9 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RolesAndPermissionsSeeder::class);
-        $this->call(EmployeeDatabaseSeeder::class);
-      
+        $this->call([
+       
+            RolesAndPermissionsSeeder::class,
 
+           
+            EmployeeSeeder::class,
+
+            
+            PerformanceDatabaseSeeder::class,
+        ]);
     }
 }

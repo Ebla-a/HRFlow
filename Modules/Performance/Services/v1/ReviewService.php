@@ -2,105 +2,116 @@
 
 namespace Modules\Performance\Services\v1;
 
-use Modules\Employee\Entities\Employee;
-use Modules\Performance\Entities\Performance_review;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Modules\Employee\Entities\Employee;
 use Modules\Performance\DTO\CreateReviewDTO;
+use Modules\Performance\Entities\PerformanceReview;
+use RuntimeException;
 
 class ReviewService
 {
     /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * Get performance reviews.
      */
-    public function showReviews()
+    public function showReviews(): LengthAwarePaginator
     {
-        /** @var \Modules\User\Entities\User|null $user */
-        $user = Auth::user();
-
-        return Performance_review::with(['cycle', 'employee'])
-            ->when($user->hasRole('Manager'), function ($query) use ($user) {
-                
-                $query->where('reviewer_id', $user->employee?->id);
-            })
+        return PerformanceReview::query()
+            ->with(['cycle', 'employee'])
             ->paginate(15);
     }
 
     /**
-     * @param CreateReviewDTO $dto
-     * @return Performance_review
-     * @throws \Exception
+     * Create a performance review.
+     *
+     * @throws RuntimeException
      */
-    public function createReview(CreateReviewDTO $dto)
+    public function createReview(CreateReviewDTO $dto): PerformanceReview
     {
-        $exists = Performance_review::where('performance_cycle_id', $dto->performance_cycle_id)
+        $exists = PerformanceReview::query()
+            ->where('performance_cycle_id', $dto->performance_cycle_id)
             ->where('employee_id', $dto->employee_id)
             ->where('reviewer_id', $dto->reviewer_id)
             ->exists();
 
         if ($exists) {
-            throw new \Exception('Employee has already been reviewed in this cycle.');
+            throw new RuntimeException(
+                'Employee has already been reviewed in this cycle.'
+            );
         }
 
-        $result = Performance_review::create([
+        $review = PerformanceReview::create([
             'performance_cycle_id' => $dto->performance_cycle_id,
-            'employee_id'          => $dto->employee_id,
-            'reviewer_id'          => $dto->reviewer_id,
-            'status'               => 'Reviewed',
-            'score'                => $dto->score,
-            'comments'             => $dto->comments,
-            'reviewed_at'          => now(),
-        ]);
-
-        $result->load(['cycle', 'employee']);
-        return $result;
-    }
-
-    /**
-     * @param CreateReviewDTO $dto
-     * @param Performance_review $review
-     * @return Performance_review
-     */
-    public function updateReview(CreateReviewDTO $dto, Performance_review $review)
-    {
-        $review->update([
-            'score'       => $dto->score,
-            'comments'    => $dto->comments,
+            'employee_id' => $dto->employee_id,
+            'reviewer_id' => $dto->reviewer_id,
+            'status' => 'Reviewed',
+            'score' => $dto->score,
+            'comments' => $dto->comments,
             'reviewed_at' => now(),
         ]);
 
-        $review->load(['cycle', 'employee']);
-        return $review;
+        return $review->load([
+            'cycle',
+            'employee',
+        ]);
     }
 
     /**
-     * @param Employee $employee
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * Update an existing performance review.
      */
-    public function employeeReviews(Employee $employee, int $perPage = 15)
-    {
-        return Performance_review::with(['cycle', 'employee'])
+    public function updateReview(
+        CreateReviewDTO $dto,
+        PerformanceReview $review
+    ): PerformanceReview {
+        $review->update([
+            'score' => $dto->score,
+            'comments' => $dto->comments,
+            'reviewed_at' => now(),
+        ]);
+
+        return $review->load([
+            'cycle',
+            'employee',
+        ]);
+    }
+
+    /**
+     * Get all reviews belonging to a specific employee.
+     */
+    public function employeeReviews(
+        Employee $employee,
+        int $perPage = 15
+    ): LengthAwarePaginator {
+        return PerformanceReview::query()
+            ->with(['cycle', 'employee'])
             ->where('employee_id', $employee->id)
             ->paginate($perPage);
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * Get reviews belonging to the authenticated employee.
      */
-    public function myReviews()
+    public function myReviews(): LengthAwarePaginator
     {
         $user = Auth::user();
-        $employee = $user->employee;
 
-        if (!$employee) {
-            return collect();
+        $employeeId = $user?->employee?->id;
+
+        /*
+         * An authenticated user without an employee record
+         * cannot have performance reviews.
+         */
+        if (!$employeeId) {
+            return PerformanceReview::query()
+                ->whereRaw('1 = 0')
+                ->paginate(15);
         }
 
-       
-        return Performance_review::with(['cycle', 'employee'])
-            ->where('employee_id', $employee->id)
-            ->whereHas('cycle', function ($q) {
-                $q->where('status', 'Closed');
+        return PerformanceReview::query()
+            ->with(['cycle', 'employee'])
+            ->where('employee_id', $employeeId)
+            ->whereHas('cycle', function ($query) {
+                $query->where('status', 'Closed');
             })
             ->paginate(15);
     }

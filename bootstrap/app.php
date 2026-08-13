@@ -4,11 +4,14 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+
 use Modules\Core\App\Exceptions\ExceptionRegistrar;
 use Modules\Core\Http\Middleware\EnsureApiHeader;
+use Modules\Core\Http\Middleware\LogApiRequest;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+
 
 
 
@@ -22,8 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
          
-     $middleware->api(prepend: [
+      $middleware->api(prepend: [
             EnsureApiHeader::class,
+            LogApiRequest::class,
         ]);
 
         $middleware->alias([
@@ -47,5 +51,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
-         ExceptionRegistrar::register($exceptions);
+        ExceptionRegistrar::register($exceptions);
+
     })->create();

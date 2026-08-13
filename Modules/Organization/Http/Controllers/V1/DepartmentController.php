@@ -19,7 +19,7 @@ class DepartmentController extends Controller
 {
 
 
-public function __construct(
+    public function __construct(
         protected DepartmentService $departmentService
     ) {}
 
@@ -28,26 +28,28 @@ public function __construct(
      * Summary of index
      * @return JsonResponse
      */
-    public function index():JsonResponse
+    public function index(): JsonResponse
     {
 
-         $result = $this->departmentService->getHierarchicalTree();
+        $result = $this->departmentService->getHierarchicalTree();
 
-         return $this->success($data = $result['data'],
+
+
+        return $this->success(
+            $data = $result['data'],
             $message = 'Departments retrieved successfully',
             $status = 200,
             $meta = $result['meta']
         );
+    }
 
-        }
 
-
-   /**
-    * Summary of store
-    * @param StoreDepartmentRequest $request
-    * @return JsonResponse
-    */
-   public function store(StoreDepartmentRequest $request): JsonResponse
+    /**
+     * Summary of store
+     * @param StoreDepartmentRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreDepartmentRequest $request): JsonResponse
     {
         $this->authorize('create', Department::class);
 
@@ -68,16 +70,15 @@ public function __construct(
      */
     public function show(int $id): JsonResponse
     {
-            $department = $this->departmentService->getDepartmentDetails($id);
-//for enssure that the manager og this department can view the department details and also the hr_admin can view the department details
+        $department = $this->departmentService->getDepartmentDetails($id);
+     
 
-            $this->authorize('view', $department);
+        $this->authorize('view', $department);
 
-            return $this->success([
-                'status' => true,
-                'data' => new DepartmentResource($department),
-            ]);
-
+        return $this->success([
+            'status' => true,
+            'data' => new DepartmentResource($department),
+        ]);
     }
     /**
      * Summary of update
@@ -97,6 +98,11 @@ public function __construct(
                 'data' => new DepartmentResource($department),
             ]);
 
+        return $this->success([
+            'status' => true,
+            'message' => 'Department updated successfully.',
+            'data' => new DepartmentResource($department),
+        ]);
     }
     /**
      * Summary of destroy
@@ -106,13 +112,12 @@ public function __construct(
     public function destroy(int $id): JsonResponse
     {
 
-            $this->departmentService->deleteDepartment($id);
+        $this->departmentService->deleteDepartment($id);
 
-            return $this->success([
-                'status' => true,
-                'message' => 'Department deleted successfully.',
-            ]);
-
+        return $this->success([
+            'status' => true,
+            'message' => 'Department deleted successfully.',
+        ]);
     }
 
 
@@ -126,8 +131,10 @@ public function __construct(
     {
         $department = $this->departmentService->restoreDepartment($id);
 
-        return $this->success(new DepartmentResource($department),
-'successfully restore the department'        );
+        return $this->success(
+            new DepartmentResource($department),
+            'successfully restore the department'
+        );
     }
     /**
      * Summary of forceDelete
@@ -138,8 +145,10 @@ public function __construct(
     {
         $this->departmentService->forceDeleteDepartment($id);
 
-        return $this->success(null,
-'successfully deleted the department permanently'        );
+        return $this->success(
+            null,
+            'successfully deleted the department permanently'
+        );
     }
     /**
      * Summary of assignManager
@@ -153,10 +162,9 @@ public function __construct(
 
         $department = $this->departmentService->assignManager($id, $dto);
 
-        return $this->success(new DepartmentResource($department),
-'manager assigned to the department successfully');
+        return $this->success(
+            new DepartmentResource($department),
+            'manager assigned to the department successfully'
+        );
     }
-
-
-
 }

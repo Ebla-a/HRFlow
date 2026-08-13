@@ -4,7 +4,8 @@ namespace Modules\Attendance\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-
+use Modules\Attendance\Console\MarkAbsentEmployeesCommand;
+use Illuminate\Console\Scheduling\Schedule;
 
 class AttendanceServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,19 @@ class AttendanceServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+    if ($this->app->runningInConsole()) {
+            // Register the command
+            $this->commands([
+                MarkAbsentEmployeesCommand::class,
+            ]);
+
+            // Register schedule inside the module provider
+            $this->app->booted(function () {
+                $schedule = $this->app->make(Schedule::class);
+                $schedule->command('attendance:mark-absent')->dailyAt('23:59');
+            });
+        }
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();

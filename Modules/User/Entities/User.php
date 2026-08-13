@@ -2,7 +2,6 @@
 
 namespace Modules\User\Entities;
 
-
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,16 +13,28 @@ use Modules\AI\Entities\AiConversation;
 use Modules\Employee\Entities\Employee;
 use Modules\User\Database\Factories\UserFactory;
 use Spatie\Permission\Traits\HasRoles;
-
-#[Fillable(['email', 'password','avatar_url','is_active'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable([
+    'email',
+    'password',
+    'avatar_url',
+    'is_active',
+    'email_verified_at',
+])]
+#[Hidden([
+    'password',
+    'remember_token',
+])]
 class User extends Authenticatable
 {
-     use HasRoles, HasFactory, Notifiable,HasApiTokens;
+    use HasApiTokens;
+    use HasFactory;
+    use HasRoles;
+    use Notifiable;
 
+    protected $guard_name = 'sanctum';
 
     /**
-     * @return array{email_verified_at: string, is_active: string, password: string}
+     * Get the attributes that should be cast.
      */
     protected function casts(): array
     {
@@ -33,23 +44,22 @@ class User extends Authenticatable
             'is_active' => 'boolean',
         ];
     }
+
+    /**
+     * Create a new factory instance for the model.
+     */
     protected static function newFactory(): UserFactory
     {
         return UserFactory::new();
     }
 
 
+
+    /**
+     * Get the employee associated with the user.
+     */
     public function employee()
     {
         return $this->hasOne(Employee::class);
     }
-      /**
-       * Summary of AiConversation
-       * @return \Illuminate\Database\Eloquent\Relations\HasMany<AiConversation, User>
-       */
-      public function AiConversation()
-    {
-        return $this->hasMany(AiConversation::class, 'user_id');
-    }
-
 }

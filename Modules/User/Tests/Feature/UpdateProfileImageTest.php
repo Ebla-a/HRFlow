@@ -1,104 +1,139 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\User\Tests\Feature;
 
-
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Modules\User\Entities\User;
-use Spatie\Permission\Models\Role; 
 use Tests\TestCase;
 
 class UpdateProfileImageTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    use RefreshDatabase;
-
-    public function test_authenticated_admin_can_update_user_profile_image()
+    public function test_authenticated_admin_can_update_user_profile_image(): void
     {
-        Storage::fake('public');
-        $role=Role::create(['name' => 'Hr_admin']);
+        Storage::fake('local');
+
         $admin = User::factory()->create();
+
         $admin->assignRole('Hr_admin');
+
         $user = User::factory()->create();
-        $file = \Illuminate\Http\UploadedFile::fake()->create('avatar.jpg', 500, 'image/jpeg');
+
         Sanctum::actingAs($admin);
-        $response = $this->postJson(route('updateProfileImage'), [
-            'id'    => $user->id,
-            'avatar_url' => $file,
-        ]);
+
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $response = $this->postJson(
+            "/api/v1/users/{$user->id}/avatar",
+            [
+                'avatar' => $file,
+            ]
+        );
+
+        $response->assertStatus(200);
 
         $user->refresh();
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'status'  => true,
-                'message' => 'profile Image updated successfully',
-                'data'    => [
-                    'id'    => $user->id,
-                    'avatar_url' =>  Storage::url($user->avatar_url),
-                ],
-            ])
+        $this->assertNotNull($user->avatar_url);
 
-            ->assertJsonStructure([
-                'status',
-                'message',
-                'data' => [
-                    'id',
-                    'email',
-                    'is_active',
-                    'avatar_url' ,
-                    'created_at',
-                    'updated_at',
-                ],
-            ]);
-
-        
-        $this->assertDatabaseHas('users', [
-            'id' => $user->id,
-            'avatar_url' =>$user->avatar_url,
-        ])
-        ;
+        Storage::disk('local')->assertExists(
+            $user->avatar_url
+        );
     }
 
-
-
-
-    public function test_cannot_upload_image_with_disallowed_mime_type()
+    public function test_cannot_upload_image_with_disallowed_mime_type(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
 
-        $role = Role::create(['name' => 'Hr_admin']);
         $admin = User::factory()->create();
-        $admin->assignRole('Hr_admin');
-        $user = User::factory()->create();
 
-        
-        $file = \Illuminate\Http\UploadedFile::fake()->create('document.pdf', 500, 'application/pdf');
+        $admin->assignRole('Hr_admin');
+
+        $user = User::factory()->create();
 
         Sanctum::actingAs($admin);
 
-        $response = $this->postJson(route('updateProfileImage'), [
-            'id'         => $user->id,
-            'avatar_url' => $file,
-        ]);
+        $file = UploadedFile::fake()->create(
+            'document.pdf',
+            500,
+            'application/pdf'
+        );
 
-        
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['avatar_url']);
+        $response = $this->postJson(
+            "/api/v1/users/{$user->id}/avatar",
+            [
+                'avatar' => $file,
+            ]
+        );
 
-        
-        $this->assertDatabaseHas('users', [
-            'id'         => $user->id,
-            'avatar_url' => $user->avatar_url,
-        ]);
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'avatar',
+            ]);
     }
 
-    
+
+    public function test_authorized_user_can_download_profile_image(): void
+{
+    Storage::fake('local');
+
+    $admin = User::factory()->create();
+
+    $admin->assignRole('Hr_admin');
+
+    $user = User::factory()->create();
+
+    $path = 'profiles/test-avatar.jpg';
+
+    Storage::disk('local')->put(
+        $path,
+        'fake image content'
+    );
+
+    $user->update([
+        'avatar_url' => $path,
+    ]);
+
+    Sanctum::actingAs($admin);
+
+    $response = $this->get(
+        "/api/v1/users/{$user->id}/avatar"
+    );
+
+    $response->assertStatus(200);
+}
+
+
+
+
+
+public function test_user_cannot_download_another_user_avatar(): void
+{
+    Storage::fake('local');
+
+    $user = User::factory()->create();
+
+    $otherUser = User::factory()->create();
+
+    $otherUser->update([
+        'avatar_url' => 'profiles/private-avatar.jpg',
+    ]);
+
+    Storage::disk('local')->put(
+        'profiles/private-avatar.jpg',
+        'fake image content'
+    );
+
+    Sanctum::actingAs($user);
+
+    $response = $this->get(
+        "/api/v1/users/{$otherUser->id}/avatar"
+    );
+
+    $response->assertStatus(403);
+}
 }

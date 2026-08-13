@@ -55,25 +55,26 @@ class UserService
 
     /**
      * Update user email.
-     */
-    public function updateEmail(User $user, UpdateEmailData $dto): User
-    {
-        $user->when($user->email !== $dto->email, function (User $u) use ($dto) {
-            $u->update([
-                'email' => $dto->email,
-                'email_verified_at' => null,
-            ]);
-        });
-
-        return $user;
+     */public function updateEmail(User $user, UpdateEmailData $dto): User
+{
+    if ($user->email !== $dto->email) {
+        $user->update([
+            'email' => $dto->email,
+            'email_verified_at' => null,
+        ]);
     }
+
+    return $user->refresh();
+}
 
     /**
      * Deactivate user account.
      */
     public function deactivateUserAccount(User $user): User
     {
-        $user->when($user->is_active, fn (User $u) => $u->update(['is_active' => false]));
+        if ($user->is_active) {
+            $user->update(['is_active' => false]);
+        }
 
         return $user;
     }
@@ -83,7 +84,9 @@ class UserService
      */
     public function activateUserAccount(User $user): User
     {
-        $user->when(! $user->is_active, fn (User $u) => $u->update(['is_active' => true]));
+        if (! $user->is_active) {
+            $user->update(['is_active' => true]);
+        }
 
         return $user;
     }

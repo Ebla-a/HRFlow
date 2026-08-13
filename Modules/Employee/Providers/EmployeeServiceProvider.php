@@ -5,31 +5,30 @@ namespace Modules\Employee\Providers;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Modules\Employee\Observers\EmployeeObserver;
-
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Policies\EmployeePolicy;
 use Modules\User\Providers\EventServiceProvider;
 
-/**
- * Summary of EmployeeServiceProvider
- */
 class EmployeeServiceProvider extends ServiceProvider
 {
     protected $moduleName = 'Employee';
-    protected $moduleNameLower = 'employee';
-    /**
-     * Summary of boot
-     * @return void
-     */
-    public function boot()
-    {
-        Employee::observe(EmployeeObserver::class);
-        Gate::policy(Employee::class, EmployeePolicy::class);
-        
-        $this->app->register(EventServiceProvider::class);
-        $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
 
+    protected $moduleNameLower = 'employee';
+
+    public function boot(): void
+    {
+
+    if ($this->app->runningInConsole()) {
+    $this->publishes([
+        module_path('Employee', 'Database/Seeders') => database_path('seeders'),
+    ], 'employee-seeders');
+}
+
+         Gate::policy(
+            Employee::class,
+            EmployeePolicy::class
+        );
+        $this->app->register(EventServiceProvider::class);
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
@@ -38,72 +37,88 @@ class EmployeeServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Database/Migrations')
         );
     }
-    /**
-     * Summary of register
-     * @return void
-     */
-    public function register()
+
+    public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
     }
 
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->publishes([
-            module_path($this->moduleName, 'Config/config.php')
-                => config_path($this->moduleNameLower . '.php'),
+            module_path(
+                $this->moduleName,
+                'Config/config.php'
+            ) => config_path(
+                $this->moduleNameLower . '.php'
+            ),
         ], 'config');
 
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'),
+            module_path(
+                $this->moduleName,
+                'Config/config.php'
+            ),
             $this->moduleNameLower
         );
     }
-    /**
-     * Summary of registerViews
-     * @return void
-     */
-    public function registerViews()
+
+    public function registerViews(): void
     {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-        $sourcePath = module_path($this->moduleName, 'Resources/views');
+        $viewPath = resource_path(
+            'views/modules/' . $this->moduleNameLower
+        );
+
+        $sourcePath = module_path(
+            $this->moduleName,
+            'Resources/views'
+        );
 
         $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-module-views']);
+            $sourcePath => $viewPath,
+        ], [
+            'views',
+            $this->moduleNameLower . '-module-views',
+        ]);
 
         $this->loadViewsFrom(
-            array_merge($this->getPublishableViewPaths(), [$sourcePath]),
+            array_merge(
+                $this->getPublishableViewPaths(),
+                [$sourcePath]
+            ),
             $this->moduleNameLower
         );
     }
-    /**
-     * Summary of registerTranslations
-     * @return void
-     */
-    public function registerTranslations()
+
+    public function registerTranslations(): void
     {
-        $langPath = resource_path('lang/modules/' . $this->moduleNameLower);
+        $langPath = resource_path(
+            'lang/modules/' . $this->moduleNameLower
+        );
 
         if (is_dir($langPath)) {
-            $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
-            $this->loadJsonTranslationsFrom($langPath);
-        } else {
             $this->loadTranslationsFrom(
-                module_path($this->moduleName, 'Resources/lang'),
+                $langPath,
                 $this->moduleNameLower
             );
 
-            $this->loadJsonTranslationsFrom(
-                module_path($this->moduleName, 'Resources/lang')
+            $this->loadJsonTranslationsFrom($langPath);
+        } else {
+            $resourcePath = module_path(
+                $this->moduleName,
+                'Resources/lang'
             );
+
+            $this->loadTranslationsFrom(
+                $resourcePath,
+                $this->moduleNameLower
+            );
+
+            $this->loadJsonTranslationsFrom($resourcePath);
         }
     }
-    /**
-     * Summary of provides
-     * @return array
-     */
-    public function provides()
+
+    public function provides(): array
     {
         return [];
     }
@@ -113,11 +128,16 @@ class EmployeeServiceProvider extends ServiceProvider
         $paths = [];
 
         foreach (Config::get('view.paths') as $path) {
-            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
-                $paths[] = $path . '/modules/' . $this->moduleNameLower;
+            $moduleViewPath = $path .
+                '/modules/' .
+                $this->moduleNameLower;
+
+            if (is_dir($moduleViewPath)) {
+                $paths[] = $moduleViewPath;
             }
         }
 
         return $paths;
     }
 }
+

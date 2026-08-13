@@ -1,43 +1,68 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\User\Policies;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 
 class UserPolicy
 {
     /**
-     * HR Admin: see all
-     * Manager: only his department users
-     * Employee: see himself only
+     * Determine whether the authenticated user
+     * can view the users list.
      */
     public function viewAny(User $authUser): bool
     {
-        return $authUser->hasRole('HR Admin')
-            || $authUser->hasRole('Manager')
-            || $authUser->hasRole('Employee');
+        return $authUser->hasAnyPermission(
+            [
+                'view.users.all',
+                'view.department.employees.own',
+                'employee.view.own.profile',
+            ],
+            'sanctum'
+        );
     }
 
     /**
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the authenticated user
+     * can view a specific user.
      */
-    public function view(User $authUser, User $targetUser): bool
-    {
-        // HR Admin sees everything
-        if ($authUser->hasRole('HR Admin')) {
+    public function view(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        /*
+         * HR Admin can view all users.
+         */
+        if ($authUser->hasPermissionTo(
+            'view.users.all',
+            'sanctum'
+        )) {
             return true;
         }
 
-        // Manager sees employees in his department only
-        if ($authUser->hasRole('Manager')) {
-            return $authUser->employee?->department_id !== null
-                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
+        /*
+         * Manager can view employees
+         * belonging to the same department.
+         */
+        if ($authUser->hasPermissionTo(
+            'view.department.employees.own',
+            'sanctum'
+        )) {
+            return $this->sameDepartment(
+                $authUser,
+                $targetUser
+            );
         }
 
-        // Employee sees only himself
-        if ($authUser->hasRole('Employee')) {
+        /*
+         * Employee can view his own profile.
+         */
+        if ($authUser->hasPermissionTo(
+            'employee.view.own.profile',
+            'sanctum'
+        )) {
             return $authUser->id === $targetUser->id;
         }
 
@@ -45,67 +70,157 @@ class UserPolicy
     }
 
     /**
-     *  email updating
-     * HR Admin: allow
-     * Manager: his department users only
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the authenticated user
+     * can update another user's email.
      */
-    public function updateEmail(User $authUser, User $targetUser): bool
-    {
-        if ($authUser->hasRole('HR Admin')) {
+    public function updateEmail(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        /*
+         * HR Admin / authorized user.
+         */
+        if ($authUser->hasPermissionTo(
+            'update.user',
+            'sanctum'
+        )) {
             return true;
         }
 
-        if ($authUser->hasRole('Manager')) {
-            return $authUser->employee?->department_id !== null
-                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
+        /*
+         * Manager can update users
+         * in the same department.
+         */
+        if ($authUser->hasPermissionTo(
+            'view.department.employees.own',
+            'sanctum'
+        )) {
+            return $this->sameDepartment(
+                $authUser,
+                $targetUser
+            );
         }
 
         return false;
     }
 
     /**
-     *  updating avatar profile
-     * @param User $authUser
-     * @param User $targetUser
-     * @return bool
+     * Determine whether the authenticated user
+     * can update another user's avatar.
      */
-    public function updateAvatar(User $authUser, User $targetUser): bool
-    {
-        if ($authUser->hasRole('HR Admin')) {
+    public function updateAvatar(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        /*
+         * HR Admin / users with global user management.
+         */
+        if ($authUser->hasPermissionTo(
+            'users.manage.all',
+            'sanctum'
+        )) {
             return true;
         }
 
+        /*
+         * Users with general update permission.
+         */
+        if ($authUser->hasPermissionTo(
+            'update.user',
+            'sanctum'
+        )) {
+            return true;
+        }
+
+        /*
+         * A user can always update his own avatar.
+         */
         if ($authUser->id === $targetUser->id) {
             return true;
         }
 
-        if ($authUser->hasRole('Manager')) {
-            return $authUser->employee?->department_id !== null
-                && $authUser->employee?->department_id === $targetUser->employee?->department_id;
+        /*
+         * Manager can update users
+         * in the same department.
+         */
+        if ($authUser->hasPermissionTo(
+            'view.department.employees.own',
+            'sanctum'
+        )) {
+            return $this->sameDepartment(
+                $authUser,
+                $targetUser
+            );
         }
 
         return false;
     }
 
     /**
-     * activate account only HR Admin
-     * @param User $authUser
-     * @return bool
+     * Determine whether the authenticated user
+     * can activate a user account.
      */
-    public function activate(User $authUser): bool
-    {
-        return $authUser->hasRole('HR Admin');
+    public function activate(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        return $authUser->hasPermissionTo(
+            'users.manage.all',
+            'sanctum'
+        );
     }
+
     /**
-     * deactivate account only HR Admin
-     * @param User $authUser
-     * @return bool
+     * Determine whether the authenticated user
+     * can deactivate a user account.
      */
-    public function deactivate(User $authUser): bool
-    {
-        return $authUser->hasRole('HR Admin');
+    public function deactivate(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        return $authUser->hasPermissionTo(
+            'users.manage.all',
+            'sanctum'
+        );
+    }
+
+    /**
+     * Determine whether the authenticated user
+     * can manage roles.
+     */
+    public function manageRoles(
+        User $authUser
+    ): bool {
+        return $authUser->hasPermissionTo(
+            'roles.manage',
+            'sanctum'
+        );
+    }
+
+    /**
+     * Determine whether the authenticated user
+     * can manage permissions.
+     */
+    public function managePermissions(
+        User $authUser
+    ): bool {
+        return $authUser->hasPermissionTo(
+            'permissions.manage',
+            'sanctum'
+        );
+    }
+
+    /**
+     * Check whether two users belong to the same department.
+     */
+    private function sameDepartment(
+        User $authUser,
+        User $targetUser
+    ): bool {
+        $authDepartmentId = $authUser->employee?->department_id;
+        $targetDepartmentId = $targetUser->employee?->department_id;
+
+        return $authDepartmentId !== null
+            && $authDepartmentId === $targetDepartmentId;
     }
 }
