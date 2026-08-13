@@ -43,6 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'employees.view.all',
             'employee.create',
+            'hire.employee',
             'employee.update',
             'employee.change.status',
 

@@ -17,9 +17,18 @@ class EmployeeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->app->register(EventServiceProvider::class);
 
-        $this->registerPolicies();
+    if ($this->app->runningInConsole()) {
+    $this->publishes([
+        module_path('Employee', 'Database/Seeders') => database_path('seeders'),
+    ], 'employee-seeders');
+}
+
+         Gate::policy(
+            Employee::class,
+            EmployeePolicy::class
+        );
+        $this->app->register(EventServiceProvider::class);
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
@@ -32,14 +41,6 @@ class EmployeeServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
-    }
-
-    protected function registerPolicies(): void
-    {
-        Gate::policy(
-            Employee::class,
-            EmployeePolicy::class
-        );
     }
 
     protected function registerConfig(): void

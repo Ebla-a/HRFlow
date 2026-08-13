@@ -2,7 +2,7 @@
 
 namespace Modules\Leave\Listeners;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 use Modules\Leave\Events\LeaveRequestCreated;

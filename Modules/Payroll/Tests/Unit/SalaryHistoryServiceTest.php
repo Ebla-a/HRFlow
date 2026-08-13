@@ -4,7 +4,7 @@ namespace Modules\Payroll\Tests\Unit;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
+use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Organization\Database\factories\JobTitleFactory;
 use Modules\Payroll\Entities\SalaryStructure;

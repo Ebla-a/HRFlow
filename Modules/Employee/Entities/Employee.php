@@ -2,7 +2,7 @@
 
 namespace Modules\Employee\Entities;
 
-use App\Models\User;
+use Modules\User\Entities\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,7 +44,7 @@ use Spatie\Permission\Traits\HasRoles;
 ])]
 class Employee extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, HasRoles;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -81,14 +81,19 @@ class Employee extends Model
         );
     }
     /**
-     * @return Attribute
+
+     * @return float|int
      */
-    protected function yearsOfService(): Attribute
+    public function getYearsOfServiceAttribute(): int
     {
-        return Attribute::make(
-            get: fn() => $this->hire_date ? Carbon::parse($this->hire_date)->diffInYears(now()) : 0
-        );
+        if (!$this->hire_date) {
+            return 0;
+        }
+
+        return Carbon::parse($this->hire_date)->diffInYears(Carbon::now());
     }
+
+
     /**
      * @param Builder $query
      * @return Builder
