@@ -33,10 +33,11 @@
     29 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     30 => 'Termwind\\Laravel\\TermwindServiceProvider',
     31 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
-    32 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
-    33 => 'Spatie\\Permission\\PermissionServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
-    35 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
+    32 => 'Pest\\Laravel\\PestServiceProvider',
+    33 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
+    34 => 'Spatie\\Permission\\PermissionServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
+    36 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
   ),
   'eager' => 
   array (
@@ -57,10 +58,11 @@
     14 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     15 => 'Termwind\\Laravel\\TermwindServiceProvider',
     16 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
-    17 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
-    18 => 'Spatie\\Permission\\PermissionServiceProvider',
-    19 => 'App\\Providers\\AppServiceProvider',
-    20 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
+    17 => 'Pest\\Laravel\\PestServiceProvider',
+    18 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
+    19 => 'Spatie\\Permission\\PermissionServiceProvider',
+    20 => 'App\\Providers\\AppServiceProvider',
+    21 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
   ),
   'deferred' => 
   array (
