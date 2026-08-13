@@ -7,7 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Report\Services\ReportService;
 use Modules\Payroll\Entities\PayrollRun;
-use Rap2hpoutre\FastExcel\FastExcel;
+use Modules\Report\Exports\ReportExport;
+use Modules\Report\Exports\ReportExportSingleSheet;
 
 class ReportController extends Controller
 {
@@ -88,24 +89,62 @@ public function generate(Request $request, string $type): JsonResponse
         ]);
     }
 
-   /**
-     * Export report to Excel format.
-     *
-     * @param Request $request
-     * @param string $type
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
-  public function exportExcel(Request $request, string $type)
+public function exportExcel(Request $request, string $type)
 {
     $month = (int) $request->query('month', now()->month);
     $year = (int) $request->query('year', now()->year);
 
     $reportData = $this->reportService->generate($type, $month, $year);
-    $rows = $this->reportService->toExportArray($reportData);
 
-    $fileName = "{$type}_report_{$year}_{$month}.xlsx";
+    $rows = [];
 
+    foreach ($reportData as $key => $value) {
 
-return (new FastExcel($rows))->download($fileName);
+        // Fix: convert Collections to arrays
+        if ($value instanceof \Illuminate\Support\Collection) {
+            $value = $value->toArray();
+        }
+
+        // Flatten arrays
+        if (is_array($value)) {
+            foreach ($value as $subKey => $subValue) {
+
+                if ($subValue instanceof \Illuminate\Support\Collection) {
+                    $subValue = $subValue->toArray();
+                }
+
+                if (is_array($subValue) || is_object($subValue)) {
+                    $subValue = json_encode($subValue, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+
+                $rows[] = [
+                    'Metric' => "{$key}.{$subKey}",
+                    'Value'  => $subValue ?? '—',
+                ];
+            }
+            continue;
+        }
+
+        if (is_object($value)) {
+            $value = json_encode((array) $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($value === null) {
+            $value = '—';
+        }
+
+        $rows[] = [
+            'Metric' => $key,
+            'Value'  => $value,
+        ];
+    }
+
+    return (new ReportExportSingleSheet($rows))
+        ->download("{$type}_report_{$year}_{$month}.xlsx");
 }
+
+
+
+
+
 }
