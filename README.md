@@ -373,7 +373,7 @@ The original system requirements also define event-driven behavior for employee 
 ## 1. Clone the Repository
 
 ```bash
-git clone <[YOUR-HRFLOW-REPOSITORY-UR](https://github.com/Ebla-a/HRFlow)L>
+git clone https://github.com/Ebla-a/HRFlow.git
 cd HRFlow
 ```
 
@@ -1337,12 +1337,11 @@ HRFlow aims to demonstrate a maintainable and production-oriented backend archit
 * Maintainable HR workflows
 
 ---
+## 📮 Postman Collection
 
-# 📄 License
+The complete Postman API Collection is available here:
 
-This project is developed for educational and engineering purposes.
-
----
+[Download HRFlow Postman Collection](https://github.com/Ebla-a/HRFlow/blob/main/docs/HRFlow.postman_collection.json)
 
 # ⭐ HRFlow
 
