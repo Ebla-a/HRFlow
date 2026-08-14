@@ -37,7 +37,8 @@ class EmployeePolicy
 
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('employee.create', 'sanctum');
+       return $user->hasPermissionTo('employee.create', 'sanctum');
+
     }
 
     public function update(User $user, Employee $employee): bool
@@ -48,5 +49,6 @@ class EmployeePolicy
     public function terminate(User $user, Employee $employee): bool
     {
         return $user->hasPermissionTo('employee.change.status', 'sanctum');
+
     }
 }
