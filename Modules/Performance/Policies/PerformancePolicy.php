@@ -6,6 +6,7 @@ use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\Entities\PerformanceReview;
+use Illuminate\Auth\Access\Response;
 
 /**
  * Class PerformancePolicy
@@ -71,6 +72,7 @@ class PerformancePolicy
         /*
          * HR/Admin override.
          */
+
         if ($authUser->hasPermissionTo('view.reviews.all')) {
             return true;
         }
@@ -114,7 +116,7 @@ class PerformancePolicy
         User $authUser,
         Employee $targetEmployee,
         ?PerformanceCycle $cycle = null
-    ): bool {
+    ) {
         /*
          * HR/Admin override.
          */
@@ -153,7 +155,7 @@ class PerformancePolicy
          * of the target employee.
          */
         $isDirectManager =
-            (int) $targetEmployee->manager_id ===
+            (int) $targetEmployee->manager_id ==
             (int) $managerEmployee->id;
 
         if (!$isDirectManager) {
@@ -166,11 +168,12 @@ class PerformancePolicy
          */
         $alreadyReviewed = PerformanceReview::query()
             ->where('employee_id', $targetEmployee->id)
-            ->where('reviewer_id', $managerEmployee->id)
             ->where('performance_cycle_id', $cycle->id)
             ->exists();
 
-        return !$alreadyReviewed;
+        return !$alreadyReviewed
+        ? Response::allow()
+        : Response::deny('Employee has already been reviewed in this cycle.');
     }
 
     /**
@@ -204,7 +207,7 @@ class PerformancePolicy
         return false;
     }
 
-  
+
     return $review->cycle?->status === 'Active';
 }
 
