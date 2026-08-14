@@ -11,6 +11,7 @@ use Modules\Organization\Entities\JobTitle;
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\User\Entities\User;
 use Modules\Performance\Entities\PerformanceReview;
+use Spatie\Permission\Models\Permission;
 
 class EmployeeReviewsTest extends TestCase
 {
@@ -19,7 +20,13 @@ class EmployeeReviewsTest extends TestCase
     public function test_Employee_Reviews()
     {
         $managerUser = User::factory()->create();
+
         $managerUser->assignRole('Manager');
+        $permission = Permission::firstOrCreate([
+           'name' => 'view.reviews.department',
+           'guard_name' => 'sanctum',
+        ]);
+        $managerUser->givePermissionTo('view.reviews.department');
 
         Sanctum::actingAs($managerUser);
 

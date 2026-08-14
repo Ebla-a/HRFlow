@@ -57,7 +57,7 @@ class CreateReviewTest extends TestCase
         $response = $this->postJson('/api/v1/performance-reviews', [
             'employee_id'           => $employee->id,
             'performance_cycle_id'  => $cycle->id,
-            'reviewer_id'           => $managerUser->id,
+            'reviewer_id'           => $manager->id,
             'score'                 => 5,
             'comments'              => "Excellent performance",
         ]);
@@ -121,6 +121,10 @@ class CreateReviewTest extends TestCase
         // Active cycle
         $cycle = PerformanceCycle::factory()->create(['status' => 'Active']);
 
+
+
+
+        
         // API request
         $response = $this->postJson('/api/v1/performance-reviews', [
             'employee_id'           => $employee->id,
