@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Modules\Auth\App\Exceptions\ExpiredResetToken;
+use Modules\Auth\App\Exceptions\InactiveUserException;
+use Modules\Auth\App\Exceptions\InvalidCredentialsException;
+use Modules\Core\App\Exceptions\UserNotFoundException;
 use Spatie\Permission\Exceptions\UnauthorizedException as SpatieUnauthorizedException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -23,7 +27,7 @@ class ExceptionRegistrar
         static::authorization($exceptions);
         static::notFound($exceptions);
         static::userNotFound($exceptions);
-        
+        static::authFailures($exceptions);
         static::serverError($exceptions);
     }
 
@@ -81,9 +85,9 @@ class ExceptionRegistrar
     protected static function serverError(Exceptions $exceptions): void
     {
         $exceptions->render(function (Throwable $e) {
-           
+
             if (method_exists($e, 'render')) {
-                return null; 
+                return null;
             }
 
             report($e);
@@ -102,7 +106,7 @@ class ExceptionRegistrar
         });
     }
 
-  
+
     protected static function formatResponse(string $message, int $status, mixed $errors = null): JsonResponse
     {
         $response = [
@@ -116,4 +120,31 @@ class ExceptionRegistrar
 
         return response()->json($response, $status);
     }
+
+
+    protected static function authFailures(Exceptions $exceptions): void
+{
+    $exceptions->render(fn (InvalidCredentialsException $e) =>
+        static::formatResponse(
+            $e->getMessage(),
+            Response::HTTP_UNAUTHORIZED // 401
+        )
+    );
+
+    $exceptions->render(fn (InactiveUserException $e) =>
+        static::formatResponse(
+            $e->getMessage(),
+            Response::HTTP_FORBIDDEN // 403
+        )
+    );
+
+     $exceptions->render(fn (ExpiredResetToken $e) =>
+            static::formatResponse(
+                $e->getMessage(),
+                $e->getCode() ?: Response::HTTP_BAD_REQUEST // 400
+            )
+        );
+}
+
+
 }

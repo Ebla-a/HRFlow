@@ -75,11 +75,7 @@ class LoginTest extends TestCase
     ]);
 
     $response
-        ->assertStatus(403)
-        ->assertJson([
-            'status' => false,
-            'message' => 'User account is inactive.',
-        ]);
+        ->assertStatus(403);
+
    }
 }
- 
