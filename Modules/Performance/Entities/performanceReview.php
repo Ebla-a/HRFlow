@@ -29,7 +29,7 @@ class PerformanceReview extends Model
 
     public function cycle()
     {
-        return $this->belongsTo(performance_cycle::class,'performance_cycle_id');
+        return $this->belongsTo(PerformanceCycle::class,'performance_cycle_id');
     }
 
     public function employee()
