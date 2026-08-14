@@ -21,7 +21,9 @@ class CreateReviewTest extends TestCase
     {
         // Manager user
         $managerUser = User::factory()->create();
-        $managerUser->assignRole('Manager');
+       $managerUser->assignRole('Manager');
+$managerUser->givePermissionTo('create.review.employee.own.department');
+
 
         Sanctum::actingAs($managerUser);
 
@@ -125,7 +127,7 @@ class CreateReviewTest extends TestCase
         $response = $this->postJson('/api/v1/performance-reviews', [
             'employee_id'           => $employee->id,
             'performance_cycle_id'  => $cycle->id,
-            'reviewer_id'           => $managerUser->id,
+            'reviewer_id' => $manager->id,
             'score'                 => 5,
             'comments'              => "badword1",
         ]);

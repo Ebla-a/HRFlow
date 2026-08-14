@@ -16,6 +16,12 @@ class ActivateCycleTest extends TestCase
     {
         $admin = User::factory()->create();
         $admin->assignRole('Hr_admin');
+        $admin->givePermissionTo([
+    'view.performance.cycle.all',
+    'create.performance.cycle',
+    'update.performance.cycle',
+]);
+
 
         Sanctum::actingAs($admin);
 
