@@ -39,12 +39,6 @@ class EmployeeController extends Controller
         $employees = $this->employeeService->getPaginatedEmployees(
             $request->validated()
         );
-        
-         try {
-} catch (AuthorizationException $e) {
-   
-    dd($e->getMessage(), auth()->user(), auth()->user()->getRoleNames(), auth()->user()->getAllPermissions());
-}
 
         return EmployeeListResource::collection($employees);
     }
@@ -56,7 +50,7 @@ class EmployeeController extends Controller
         StoreEmployeeRequest $request,
         HireEmployeeAction $action
     ) {
-        $this->authorize('create', Employee::class);
+        //$this->authorize('create', Employee::class);
 
         $dto = CreateEmployeeDTO::fromRequest($request);
 

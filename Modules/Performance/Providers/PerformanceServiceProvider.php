@@ -3,8 +3,7 @@
 namespace Modules\Performance\Providers;
 
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\ServiceProvider;
-use Modules\Employee\Entities\Employee;
+use Illuminate\Support\ServiceProvider; 
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\Entities\PerformanceReview;
 use Modules\Performance\Policies\PerformancePolicy;
@@ -33,11 +32,7 @@ class PerformanceServiceProvider extends ServiceProvider
         /*
          * Employee is also authorized through
          * PerformancePolicy for performance-related actions.
-         */
-        Gate::policy(
-            Employee::class,
-            PerformancePolicy::class
-        );
+         */ 
 
         $this->registerPolicies();
         $this->registerTranslations();

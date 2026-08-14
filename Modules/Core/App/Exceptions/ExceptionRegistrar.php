@@ -16,6 +16,7 @@ use Spatie\Permission\Exceptions\UnauthorizedException as SpatieUnauthorizedExce
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Modules\Employee\App\Exceptions\InvalidJobTitleForDepartmentException;
 use Throwable;
 
 class ExceptionRegistrar
@@ -28,6 +29,7 @@ class ExceptionRegistrar
         static::notFound($exceptions);
         static::userNotFound($exceptions);
         static::authFailures($exceptions);
+        static::invalidJobTitleForDepartment($exceptions);
         static::serverError($exceptions);
     }
 
@@ -78,6 +80,16 @@ class ExceptionRegistrar
             static::formatResponse(
                 $e->getMessage() ?: 'User not found.',
                 Response::HTTP_NOT_FOUND
+            )
+        );
+    }
+
+    protected static function invalidJobTitleForDepartment(Exceptions $exceptions): void
+    {
+        $exceptions->render(fn (InvalidJobTitleForDepartmentException $e) =>
+            static::formatResponse(
+                $e->getMessage() ?: 'Invalid job title for department.',
+                Response::HTTP_UNPROCESSABLE_ENTITY
             )
         );
     }
