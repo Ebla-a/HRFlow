@@ -34,9 +34,10 @@
     30 => 'Termwind\\Laravel\\TermwindServiceProvider',
     31 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     32 => 'Pest\\Laravel\\PestServiceProvider',
-    33 => 'Spatie\\Permission\\PermissionServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
-    35 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
+    33 => 'Pest\\Laravel\\PestServiceProvider',
+    34 => 'Spatie\\Permission\\PermissionServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
+    36 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
   ),
   'eager' => 
   array (
@@ -58,9 +59,10 @@
     15 => 'Termwind\\Laravel\\TermwindServiceProvider',
     16 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     17 => 'Pest\\Laravel\\PestServiceProvider',
-    18 => 'Spatie\\Permission\\PermissionServiceProvider',
-    19 => 'App\\Providers\\AppServiceProvider',
-    20 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
+    18 => 'Pest\\Laravel\\PestServiceProvider',
+    19 => 'Spatie\\Permission\\PermissionServiceProvider',
+    20 => 'App\\Providers\\AppServiceProvider',
+    21 => 'Modules\\Payroll\\Providers\\PayrollServiceProvider',
   ),
   'deferred' => 
   array (
