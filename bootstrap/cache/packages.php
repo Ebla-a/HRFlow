@@ -59,11 +59,11 @@
       0 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     ),
   ),
-  'rap2hpoutre/fast-excel' => 
+  'pestphp/pest-plugin-laravel' => 
   array (
     'providers' => 
     array (
-      0 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
+      0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
   'spatie/laravel-permission' => 
