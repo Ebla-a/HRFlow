@@ -30,7 +30,12 @@ class User extends Authenticatable
     use HasRoles;
     use Notifiable;
 
-    protected $guard_name = 'sanctum';
+       protected string $guard_name = 'sanctum';
+
+       public function getGuardName(): string
+    {
+        return 'sanctum';
+    }
 
     /**
      * Get the attributes that should be cast.

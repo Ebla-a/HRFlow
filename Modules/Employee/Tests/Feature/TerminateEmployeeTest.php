@@ -46,6 +46,7 @@ class TerminateEmployeeTest extends TestCase
         ];
 
         Sanctum::actingAs($this->hrAdmin);
+        
        $response = $this->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
 
         $response->assertStatus(200)

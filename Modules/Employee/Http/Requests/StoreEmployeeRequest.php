@@ -32,7 +32,7 @@ class StoreEmployeeRequest extends FormRequest
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string',
             'birth_date' => 'required|date',
-            'gender' => ['nullable', Rule::in(Gender::values())],
+            'gender' => ['required', Rule::in(Gender::values())],
         ];
     }
 }
