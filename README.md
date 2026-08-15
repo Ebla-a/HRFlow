@@ -1481,24 +1481,27 @@ For their commitment to student growth and learning opportunities.
 
 ## 👨‍🏫 Mentors
 
-### Mr. Hashim Othman
+### Mr. Somar Kesen
 
+- Support throughout development
 - Technical guidance
 - Concept clarification
 - Inspirational mentorship
 
-### Mr. Ayham Ibrahim
+### Mr. Yousef Saleh
 
 - Support throughout development
+-  Technical guidance
+- Concept clarification
+- Inspirational mentorship
 
 ---
 
 ## 👩‍💼 Supervisors
 
-### Ms. Nourhan Almohammed & Ms. Muna Alrays
+### Mr. Bsher Al-Mahayni
 
 - Technical support
-- Daily follow-up
 - Continuous guidance throughout the project
 
 ---
