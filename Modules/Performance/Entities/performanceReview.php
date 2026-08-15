@@ -18,8 +18,17 @@ use Modules\Performance\Database\Factories\ReviewFactory;
 class PerformanceReview extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
+    ];
     
     protected $table = 'performance_reviews';
+
+    
+    protected $casts = [
+        'reviewed_at' => 'datetime', 
+    ];
     
 
     protected static function newFactory()

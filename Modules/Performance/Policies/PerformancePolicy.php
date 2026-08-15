@@ -8,208 +8,154 @@ use Modules\Performance\Entities\PerformanceCycle;
 use Modules\Performance\Entities\PerformanceReview;
 use Illuminate\Auth\Access\Response;
 
-/**
- * Class PerformancePolicy
- *
- * Handles authorization for performance cycles and employee reviews.
- *
- * Authorization is permission-based rather than role-based.
- */
 class PerformancePolicy
 {
     /**
-     * Determine whether the user can view performance cycles.
+     * HR/Admin can view all cycles.
      */
     public function viewCycles(User $authUser): bool
     {
-        return $authUser->hasPermissionTo(
-            'view.performance.cycle.all'
-        );
+        return $authUser->hasPermissionTo('view.performance.cycle.all');
     }
 
     /**
-     * Determine whether the user can create a performance cycle.
+     * HR/Admin can create cycles.
      */
     public function createCycle(User $authUser): bool
     {
-        return $authUser->hasPermissionTo(
-            'create.performance.cycle'
-        );
+        return $authUser->hasPermissionTo('create.performance.cycle');
     }
 
     /**
-     * Determine whether the user can update a performance cycle.
-     *
-     * Used for activating and closing cycles.
+     * HR/Admin can update cycles.
      */
     public function updateCycle(User $authUser): bool
     {
-        return $authUser->hasPermissionTo(
-            'update.performance.cycle'
-        );
+        return $authUser->hasPermissionTo('update.performance.cycle');
     }
 
     /**
-     * Determine whether the user can view their own reviews.
+     * Employee can view their own reviews.
      */
     public function viewMyReviews(User $authUser): bool
     {
-        return $authUser->hasPermissionTo(
-            'view.performance.reviews.own'
-        );
+        return $authUser->hasPermissionTo('view.performance.reviews.own');
     }
 
     /**
-     * Determine whether the user can view performance reviews.
-     *
-     * HR/Admin can view all reviews.
-     * Managers can view reviews within their department.
+     * HR can view all reviews.
+     * Manager can view reviews of employees in their department.
      */
-    public function viewReviews(
-        User $authUser,
-        ?Employee $targetEmployee = null
-    ): bool {
-        /*
-         * HR/Admin override.
-         */
-
+    public function viewReviews(User $authUser, ?Employee $targetEmployee = null): bool
+    {
+        // HR/Admin override
         if ($authUser->hasPermissionTo('view.reviews.all')) {
             return true;
         }
 
-        /*
-         * User must have department-level review permission.
-         */
+        // Manager permission
         if (!$authUser->hasPermissionTo('view.reviews.department')) {
             return false;
         }
 
-        /*
-         * General performance review listing.
-         */
+        // Listing all reviews (no employee filter)
         if (!$targetEmployee) {
             return true;
         }
 
-        /*
-         * The authenticated user must have an employee record.
-         */
+        // Manager must have employee record
         $managerEmployee = $authUser->employee;
-
         if (!$managerEmployee) {
             return false;
         }
 
-        /*
-         * Manager can only view employees from
-         * the same department.
-         */
-        return (int) $managerEmployee->department_id ===
-            (int) $targetEmployee->department_id;
+        // Manager can view only employees in same department
+        return (int) $managerEmployee->department_id === (int) $targetEmployee->department_id;
     }
 
     /**
-     * Determine whether the authenticated user can create
-     * a performance review for a specific employee and cycle.
+     * Create review logic:
+     * - HR can review any employee if cycle is Active.
+     * - Manager can review employees in their department.
+     * - If employee has no manager → HR can review.
+     * - Manager must be direct manager.
+     * - No duplicate reviews.
      */
-    public function createReview(
-        User $authUser,
-        Employee $targetEmployee,
-        ?PerformanceCycle $cycle = null
-    ) {
-        /*
-         * HR/Admin override.
-         */
-        if ($authUser->hasPermissionTo('view.reviews.all')) {
-            return $cycle?->status === 'Active';
-        }
-
-        /*
-         * Manager must have permission to create reviews
-         * for employees within their own department.
-         */
-        if (!$authUser->hasPermissionTo(
-            'create.review.employee.own.department'
-        )) {
-            return false;
-        }
-
-        /*
-         * Authenticated user must have an employee record.
-         */
-        $managerEmployee = $authUser->employee;
-
-        if (!$managerEmployee) {
-            return false;
-        }
-
-        /*
-         * A valid active cycle is required.
-         */
-        if (!$cycle || $cycle->status !== 'Active') {
-            return false;
-        }
-
-        /*
-         * The reviewer must be the direct manager
-         * of the target employee.
-         */
-        $isDirectManager =
-            (int) $targetEmployee->manager_id ==
-            (int) $managerEmployee->id;
-
-        if (!$isDirectManager) {
-            return false;
-        }
-
-        /*
-         * Prevent duplicate reviews for the same employee,
-         * reviewer and performance cycle.
-         */
-        $alreadyReviewed = PerformanceReview::query()
-            ->where('employee_id', $targetEmployee->id)
-            ->where('performance_cycle_id', $cycle->id)
-            ->exists();
-
-        return !$alreadyReviewed
-        ? Response::allow()
-        : Response::deny('Employee has already been reviewed in this cycle.');
-    }
-
-    /**
-     * Determine whether the authenticated user can update
-     * an existing performance review.
-     *
-     * HR/Admin can update any review.
-     * Managers can update only reviews they created.
-     * Reviews can only be updated while the cycle is active.
-     */
- public function updateReview(User $authUser, PerformanceReview $review): bool
+  public function createReview(User $authUser, Employee $targetEmployee, ?PerformanceCycle $cycle = null)
 {
-  
-    if ($authUser->hasPermissionTo('view.reviews.all')) {
-        return $review->cycle?->status === 'Active';
-    }
-
-    if (!$authUser->hasPermissionTo('update.review.employee.own.department')) {
+    // Cycle must be active
+    if (!$cycle || $cycle->status !== 'Active') {
         return false;
     }
 
-    
-    $managerEmployee = $authUser->employee;
+    // 1) Prevent duplicate reviews FIRST
+    $alreadyReviewed = PerformanceReview::query()
+        ->where('employee_id', $targetEmployee->id)
+        ->where('performance_cycle_id', $cycle->id)
+        ->exists();
 
+    if ($alreadyReviewed) {
+        return Response::deny('Employee has already been reviewed in this cycle.');
+    }
+
+    // 2) HR/Admin override
+    if ($authUser->hasPermissionTo('view.reviews.all')) {
+        return Response::allow();
+    }
+
+    // 3) Manager permission
+    if (!$authUser->hasPermissionTo('create.review.employee.own.department')) {
+        return false;
+    }
+
+    // Manager must have employee record
+    $managerEmployee = $authUser->employee;
     if (!$managerEmployee) {
         return false;
     }
 
-
-    if ((int) $review->reviewer_id !== (int) $managerEmployee->id) {
+    // If employee has no manager → only HR can review (already handled above)
+    if (!$targetEmployee->manager_id) {
         return false;
     }
 
+    // 4) Manager must be direct manager
+    if ((int) $targetEmployee->manager_id !== (int) $managerEmployee->id) {
+        return false;
+    }
 
-    return $review->cycle?->status === 'Active';
+    return Response::allow();
 }
 
+    /**
+     * Update review logic:
+     * - HR can update any review if cycle is Active.
+     * - Manager can update only reviews they created.
+     */
+    public function updateReview(User $authUser, PerformanceReview $review): bool
+    {
+        // Cycle must be active
+        if ($review->cycle?->status !== 'Active') {
+            return false;
+        }
 
+        // HR/Admin override
+        if ($authUser->hasPermissionTo('view.reviews.all')) {
+            return true;
+        }
+
+        // Manager permission
+        if (!$authUser->hasPermissionTo('update.review.employee.own.department')) {
+            return false;
+        }
+
+        // Manager must have employee record
+        $managerEmployee = $authUser->employee;
+        if (!$managerEmployee) {
+            return false;
+        }
+
+        // Manager can update only reviews they created
+        return (int) $review->reviewer_id === (int) $managerEmployee->id;
+    }
 }
