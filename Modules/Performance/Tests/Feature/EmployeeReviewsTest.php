@@ -11,6 +11,7 @@ use Modules\Organization\Entities\JobTitle;
 use Modules\Performance\Entities\PerformanceCycle;
 use Modules\User\Entities\User;
 use Modules\Performance\Entities\PerformanceReview;
+use Spatie\Permission\Models\Permission;
 
 class EmployeeReviewsTest extends TestCase
 {
@@ -18,22 +19,32 @@ class EmployeeReviewsTest extends TestCase
 
     public function test_Employee_Reviews()
     {
+        // Create needed permissions
+        Permission::firstOrCreate(['name' => 'view.reviews.all', 'guard_name' => 'sanctum']);
+        Permission::firstOrCreate(['name' => 'view.reviews.department', 'guard_name' => 'sanctum']);
+
+        // Manager user
         $managerUser = User::factory()->create();
         $managerUser->assignRole('Manager');
+        $managerUser->givePermissionTo('view.reviews.all');
 
         Sanctum::actingAs($managerUser);
 
+        // Employee user
         $employeeUser = User::factory()->create();
 
+        // Department + JobTitle
         $department = Department::factory()->create();
         $jobTitle = JobTitle::factory()->create(['department_id' => $department->id]);
 
+        // Manager employee record
         $manager = Employee::factory()->create([
             'user_id' => $managerUser->id,
             'department_id' => $department->id,
             'job_title_id' => $jobTitle->id,
         ]);
 
+        // Employee record
         $employee = Employee::factory()->create([
             'user_id' => $employeeUser->id,
             'department_id' => $department->id,
@@ -41,9 +52,11 @@ class EmployeeReviewsTest extends TestCase
             'manager_id' => $manager->id,
         ]);
 
+        // Active cycle
         $cycle = PerformanceCycle::factory()->create(['status' => 'Active']);
 
-        $review = PerformanceReview::factory()->create([
+        // Review
+        PerformanceReview::factory()->create([
             'employee_id' => $employee->id,
             'reviewer_id' => $manager->id,
             'performance_cycle_id' => $cycle->id,
@@ -52,6 +65,7 @@ class EmployeeReviewsTest extends TestCase
             'comments' => 'AAAA',
         ]);
 
+        // API request
         $response = $this->getJson("/api/v1/employees/{$employee->id}/performance");
 
         $response->assertStatus(200);

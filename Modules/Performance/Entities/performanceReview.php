@@ -20,6 +20,11 @@ class PerformanceReview extends Model
     use HasFactory;
     
     protected $table = 'performance_reviews';
+
+    
+    protected $casts = [
+        'reviewed_at' => 'datetime', 
+    ];
     
 
     protected static function newFactory()

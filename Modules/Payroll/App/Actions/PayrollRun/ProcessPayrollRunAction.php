@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Modules\Payroll\App\Actions\PayrollRun;
@@ -32,7 +33,7 @@ final readonly class ProcessPayrollRunAction
     public function execute(PayrollRun $payrollRun, int $processedBy): PayrollRun
     {
         return DB::transaction(function () use ($payrollRun, $processedBy) {
-            
+
             // 1. Define the carbon immutable date for the payroll run month
             $payrollDate = CarbonImmutable::create(
                 year: $payrollRun->year,
@@ -74,9 +75,12 @@ final readonly class ProcessPayrollRunAction
                     $payslipsToInsert = [];
 
                     foreach ($employees as $employee) {
+
+
                         if (! $employee->salaryStructure) {
-                            throw new SalaryStructureNotFoundException((string) $employee->id);
+                            continue;
                         }
+
 
                         $unpaidDays = (int) $employee->leaveRequests->sum('days_count');
 

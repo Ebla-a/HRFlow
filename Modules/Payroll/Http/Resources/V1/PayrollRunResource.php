@@ -23,7 +23,7 @@ class PayrollRunResource extends JsonResource
             'deductions' => PayslipDeductionResource::collection($this->whenLoaded('deductions')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'status' => $this->status,
+              'status' => $this->status->value,
 
         ];
     }
