@@ -16,13 +16,14 @@ class ReviewResource extends JsonResource
             'status'        => $this->status,
             'score'         => $this->score,
             'comments'      => $this->comments,
+
             'reviewed_at'   => $this->reviewed_at
                 ? $this->reviewed_at->toDateTimeString()
                 : null,
+
             'status_cycle'  => $this->cycle?->status         ?? 'Unassigned',
             'cycle_name'    => $this->cycle?->name           ?? 'Unassigned',
             'employee_name' => $this->employee?->first_name  ?? 'Unassigned',
         ];
     }
 }
-
