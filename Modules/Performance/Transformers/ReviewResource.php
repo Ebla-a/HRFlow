@@ -23,7 +23,7 @@ class ReviewResource extends JsonResource
             'score' => $this->score,
             'comments' => $this->comments,
            'reviewed_at' => $this->reviewed_at
-    ? $this->reviewed_at->format('y-m-d 00:00:00')
+    ? \Carbon\Carbon::parse($this->reviewed_at)->format('Y-m-d H:i:s')
     : null,
             'status_cycle'=>$this->cycle?->status         ?? 'Unassigned',
             'cycle_name'=>$this->cycle?->name             ?? 'Unassigned',
