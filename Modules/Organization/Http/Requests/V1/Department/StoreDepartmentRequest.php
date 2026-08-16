@@ -3,7 +3,6 @@
 namespace Modules\Organization\Http\Requests\V1\Department;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Rules\PreventCircularDepartmentReference;
 

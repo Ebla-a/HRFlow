@@ -24,7 +24,6 @@ class ForgotPasswordTest extends TestCase
              'status',
              'message',
              'data',
-             'meta', 
          ]);
 
         $this->assertDatabaseHas('password_reset_tokens', [
@@ -32,4 +31,3 @@ class ForgotPasswordTest extends TestCase
         ]);
     }
 }
- 

@@ -24,6 +24,9 @@ class PerformanceController extends Controller
         public ReviewService $reviewService
     ) {}
 
+    /**
+     * @return JsonResponse
+     */
     public function ShowCycles(): JsonResponse
     {
         $this->authorize('viewCycles', PerformanceCycle::class);
@@ -38,6 +41,10 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param CycleRequest $request
+     * @return JsonResponse
+     */
     public function CreateCycle(CycleRequest $request): JsonResponse
     {
         $this->authorize('createCycle', PerformanceCycle::class);
@@ -55,6 +62,10 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param PerformanceCycle $id
+     * @return JsonResponse
+     */
     public function ActivateCycle(PerformanceCycle $id): JsonResponse
     {
         $this->authorize('updateCycle', $id);
@@ -67,6 +78,10 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param PerformanceCycle $id
+     * @return JsonResponse
+     */
     public function CloseCycle(PerformanceCycle $id): JsonResponse
     {
         $this->authorize('updateCycle', $id);
@@ -79,6 +94,9 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function MyReviews(): JsonResponse
     {
         $this->authorize(
@@ -96,6 +114,10 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param Employee $id
+     * @return JsonResponse
+     */
     public function EmployeeReviews(Employee $id): JsonResponse
     {
         $this->authorize('viewReviews', $id);
@@ -110,6 +132,9 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function ShowReviews(): JsonResponse
     {
         $this->authorize(
@@ -127,6 +152,10 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param ReviewRequest $request
+     * @return JsonResponse
+     */
     public function CreateReview(ReviewRequest $request): JsonResponse
     {
         $validated = $request->validated();
@@ -155,29 +184,34 @@ class PerformanceController extends Controller
         );
     }
 
+    /**
+     * @param UpdateReviewRequest $request
+     * @param PerformanceReview $id
+     * @return JsonResponse
+     */
     public function UpdateReview(
         UpdateReviewRequest $request,
-        PerformanceReview $performanceReview
+        PerformanceReview $id
     ): JsonResponse {
         $this->authorize(
             'updateReview',
-            $performanceReview
+            $id
         );
 
         $dto = CreateReviewDTO::fromRequest(
             array_merge(
                 $request->validated(),
                 [
-                    'employee_id' => $performanceReview->employee_id,
-                    'performance_cycle_id' => $performanceReview->performance_cycle_id,
-                    'reviewer_id' => $performanceReview->reviewer_id,
+                    'employee_id' => $id->employee_id,
+                    'performance_cycle_id' => $id->performance_cycle_id,
+                    'reviewer_id' => $id->reviewer_id,
                 ]
             )
         );
 
         $data = $this->reviewService->updateReview(
             $dto,
-            $performanceReview
+            $id
         );
 
         return $this->success(

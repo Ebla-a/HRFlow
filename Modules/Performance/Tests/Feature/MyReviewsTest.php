@@ -20,6 +20,7 @@ class MyReviewsTest extends TestCase
     {
         $managerUser = User::factory()->create();
         $managerUser->assignRole('Manager');
+        $managerUser->givePermissionTo('view.reviews.department');
 
         $employeeUser = User::factory()->create();
         $employeeUser->assignRole('Employee');

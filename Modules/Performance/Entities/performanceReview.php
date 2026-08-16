@@ -24,6 +24,11 @@ class PerformanceReview extends Model
     ];
     
     protected $table = 'performance_reviews';
+
+    
+    protected $casts = [
+        'reviewed_at' => 'datetime', 
+    ];
     
 
     protected static function newFactory()
@@ -33,7 +38,7 @@ class PerformanceReview extends Model
 
     public function cycle()
     {
-        return $this->belongsTo(performance_cycle::class,'performance_cycle_id');
+        return $this->belongsTo(PerformanceCycle::class,'performance_cycle_id');
     }
 
     public function employee()

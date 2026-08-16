@@ -25,7 +25,6 @@ class SalaryHistoryServiceTest extends TestCase
         $employee = Employee::factory()->create([
             'user_id' => $user->id,
             'job_title_id' => $jobTitle->id,
-            'employee_number' => 'EMP-001',
         ]);
 
         $salaryStructure = SalaryStructure::factory()->create([

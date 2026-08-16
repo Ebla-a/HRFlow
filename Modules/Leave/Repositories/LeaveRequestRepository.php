@@ -51,5 +51,11 @@ class LeaveRequestRepository implements LeaveRequestRepositoryInterface
     ): bool {
 
     return $leaveRequest->delete();}
+
+
+
+
+
+
+
 }
- 

@@ -9,5 +9,6 @@
     "Performance": true,
     "Notification": true,
     "Report": true,
-    "Attendance": true
+    "Attendance": true,
+    "AI": true
 }

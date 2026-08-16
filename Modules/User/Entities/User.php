@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\AI\Entities\AiConversation;
 use Modules\Employee\Entities\Employee;
 use Modules\User\Database\Factories\UserFactory;
 use Spatie\Permission\Traits\HasRoles;
@@ -57,11 +58,22 @@ class User extends Authenticatable
         return UserFactory::new();
     }
 
+
+
     /**
      * Get the employee associated with the user.
      */
     public function employee()
     {
         return $this->hasOne(Employee::class);
+    }
+
+          /**
+           * Summary of AiConversation
+           * @return \Illuminate\Database\Eloquent\Relations\HasMany<AiConversation, User>
+           */
+          public function AiConversation()
+    {
+        return $this->hasMany(AiConversation::class, 'user_id');
     }
 }
