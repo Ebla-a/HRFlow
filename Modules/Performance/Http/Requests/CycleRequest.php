@@ -28,16 +28,16 @@ class CycleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'               => 'The cycle name is required.',
-            'name.string'                 => 'The cycle name must be a string.',
-            'name.max'                    => 'The cycle name may not exceed 255 characters.',
-            'name.filter'                 => 'The name contains inappropriate words.',
-            'start_date.required'         => 'The start date is required.',
-            'start_date.date'             => 'The start date must be a valid date.',
-            'start_date.after'            => 'The start date must be a date after today.',
-            'end_date.required'           => 'The end date is required.',
-            'end_date.date'               => 'The end date must be a valid date.',
-            'end_date.minimum_days_after' => 'The end date must be at least 3 days after the start date.',
+            'name.required'               => __('The cycle name is required.'),
+            'name.string'                 => __('The cycle name must be a string.'),
+            'name.max'                    => __('The cycle name may not exceed 255 characters.'),
+            'name.filter'                 => __('The name contains inappropriate words.'),
+            'start_date.required'         => __('The start date is required.'),
+            'start_date.date'             => __('The start date must be a valid date.'),
+            'start_date.after'            => __('The start date must be a date after today.'),
+            'end_date.required'           => __('The end date is required.'),
+            'end_date.date'               => __('The end date must be a valid date.'),
+            'end_date.minimum_days_after' => __('The end date must be at least 3 days after the start date.'),
         ];
     }
 
@@ -45,7 +45,7 @@ class CycleRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'status'  => false,
-            'message' => 'Validation errors',
+            'message' => __('Validation errors'),
             'errors'  => $validator->errors()->toArray(),
         ], 422));
     }

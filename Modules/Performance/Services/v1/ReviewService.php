@@ -36,7 +36,7 @@ class ReviewService
 
         if ($exists) {
             throw new RuntimeException(
-                'Employee has already been reviewed in this cycle.'
+                __('Employee has already been reviewed in this cycle.')
             );
         }
 
