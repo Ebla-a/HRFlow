@@ -60,7 +60,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'jobtitle.update',
             'jobtitle.delete',
             'jobtitles.view.all',
-            'jobtitles.restore',
+            'jobtitle.restore',
 
             'leave.type.create',
             'leave.type.update',
