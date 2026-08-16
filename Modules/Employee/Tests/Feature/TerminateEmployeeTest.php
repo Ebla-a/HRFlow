@@ -28,6 +28,10 @@ class TerminateEmployeeTest extends TestCase
         $this->hrAdmin = User::factory()->create();
         $this->hrAdmin->guard_name = 'sanctum';
         $this->hrAdmin->assignRole('Hr_admin');
+        $this->hrAdmin->givePermissionTo(
+          'employee.change.status',
+          );
+
 
         $user = User::factory()->create(['is_active' => true]);
 
@@ -46,6 +50,7 @@ class TerminateEmployeeTest extends TestCase
         ];
 
         Sanctum::actingAs($this->hrAdmin);
+        
        $response = $this->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
 
         $response->assertStatus(200)

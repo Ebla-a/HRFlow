@@ -15,17 +15,18 @@ use Modules\Performance\Database\Factories\ReviewFactory;
         'score',
         'comments',
         'reviewed_at'])]
-        
 class PerformanceReview extends Model
 {
     use HasFactory;
+
     
     protected $table = 'performance_reviews';
-    
+
     
     protected $casts = [
-    'reviewed_at' => 'datetime:Y-m-d H:i:s',
+        'reviewed_at' => 'datetime', 
     ];
+    
 
     protected static function newFactory()
     {
@@ -47,5 +48,4 @@ class PerformanceReview extends Model
         return $this->belongsTo(Employee::class, 'reviewer_id');
     }
 
-}
-
+} 

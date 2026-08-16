@@ -28,15 +28,24 @@ class PerformanceSeederTableSeeder extends Seeder
         /*
          * Create performance cycles.
          */
+
+        PerformanceCycle::factory()
+            ->count(5)
+            ->create([
+                'status' => 'Active',
+            ]);
+
+        PerformanceCycle::factory()
+            ->count(5)
+            ->create([
+                'status' => 'Closed',
+            ]);
+
         PerformanceCycle::factory()
             ->count($n)
             ->create();
 
-        PerformanceCycle::factory()
-            ->count(2)
-            ->create([
-                'status' => 'Active',
-            ]);
+        
 
         /*
          * Create employees with their related users.
@@ -72,13 +81,14 @@ class PerformanceSeederTableSeeder extends Seeder
         /*
          * Select the first employee as manager.
          */
-        $manager = $employees->first();
+        $manager = $employees->firstWhere('id', 2) ?? $employees->first();
 
         $subordinates = $employees->where(
             'id',
             '!=',
             $manager->id
-        );
+        )
+        ->where('id','!=',1)->where('id','!=',3);
 
         /*
          * Assign all other employees to the manager.
