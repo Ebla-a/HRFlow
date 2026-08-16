@@ -26,18 +26,10 @@ class PerformanceReview extends Model
     public array $translatable = ['comments'];
 
     
-    
-    protected $casts = [
-    'comments' => 'json', 
-    'reviewed_at' => 'datetime:Y-m-d H:i:s',
-    use HasFactory;
-
-    
-    protected $table = 'performance_reviews';
-
-    
     protected $casts = [
         'reviewed_at' => 'datetime', 
+        'comments' => 'json', 
+      'reviewed_at' => 'datetime:Y-m-d H:i:s',
     ];
     
 
