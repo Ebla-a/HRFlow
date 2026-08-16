@@ -42,7 +42,6 @@ class AIServiceProvider extends ServiceProvider
             $registry->register($this->app->make(GetMyPerformanceReviewsTool::class));
         }
 
-
         }
 
     /**

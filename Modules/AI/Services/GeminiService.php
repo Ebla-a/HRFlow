@@ -2,14 +2,9 @@
 
 namespace Modules\AI\Services;
 
-use Exception;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Modules\AI\Entities\AiConversation;
 use Modules\AI\Entities\Message;
-use Throwable;
 
 class GeminiService
 {
@@ -140,7 +135,7 @@ if (isset($candidate['functionCall'])) {
 
 
     // Fallback logic: If Gemini fails to generate a text summary, format and present the raw tool data to the user.
-   
+
 if (!$replyText) {
     if (is_array($toolResult)) {
         $dataToFormat = $toolResult['data'] ?? $toolResult;
