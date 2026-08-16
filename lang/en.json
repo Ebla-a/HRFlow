@@ -1,0 +1,48 @@
+{
+    "Draft": "Draft",
+    "Active": "Active",
+    "Closed": "Closed",
+    "Reviewed": "Reviewed",
+
+    "Performance cycles retrieved successfully.": "Performance cycles retrieved successfully.",
+    "Performance cycle created successfully.": "Performance cycle created successfully.",
+    "Performance cycle activated successfully.": "Performance cycle activated successfully.",
+    "Performance cycle closed successfully.": "Performance cycle closed successfully.",
+    "My reviews retrieved successfully.": "My reviews retrieved successfully.",
+    "Employee reviews retrieved successfully.": "Employee reviews retrieved successfully.",
+    "Performance reviews retrieved successfully.": "Performance reviews retrieved successfully.",
+    "Performance review created successfully.": "Performance review created successfully.",
+
+    "Cannot activate a performance cycle whose end date has passed.": "Cannot activate a performance cycle whose end date has passed.",
+    "Employee has already been reviewed in this cycle.": "Employee has already been reviewed in this cycle.",
+
+    "The cycle name is required.": "The cycle name is required.",
+    "The cycle name must be a string.": "The cycle name must be a string.",
+    "The cycle name may not exceed 255 characters.": "The cycle name may not exceed 255 characters.",
+    "The name contains inappropriate words.": "The name contains inappropriate words.",
+    "The start date is required.": "The start date is required.",
+    "The start date must be a valid date.": "The start date must be a valid date.",
+    "The start date must be a date after today.": "The start date must be a date after today.",
+    "The end date is required.": "The end date is required.",
+    "The end date must be a valid date.": "The end date must be a valid date.",
+    "The end date must be at least 3 days after the start date.": "The end date must be at least 3 days after the start date.",
+
+    "The employee is required.": "The employee is required.",
+    "The selected employee does not exist.": "The selected employee does not exist.",
+    
+    "The performance cycle is required.": "The performance cycle is required.",
+    "The selected cycle does not exist.": "The selected cycle does not exist.",
+    
+    "The score is required.": "The score is required.",
+    "The score must be an integer.": "The score must be an integer.",
+    "The score must be between 1 and 5.": "The score must be between 1 and 5.",
+    
+    "The comments are required.": "The comments are required.",
+    "The comments must be a string.": "The comments must be a string.",
+    "The comments may not exceed 255 characters.": "The comments may not exceed 255 characters.",
+    "The comments contain inappropriate words.": "The comments contain inappropriate words.",
+
+    "Unauthenticated.": "Unauthenticated.",
+    "This action is unauthorized.": "This action is unauthorized.",
+    "Validation errors": "Validation errors"
+}

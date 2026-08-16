@@ -19,10 +19,10 @@ class ReviewResource extends JsonResource
             'cycle_id' => $this->performance_cycle_id,
             'employee_id' => $this->employee_id,
             'manager_id' => $this->reviewer_id,
-            'status'=>$this->status,
+            'status'=>__($this->status),
             'score' => $this->score,
-            'comments' => $this->comments,
-           'reviewed_at' => $this->reviewed_at
+            'comments' =>$this->getTranslation('comments', app()->getLocale()),
+            'reviewed_at' => $this->reviewed_at
     ? $this->reviewed_at->format('y-m-d 00:00:00')
     : null,
             'status_cycle'=>$this->cycle?->status         ?? 'Unassigned',

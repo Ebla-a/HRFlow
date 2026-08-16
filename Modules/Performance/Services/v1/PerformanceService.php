@@ -23,7 +23,7 @@ class PerformanceService
     public function create(CreateCycleDTO $data)
     {
         return PerformanceCycle::create([
-            'name'       => $data->name,
+            'name'       => [app()->getLocale() => $data->name],
             'start_date' => $data->start_date,
             'end_date'   => $data->end_date,
             'status'     => 'Draft', 
@@ -38,7 +38,7 @@ class PerformanceService
     {
         if ($cycle->end_date->isPast()) {
         throw new CycleEndedException
-        ('Cannot activate a performance cycle whose end date has passed.');
+        (__('Cannot activate a performance cycle whose end date has passed.'));
     }
         $cycle->status = 'Active';
         $cycle->save();

@@ -37,7 +37,7 @@ class PerformanceController extends Controller
             PerformanceResource::collection($data)
                 ->response()
                 ->getData(true),
-            'Performance cycles retrieved successfully.'
+            __('Performance cycles retrieved successfully.')
         );
     }
 
@@ -57,7 +57,7 @@ class PerformanceController extends Controller
 
         return $this->success(
             new PerformanceResource($data),
-            'Performance cycle created successfully.',
+            __('Performance cycle created successfully.'),
             201
         );
     }
@@ -74,7 +74,7 @@ class PerformanceController extends Controller
 
         return $this->success(
             new PerformanceResource($data),
-            'Performance cycle activated successfully.'
+            __('Performance cycle activated successfully.')
         );
     }
 
@@ -90,7 +90,7 @@ class PerformanceController extends Controller
 
         return $this->success(
             new PerformanceResource($data),
-            'Performance cycle closed successfully.'
+            __('Performance cycle closed successfully.')
         );
     }
 
@@ -110,7 +110,7 @@ class PerformanceController extends Controller
             ReviewResource::collection($data)
                 ->response()
                 ->getData(true),
-            'My reviews retrieved successfully.'
+            __('My reviews retrieved successfully.')
         );
     }
 
@@ -128,7 +128,7 @@ class PerformanceController extends Controller
             ReviewResource::collection($data)
                 ->response()
                 ->getData(true),
-            'Employee reviews retrieved successfully.'
+            __('Employee reviews retrieved successfully.')
         );
     }
 
@@ -148,7 +148,7 @@ class PerformanceController extends Controller
             ReviewResource::collection($data)
                 ->response()
                 ->getData(true),
-            'Performance reviews retrieved successfully.'
+            __('Performance reviews retrieved successfully.')
         );
     }
 
@@ -179,7 +179,7 @@ class PerformanceController extends Controller
 
         return $this->success(
             new ReviewResource($data),
-            'Performance review created successfully.',
+            __('Performance review created successfully.'),
             201
         );
     }
@@ -216,7 +216,7 @@ class PerformanceController extends Controller
 
         return $this->success(
             new ReviewResource($data),
-            'Performance review updated successfully.'
+            __('Performance review updated successfully.')
         );
     }
 }

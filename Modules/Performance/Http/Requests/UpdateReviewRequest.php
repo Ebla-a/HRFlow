@@ -26,13 +26,13 @@ class UpdateReviewRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'score.required'    => 'The score is required.',
-            'score.integer'     => 'The score must be an integer.',
-            'score.between'     => 'The score must be between 1 and 5.',
-            'comments.required' => 'The comments are required.',
-            'comments.string'   => 'The comments must be a string.',
-            'comments.max'      => 'The comments may not exceed 255 characters.',
-            'comments.filter'   => 'The comments contain inappropriate words.',
+            'score.required'    => __('The score is required.'),
+            'score.integer'     => __('The score must be an integer.'),
+            'score.between'     => __('The score must be between 1 and 5.'),
+            'comments.required' => __('The comments are required.'),
+            'comments.string'   => __('The comments must be a string.'),
+            'comments.max'      => __('The comments may not exceed 255 characters.'),
+            'comments.filter'   => __('The comments contain inappropriate words.'),
         ];
     }
 
@@ -40,7 +40,7 @@ class UpdateReviewRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'status'  => false,
-            'message' => 'Validation errors',
+            'message' => __('Validation errors'),
             'errors'  => $validator->errors()->toArray(),
         ], 422));
     }

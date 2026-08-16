@@ -5,8 +5,18 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+
+"repositories": [
+    {
+        "type": "path",
+        "url": "./packages/transla-genius"
+    }
+],
+
+
     "require": {
         "php": "^8.3",
+        "coding-partners/transla-genius": "*@dev",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
@@ -94,6 +104,6 @@
             "wikimedia/composer-merge-plugin": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

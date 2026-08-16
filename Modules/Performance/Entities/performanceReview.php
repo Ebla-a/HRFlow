@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Employee\Entities\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Performance\Database\Factories\ReviewFactory;
+use CodingPartners\TranslaGenius\Traits\Translatable;
+
 
 #[Fillable([ 'employee_id',
         'performance_cycle_id',
@@ -18,12 +20,16 @@ use Modules\Performance\Database\Factories\ReviewFactory;
         
 class PerformanceReview extends Model
 {
-    use HasFactory;
+    use HasFactory,Translatable;
     
     protected $table = 'performance_reviews';
+
+    public array $translatable = ['comments'];
+
     
     
     protected $casts = [
+    'comments' => 'json', 
     'reviewed_at' => 'datetime:Y-m-d H:i:s',
     ];
 

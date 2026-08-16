@@ -62,20 +62,20 @@ class ReviewRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'employee_id.required' => 'The employee is required.',
-            'employee_id.exists' => 'The selected employee does not exist.',
+            'employee_id.required' => __('The employee is required.'),
+            'employee_id.exists' => __('The selected employee does not exist.'),
 
-            'performance_cycle_id.required' => 'The performance cycle is required.',
-            'performance_cycle_id.exists' => 'The selected cycle does not exist.',
+            'performance_cycle_id.required' => __('The performance cycle is required.'),
+            'performance_cycle_id.exists' => __('The selected cycle does not exist.'),
 
-            'score.required' => 'The score is required.',
-            'score.integer' => 'The score must be an integer.',
-            'score.between' => 'The score must be between 1 and 5.',
+            'score.required' => __('The score is required.'),
+            'score.integer' => __('The score must be an integer.'),
+            'score.between' => __('The score must be between 1 and 5.'),
 
-            'comments.required' => 'The comments are required.',
-            'comments.string' => 'The comments must be a string.',
-            'comments.max' => 'The comments may not exceed 255 characters.',
-            'comments.filter' => 'The comments contain inappropriate words.',
+            'comments.required' => __('The comments are required.'),
+            'comments.string' => __('The comments must be a string.'),
+            'comments.max' => __('The comments may not exceed 255 characters.'),
+            'comments.filter' => __('The comments contain inappropriate words.'),
         ];
     }
 
@@ -84,7 +84,7 @@ class ReviewRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'status' => false,
-                'message' => 'Validation errors',
+                'message' => __('Validation errors'),
                 'errors' => $validator->errors()->toArray(),
             ], 422)
         );

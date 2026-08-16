@@ -16,10 +16,10 @@ class PerformanceResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name'=>$this->name,
+            'name'=>$this->getTranslation('name', app()->getLocale()),
             'start_date'=>$this->start_date->toDateTimeString(),
             'end_date'=>$this->end_date->toDateTimeString(),
-            'status'=>$this->status,
+            'status'=>__($this->status),
 
         ];
     }

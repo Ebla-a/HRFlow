@@ -11,6 +11,7 @@ use Modules\Core\Http\Middleware\LogApiRequest;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use CodingPartners\TranslaGenius\Middleware\SetLocale;
 
 
 
@@ -28,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
       $middleware->api(prepend: [
             EnsureApiHeader::class,
             LogApiRequest::class,
+            SetLocale::class,
         ]);
 
         $middleware->alias([

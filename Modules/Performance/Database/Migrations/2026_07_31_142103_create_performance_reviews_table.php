@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->decimal('score',5,2);
 
-            $table->text('comments')
+            $table->json('comments')
                 ->nullable();
 
 
