@@ -5,6 +5,7 @@ namespace Modules\AI\Providers;
 use Illuminate\Support\ServiceProvider;
 use Modules\AI\Services\AiToolRegistry;
 use Modules\Leave\Contracts\GetLeaveBalanceTool;
+use Modules\Performance\ToolAi\GetMyPerformanceReviewsTool;
 
 class AIServiceProvider extends ServiceProvider
 {
@@ -30,14 +31,16 @@ class AIServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
 
-    
+
 
         $registry = $this->app->make(AiToolRegistry::class);
 
         if (class_exists(GetLeaveBalanceTool::class)) {
             $registry->register($this->app->make(GetLeaveBalanceTool::class));
         }
-
+    if (class_exists(GetMyPerformanceReviewsTool::class)) {
+            $registry->register($this->app->make(GetMyPerformanceReviewsTool::class));
+        }
 
 
         }

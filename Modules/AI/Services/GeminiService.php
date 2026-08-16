@@ -2,9 +2,14 @@
 
 namespace Modules\AI\Services;
 
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Modules\AI\Entities\AiConversation;
 use Modules\AI\Entities\Message;
+use Throwable;
 
 class GeminiService
 {
@@ -46,11 +51,13 @@ class GeminiService
         $payload = [
             'systemInstruction' => [
                 'parts' => [
-                ['text' => 'You are a smart AI assistant for the HRFlow HR system.
-                The system automatically identifies the employee from the session,
-                 so never ask them for their employee ID. Instead,
-                 invoke the appropriate tool immediatelyوAfter invoking any tool, always convert the raw returned data into a clear, friendly human sentence for the user. Never return an empty text response.'
-                 ]        ]
+                           ['text' => "You are an intelligent HR assistant integrated into the HRFlow application.\n" .
+                              "Important response rules:\n" .
+                              "1. When executing tools and receiving JSON data, NEVER display raw JSON objects, code snippets, or raw technical fields to the user under any circumstances.\n" .
+                              "2. Always analyze the data and craft a natural, human-friendly response in the user's language (defaulting to Arabic or English based on the input).\n" .
+                              "3. Format performance reviews, list items, and structured data cleanly using Markdown tables or concise bullet points for optimal readability."
+                             ]
+                      ]
                 ],
             'contents' => $contents,
             'tools'    => $this->toolRegistry->getDeclarationsForGemini(),
@@ -125,20 +132,28 @@ if (isset($candidate['functionCall'])) {
 
 
 
-    $finalResponse = Http::timeout(60)->post($url, $finalPayload)->json();
+
+    $finalResponse = Http::timeout(90)->post($url, $finalPayload)->json();
 // Safely extract the generated response text from the first candidate part, or fall back to null if missing.
     $replyText = $finalResponse['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
 
 
     // Fallback logic: If Gemini fails to generate a text summary, format and present the raw tool data to the user.
-     if (!$replyText) {
-         if (is_array($toolResult) && isset($toolResult['total_remaining_days'])) {
-        $replyText = "مجموع إجازاتك المتبقية لسنة " . ($toolResult['year'] ?? 2026) . " هو " . $toolResult['total_remaining_days'] . " يوم.";
+   
+if (!$replyText) {
+    if (is_array($toolResult)) {
+        $dataToFormat = $toolResult['data'] ?? $toolResult;
+
+        if (is_array($dataToFormat)) {
+            unset($dataToFormat['status'], $dataToFormat['count'], $dataToFormat['total']);
+        }
+
+        $replyText = $this->formatDynamicToolResult($dataToFormat, $toolResult['message'] ?? null);
     } else {
-              $replyText = "Here are the requested details:\n" . json_encode($toolResult, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                }
-     }
+        $replyText = (string) $toolResult;
+    }
+}
 
         //save final message from ai
     Message::create([
@@ -171,8 +186,59 @@ return [
 
 
 
+/**
+ * Summary of formatDynamicToolResult
+ * @param array $data
+ * @param mixed $defaultMessage
+ * @return string
+ */
+private function formatDynamicToolResult(array $data, ?string $defaultMessage = null): string
+{
+    if (empty($data)) {
+        return $defaultMessage ?? 'لا توجد بيانات متاحة حالياً.';
+    }
 
+    $output = "";
+    if ($defaultMessage) {
+        $output .= "{$defaultMessage}\n\n";
+    }
 
+    if (array_is_list($data)) {
+        foreach ($data as $index => $item) {
+            $num = $index + 1;
+            $output .= " #{$num} ";
+
+            if (is_array($item)) {
+                foreach ($item as $key => $value) {
+                    $formattedKey = ucwords(str_replace(['_', '-'], ' ', $key));
+                    $formattedValue = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : ($value ?? 'N/A');
+                    $output .= "• {$formattedKey}: {$formattedValue}  ";
+                }
+            } else {
+                $output .= "• {$item}\n";
+            }
+            $output .= "\n";
+        }
+
+        return trim($output);
+    }
+
+    foreach ($data as $key => $value) {
+        $formattedKey = ucwords(str_replace(['_', '-'], ' ', $key));
+
+        if (is_array($value)) {
+            $output .= " {$formattedKey}:**  ";
+            foreach ($value as $subKey => $subValue) {
+                $subFormattedKey = ucwords(str_replace(['_', '-'], ' ', $subKey));
+                $output .= "  • {$subFormattedKey}:  " . (is_array($subValue) ? json_encode($subValue, JSON_UNESCAPED_UNICODE) : ($subValue ?? 'N/A')) ;
+            }
+        } else {
+            $output .= "• {$formattedKey}: " . ($value ?? 'N/A') ;
+        }
+    }
+
+    return trim($output);
+}
 
 
 }
