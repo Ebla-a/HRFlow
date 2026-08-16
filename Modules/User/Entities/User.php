@@ -31,7 +31,7 @@ class User extends Authenticatable
     use HasRoles;
     use Notifiable;
 
-       protected string $guard_name = 'sanctum';
+
 
        public function getGuardName(): string
     {
