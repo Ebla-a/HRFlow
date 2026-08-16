@@ -1153,17 +1153,84 @@ php artisan test
 
 ---
 
+---
+
+# 🤖 AI Employee Assistant
+
+HRFlow includes an AI-powered assistant designed to help employees interact with the HR system using natural language.
+
+The assistant can understand employee questions and dynamically execute registered HR tools to retrieve relevant information from the system.
+
+For example, an employee can ask questions such as:
+
+- What is my remaining leave balance?
+- How many days of annual leave do I have?
+- What is my current HR information?
+- What is my attendance information?
+
+The AI assistant communicates with the available HR tools through a centralized tool registry.
+
+### AI Request Flow
+
+```text
+Employee
+    │
+    ▼
+AI Assistant
+    │
+    ▼
+GeminiService
+    │
+    ▼
+AiToolRegistry
+    │
+    ├──────────────► GetLeaveBalanceTool
+    │
+    ├──────────────► Employee Information Tool
+    │
+    ├──────────────► Attendance Tool
+    │
+    └──────────────► Other AI Tools
+    │
+    ▼
+Tool Execution
+    │
+    ▼
+Result
+    │
+    ▼
+AI Response
+    │
+    ▼
+Employee
+
 # 📮 Postman Collection
 
 HRFlow is a **Backend API project only**.
 
 There is no frontend application included in this repository.
 
-API development and testing are performed through a Postman Collection.
+API development, testing, and endpoint verification are performed using a Postman Collection.
 
-The collection uses environment variables instead of hard-coded URLs and authentication tokens.
+The Postman Collection uses environment variables for the API URL and authentication tokens, allowing the same collection to be used for different users and environments.
 
-### 📥 Download Postman Collection
+## 📥 Download Postman Collection
+
+The complete HRFlow Postman Collection is available in the repository:
+
+[Download HRFlow Postman Collection](https://github.com/Ebla-a/HRFlow/blob/main/docs/HRFlow.postman_collection.json)
+
+---
+
+## 🔧 Postman Environment Variables
+
+The collection uses the following variables:
+
+```text
+base_url
+hr_admin
+manager
+employee### 📥 Download Postman Collection
 
 The complete Postman API Collection is available here:
 
