@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('conversation_id')->constrained('ai_conversations')->cascadeOnDelete();
-            $table->enum('role', ['user', 'model', 'tool']);
-            $table->text('content')->nullable();
+$table->enum('role', ['user', 'model', 'function', 'tool']);            $table->json('content')->nullable();
             $table->timestamps();
         });
     }

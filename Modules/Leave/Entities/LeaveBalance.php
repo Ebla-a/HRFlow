@@ -33,12 +33,12 @@ use Modules\Employee\Entities\Employee;
         return $this->belongsTo(
             Employee::class
         );
-    } 
+    }
 
     public function leaveType()
     {
         return $this->belongsTo(
-            LeaveType::class
+            LeaveType::class,'leave_type_id'
         );
     }
-  } 
+  }
