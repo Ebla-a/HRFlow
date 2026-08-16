@@ -20,5 +20,6 @@ interface LeaveRequestRepositoryInterface
     public function delete(
         LeaveRequest $leaveRequest
     ): bool;
+
+
 }
- 

@@ -14,6 +14,9 @@ class Message extends Model
     use HasFactory;
 
    protected $table = 'messages';
+  protected $casts = [
+        'content' => 'array',
+    ];
     /**
      * Summary of conversation
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<AiConversation, Message>

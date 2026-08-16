@@ -2,78 +2,70 @@
 
 namespace Modules\AI\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\AI\Entities\AiConversation;
+use Modules\AI\Http\Requests\AiFormRequest;
+use Modules\AI\Services\GeminiService;
 
 class AIController extends Controller
 {
+   public function __construct(private GeminiService $geminiService) {}
+
+/**
+ * Summary of ask
+ * @param Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+public function ask(AiFormRequest $request)
+    {
+
+      $validated = $request->validated();
+
+        $userId = auth()->id() ?? 1;
+        
+// Fetch existing conversation model if conversation_id is provided
+        $conversation = $request->filled('conversation_id')
+            ? AiConversation::find($validated['conversation_id'])
+            : null;
+
+        $result = $this->geminiService->ask(
+            $validated['prompt'],
+            $userId,
+            $conversation
+        );
+
+        return response()->json([
+            'status'          => 'success',
+            'conversation_id' => $result['conversation_id'],
+            'reply'           => $result['reply'],
+        ], 200, [], JSON_UNESCAPED_UNICODE);
+    }
+
+
     /**
-     * Display a listing of the resource.
-     * @return Renderable
+     * Summary of index
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return view('ai::index');
-    }
+        $conversations = AiConversation::where('user_id', auth()->id() ?? 1)
+            ->latest()
+            ->get();
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('ai::create');
+        return response()->json($conversations);
     }
-
     /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
+     * Summary of show
+     * @param mixed $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        return view('ai::show');
-    }
+        $conversation = AiConversation::where('user_id', auth()->id() ?? 1)
+            ->with('messages')
+            ->findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
-    public function edit($id)
-    {
-        return view('ai::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json($conversation);
     }
 }

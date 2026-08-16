@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\AI\Http\Controllers\AIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/ai', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->group(function () {
+Route::post('/chat', [AIController::class, 'ask']);
+    Route::get('/conversations', [AIController::class, 'index']);
+    Route::get('/conversations/{id}', [AIController::class, 'show']);
+    // });
