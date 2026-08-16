@@ -22,8 +22,8 @@ public function ask(AiFormRequest $request)
 
       $validated = $request->validated();
 
-        $userId = auth()->id() ?? 1;
-        
+        $userId = auth()->id() ;
+
 // Fetch existing conversation model if conversation_id is provided
         $conversation = $request->filled('conversation_id')
             ? AiConversation::find($validated['conversation_id'])
@@ -49,7 +49,7 @@ public function ask(AiFormRequest $request)
      */
     public function index()
     {
-        $conversations = AiConversation::where('user_id', auth()->id() ?? 1)
+        $conversations = AiConversation::where('user_id', auth()->id() )
             ->latest()
             ->get();
 
@@ -62,7 +62,7 @@ public function ask(AiFormRequest $request)
      */
     public function show($id)
     {
-        $conversation = AiConversation::where('user_id', auth()->id() ?? 1)
+        $conversation = AiConversation::where('user_id', auth()->id() )
             ->with('messages')
             ->findOrFail($id);
 

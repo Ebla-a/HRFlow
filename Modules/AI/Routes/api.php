@@ -15,8 +15,8 @@ use Modules\AI\Http\Controllers\AIController;
 |
 */
 
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 Route::post('/chat', [AIController::class, 'ask']);
     Route::get('/conversations', [AIController::class, 'index']);
     Route::get('/conversations/{id}', [AIController::class, 'show']);
-    // });
+    });
