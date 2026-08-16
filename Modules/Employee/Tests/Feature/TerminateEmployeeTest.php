@@ -6,8 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\PermissionRegistrar;
 
-use Modules\Employee\App\Events\EmployeeTerminated;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
@@ -23,11 +23,15 @@ class TerminateEmployeeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->seed(\Modules\User\Database\Seeders\RolesAndPermissionsSeeder::class);
+
 
         $this->hrAdmin = User::factory()->create();
         $this->hrAdmin->guard_name = 'sanctum';
         $this->hrAdmin->assignRole('Hr_admin');
+
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 
         $user = User::factory()->create(['is_active' => true]);
 
@@ -39,14 +43,16 @@ class TerminateEmployeeTest extends TestCase
 
     public function test_hr_admin_can_terminate_employee_and_deactivate_user(): void
     {
+        $this->withoutExceptionHandling();
         Event::fake();
 
         $payload = [
             'termination_reason' => 'End of contract',
         ];
 
-        Sanctum::actingAs($this->hrAdmin);
-       $response = $this->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
+        Sanctum::actingAs($this->hrAdmin, ['*'], 'sanctum');
+
+        $response = $this->postJson("/api/v1/employees/{$this->employee->id}/terminate", $payload);
 
         $response->assertStatus(200)
             ->assertJsonPath('data.status', EmployeeStatus::TERMINATED->value);

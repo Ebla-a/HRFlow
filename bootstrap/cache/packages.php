@@ -7,82 +7,83 @@
     ),
   ),
   'laravel/pail' => 
+  'laravel/pail' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Laravel\\Pail\\PailServiceProvider',
     ),
   ),
-  'laravel/pao' => 
+  'laravel/pao' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
     ),
   ),
-  'laravel/sanctum' => 
+  'laravel/sanctum' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
     ),
   ),
-  'laravel/tinker' => 
+  'laravel/tinker' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Laravel\\Tinker\\TinkerServiceProvider',
     ),
   ),
-  'nesbot/carbon' => 
+  'nesbot/carbon' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Carbon\\Laravel\\ServiceProvider',
     ),
   ),
-  'nunomaduro/collision' => 
+  'nunomaduro/collision' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
-  'nunomaduro/termwind' => 
+  'nunomaduro/termwind' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
-  'nwidart/laravel-modules' => 
+  'nwidart/laravel-modules' =>
   array (
-    'aliases' => 
+    'aliases' =>
     array (
       'Module' => 'Nwidart\\Modules\\Facades\\Module',
     ),
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Nwidart\\Modules\\LaravelModulesServiceProvider',
     ),
   ),
-  'pestphp/pest-plugin-laravel' => 
+  'pestphp/pest-plugin-laravel' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
-  'rap2hpoutre/fast-excel' => 
+  'rap2hpoutre/fast-excel' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
-      0 => 'Rap2hpoutre\\FastExcel\\Providers\\FastExcelServiceProvider',
+      0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
-  'spatie/laravel-permission' => 
+  'spatie/laravel-permission' =>
   array (
-    'providers' => 
+    'providers' =>
     array (
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
@@ -94,4 +95,5 @@
       0 => 'Spatie\\Translatable\\TranslatableServiceProvider',
     ),
   ),
+);
 );

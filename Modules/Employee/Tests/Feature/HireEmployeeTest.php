@@ -53,11 +53,13 @@ class HireEmployeeTest extends TestCase
             'employee_number' => 'EMP-1001',
             'national_id' => '1234567890',
             'birth_date' => '1995-01-01',
+            'gender' => 'male',
             'employment_type' => EmploymentType::FULL_TIME->value,
             'status' => EmployeeStatus::ACTIVE->value,
             'hire_date' => now()->startOfDay()->format('Y-m-d'),
         ];
  Sanctum::actingAs($this->hrAdmin);
+
         $response = $this->postJson('/api/v1/employees', $payload ,['X-Request-ID' => 'test-uuid']);
 
         $response->assertStatus(201)
@@ -83,6 +85,7 @@ class HireEmployeeTest extends TestCase
             'employee_number' => 'EMP-1002',
             'national_id' => '1234567890',
             'birth_date' => '1995-01-01',
+            'gender' => 'female',
             'employment_type' => EmploymentType::FULL_TIME->value,
             'status' => EmployeeStatus::ACTIVE->value,
             'hire_date' => now()->startOfDay()->format('Y-m-d'),
@@ -109,6 +112,7 @@ $response = $this->postJson('/api/v1/employees', $payload);
             'employee_number' => 'EMP-1003',
             'national_id' => '1234567890',
             'birth_date' => '1995-01-01',
+            'gender' => 'male',
             'employment_type' => EmploymentType::FULL_TIME->value,
             'status' => EmployeeStatus::ACTIVE->value,
             'hire_date' => now()->startOfDay()->format('Y-m-d'),

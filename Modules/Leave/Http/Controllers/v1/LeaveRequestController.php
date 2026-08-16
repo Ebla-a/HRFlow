@@ -28,7 +28,7 @@ class LeaveRequestController extends Controller
         'leaveType'
     ]);
 
-   
+  
     if (!$user->hasPermissionTo('leave.requests.view.all')) {
         $query->where('employee_id', $user->employee?->id);
     }
@@ -36,7 +36,7 @@ class LeaveRequestController extends Controller
     return LeaveRequestResource::collection($query->paginate());
 }
 
-    public function store(StoreLeaveRequestRequest $request) 
+    public function store(StoreLeaveRequestRequest $request)
     {
        $this->authorize(
          'create',
@@ -46,7 +46,7 @@ class LeaveRequestController extends Controller
        if (!auth('sanctum')->user()->employee) {
 
             return $this->error("User is not associated with an employee record",422);
-         
+
        }
 
        $request->merge([
@@ -105,7 +105,7 @@ class LeaveRequestController extends Controller
         'approveHR',
         $leaveRequest
     );
- 
+
     return new LeaveRequestResource(
         $this->service->approveByHR(
             $leaveRequest
@@ -121,7 +121,7 @@ class LeaveRequestController extends Controller
           'reject',
           $leaveRequest
       );
- 
+
        return new LeaveRequestResource(
          $this->service->reject(
             $leaveRequest,

@@ -52,7 +52,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'departments.show',
             'departments.update',
             'departments.delete',
-            'departments.assign_manager',
+            'departments.assign-manager',
             'departments.force-delete',
             'departments.restore',
 
@@ -60,7 +60,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'jobtitle.update',
             'jobtitle.delete',
             'jobtitles.view.all',
-            'jobtitles.restore',
+            'jobtitle.restore',
 
             'leave.type.create',
             'leave.type.update',

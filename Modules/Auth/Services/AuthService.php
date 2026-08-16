@@ -1,7 +1,7 @@
 <?php
 
 namespace Modules\Auth\Services;
- 
+
 use App\Models\LoginAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,11 +11,14 @@ use Illuminate\Validation\ValidationException;
 use Modules\Auth\App\DTOs\ChangePasswordDTO;
 use Modules\Auth\App\DTOs\LoginDTO;
 use Modules\Auth\App\DTOs\ResetPasswordDTO;
+use Modules\Auth\App\Exceptions\ExpiredResetToken;
+use Modules\Auth\App\Exceptions\InactiveUserException;
+use Modules\Auth\App\Exceptions\InvalidCredentialsException;
 use Modules\Auth\Events\PasswordChanged;
 use Modules\User\Entities\User;
 
 class AuthService
-{ 
+{
     /**
      * Login user.
      *
@@ -36,15 +39,14 @@ class AuthService
         if (! Hash::check($dto->password, $user->password)) {
             $this->recordLoginAttempt($dto->email, 'invalid_password');
 
-            throw new \Exception('Invalid password.', 401);
+              throw new InvalidCredentialsException();
         }
 
         if (! $user->is_active) {
             $this->recordLoginAttempt($dto->email, 'inactive_account');
 
-            throw new \Exception('User account is inactive.', 403);
+           throw new InactiveUserException();
         }
-
         $token = $user
             ->createToken('auth_token')
             ->plainTextToken;
@@ -140,8 +142,8 @@ class AuthService
             ->first();
 
         if (! $record || ! Hash::check($dto->token, $record->token)) {
-            throw new \Exception('Invalid or expired reset token.', 400);
-        } 
+             throw new ExpiredResetToken();
+        }
 
         $user = User::query()
             ->where('email', $dto->email)
@@ -159,7 +161,7 @@ class AuthService
             $user,
             request()->ip(),
             request()->userAgent()
-        )); 
+        ));
 
         DB::table('password_reset_tokens')
             ->where('email', $dto->email)
