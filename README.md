@@ -80,6 +80,20 @@ The system provides:
 
 ---
 
+## 🛠️ Main Technologies
+
+| Technology | Purpose |
+|------------|---------|
+| PHP 8.4+ | Backend language |
+| Laravel 13 | Backend framework |
+| Laravel Sanctum | API authentication |
+| MySQL / SQLite | Database |
+| Spatie Permission | Roles & permissions |
+| TranslaGenius | Automatic translation & localization |
+| Google Gemini | AI Employee Assistant |
+| Postman | API testing |
+| PhpSpreadsheet | Excel report export |
+
 # ✨ Key Features
 
 ## 👤 Employee Management
@@ -1203,6 +1217,34 @@ AI Response
     │
     ▼
 Employee
+
+
+
+# 🌍 Localization & Automatic Translation
+
+HRFlow supports multilingual content and automatic field translation using the **TranslaGenius** Laravel package.
+
+TranslaGenius provides automatic translation for configured Eloquent model fields and supports multiple languages. It also provides queue-based translation processing, allowing translation work to be handled asynchronously without blocking the main API request. :contentReference[oaicite:1]{index=1}
+
+The package can automatically translate configured model attributes into the supported languages.
+
+### Package
+
+**TranslaGenius**
+
+Repository:
+
+https://github.com/YousefSaleh1/transla-genius
+
+Install with:
+
+```bash
+composer require coding-partners/transla-genius
+
+
+⚙️ Queue-Based Translation
+php artisan queue:work
+
 
 # 📮 Postman Collection
 
