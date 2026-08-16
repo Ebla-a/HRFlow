@@ -12,8 +12,10 @@ use Modules\Leave\Repositories\Interfaces\LeaveRequestRepositoryInterface;
 use Modules\Leave\Providers\RouteServiceProvider;
 use Modules\Leave\Providers\EventServiceProvider;
 use Modules\Leave\Observers\LeaveRequestObserver;
+use Modules\Leave\Repositories\Interfaces\LeaveBalanceRepositoryInterface;
 use Modules\Leave\Repositories\LeaveTypeRepository;
 use Modules\Leave\Repositories\Interfaces\LeaveTypeRepositoryInterface;
+use Modules\Leave\Repositories\LeaveBalanceRepository;
 
 class LeaveServiceProvider extends ServiceProvider
 {
@@ -74,6 +76,10 @@ class LeaveServiceProvider extends ServiceProvider
       $this->app->bind(
         LeaveTypeRepositoryInterface::class,
         LeaveTypeRepository::class
+      );
+       $this->app->bind(
+        LeaveBalanceRepositoryInterface::class,
+        LeaveBalanceRepository::class
       );
    }
 
@@ -149,4 +155,3 @@ class LeaveServiceProvider extends ServiceProvider
         return $paths;
     }
 }
- 

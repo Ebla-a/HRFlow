@@ -2,10 +2,9 @@
 
 namespace Modules\AI\Providers;
 
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
-use Modules\AI\Contracts\AiProviderInterface;
-use Modules\AI\Services\Providers\GeminiProvider;
+use Modules\AI\Services\AiToolRegistry;
+use Modules\Leave\Contracts\GetLeaveBalanceTool;
 
 class AIServiceProvider extends ServiceProvider
 {
@@ -30,7 +29,18 @@ class AIServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-    }
+
+    
+
+        $registry = $this->app->make(AiToolRegistry::class);
+
+        if (class_exists(GetLeaveBalanceTool::class)) {
+            $registry->register($this->app->make(GetLeaveBalanceTool::class));
+        }
+
+
+
+        }
 
     /**
      * Register the service provider.
@@ -39,8 +49,10 @@ class AIServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Register AiToolRegistry as a singleton service to share registered AI tools across the entire request lifecycle.
+        $this->app->singleton(AiToolRegistry::class);
+
         $this->app->register(RouteServiceProvider::class);
-        $this->app->bind(AiProviderInterface::class, GeminiProvider::class);
     }
 
     /**

@@ -8,7 +8,7 @@ class UpdateJobTitleDto
 {
     public function __construct(
       public readonly ?string $title = null,
-        public readonly ?string $grade = null,
+     public readonly ?JobTitleGrade $grade = null,
         public readonly ?int $departmentId = null,
         public readonly ?string $description = null,
         public readonly ?bool $isActive = null,
@@ -25,7 +25,7 @@ class UpdateJobTitleDto
             : null;
        return new self(
             title: $data['title'] ?? null,
-            grade: $gradeValue,
+            grade: $gradeValue ,
             departmentId: isset($data['department_id']) ? (int) $data['department_id'] : null,
             description: $data['description'] ?? null,
             isActive: isset($data['is_active']) ? (bool) $data['is_active'] : null,
