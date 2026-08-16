@@ -1,4 +1,12 @@
 <?php return array (
+  'coding-partners/transla-genius' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'CodingPartners\\TranslaGenius\\TranslaGeniusServiceProvider',
+    ),
+  ),
+  'laravel/pail' => 
   'laravel/pail' =>
   array (
     'providers' =>
@@ -80,4 +88,12 @@
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
     ),
   ),
+  'spatie/laravel-translatable' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Translatable\\TranslatableServiceProvider',
+    ),
+  ),
+);
 );

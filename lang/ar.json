@@ -1,0 +1,58 @@
+{
+
+
+    "Draft": "مسودة",
+    "Active": "نشط",
+    "Closed": "مغلق",
+    "Reviewed": "تمت مراجعته",
+
+    "Performance cycles retrieved successfully.": "تم استرجاع دورات الأداء بنجاح.",
+    "Performance cycle created successfully.": "تم إنشاء دورة الأداء بنجاح.",
+    "Performance cycle activated successfully.": "تم تفعيل دورة الأداء بنجاح.",
+    "Performance cycle closed successfully.": "تم إغلاق دورة الأداء بنجاح.",
+    "My reviews retrieved successfully.": "تم استرجاع مراجعاتي بنجاح.",
+    "Employee reviews retrieved successfully.": "تم استرجاع مراجعات الموظف بنجاح.",
+    "Performance reviews retrieved successfully.": "تم استرجاع مراجعات الأداء بنجاح.",
+    "Performance review created successfully.": "تم إنشاء مراجعة الأداء بنجاح.",
+
+
+    "Cannot activate a performance cycle whose end date has passed.": "لا يمكن تفعيل دورة أداء انتهى تاريخ إجائها.",
+    "Employee has already been reviewed in this cycle.": "تم تقييم الموظف مسبقاً في هذه الدورة.",
+
+
+
+    "The cycle name is required.": "اسم الدورة مطلوب.",
+    "The cycle name must be a string.": "يجب أن يكون اسم الدورة نصاً.",
+    "The cycle name may not exceed 255 characters.": "لا يجوز أن يتجاوز اسم الدورة 255 حرفاً.",
+    "The name contains inappropriate words.": "يحتوي الاسم على كلمات غير لائقة.",
+    "The start date is required.": "تاريخ البدء مطلوب.",
+    "The start date must be a valid date.": "يجب أن يكون تاريخ البدء تاريخاً صالحاً.",
+    "The start date must be a date after today.": "يجب أن يكون تاريخ البدء بعد تاريخ اليوم.",
+    "The end date is required.": "تاريخ الانتهاء مطلوب.",
+    "The end date must be a valid date.": "يجب أن يكون تاريخ الانتهاء تاريخاً صالحاً.",
+    "The end date must be at least 3 days after the start date.": "يجب أن يكون تاريخ الانتهاء بعد 3 أيام على الأقل من تاريخ البدء.",
+
+
+    "The employee is required.": "الموظف مطلوب.",
+    "The selected employee does not exist.": "الموظف المحدد غير موجود.",
+    
+    "The performance cycle is required.": "دورة الأداء مطلوبة.",
+    "The selected cycle does not exist.": "الدورة المحددة غير موجودة.",
+    
+    "The score is required.": "الدرجة مطلوبة.",
+    "The score must be an integer.": "يجب أن تكون الدرجة عدداً صحيحاً.",
+    "The score must be between 1 and 5.": "يجب أن تكون الدرجة بين 1 و 5.",
+    
+    "The comments are required.": "التعليقات مطلوبة.",
+    "The comments must be a string.": "يجب أن تكون التعليقات نصاً.",
+    "The comments may not exceed 255 characters.": "لا يجوز أن تتجاوز التعليقات 255 حرفاً.",
+    "The comments contain inappropriate words.": "تحتوي التعليقات على كلمات غير لائقة.",
+
+    "Unauthenticated.": "غير مسجل الدخول.",
+    "This action is unauthorized.": "هذا الإجراء غير مسموح به.",
+    "Validation errors": "أخطاء في التحقق من الصحة"
+
+
+
+
+}
