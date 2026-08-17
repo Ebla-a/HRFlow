@@ -39,8 +39,8 @@ class AttendanceResource extends JsonResource
 
             'overtime_minutes' => $this->overtime_minutes,
 
-            'status' => $this->status,
-            'notes' => $this->notes,
+            'status' => __($this->status),
+            'notes' => $this->getTranslation('notes', app()->getLocale()),
 
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

@@ -12,7 +12,7 @@ return new class extends Migration
 
             $table->id();
 
-            $table->string('name')->unique();
+            $table->json('name');
 
             $table->string('code',20)->unique();
 
@@ -32,7 +32,7 @@ return new class extends Migration
                 'manager_id'
             ]);
 
-            $table->index('name');
+            
 
         });
     }

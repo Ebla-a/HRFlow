@@ -16,7 +16,7 @@ class JobTitleResource extends JsonResource
      return [
             'id' => $this->id,
             'title' => $this->title,
-            'grade' => $this->grade,
+            'grade' => $this->grade ? __($this->grade->value) : null,
             'description' => $this->description,
             'is_active' => $this->is_active,
             'department_name' => $this->department->name ?? null,

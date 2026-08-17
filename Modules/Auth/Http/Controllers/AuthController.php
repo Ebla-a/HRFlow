@@ -44,7 +44,7 @@ final class AuthController extends Controller
                 'token_type' => $result['token_type'],
                 'user' => new UserAuthResource($result['user']),
             ],
-            message: 'Login successful'
+            message: __('Login successful')
         );
     }
 
@@ -57,7 +57,7 @@ final class AuthController extends Controller
 
         return $this->success(
             data: [],
-            message: 'Logout successful'
+            message: __('Logout successful')
         );
     }
 
@@ -70,7 +70,7 @@ final class AuthController extends Controller
 
         return $this->success(
             data: new UserAuthResource($user),
-            message: 'User retrieved successfully'
+            message: __('User retrieved successfully')
         );
     }
 
@@ -92,7 +92,7 @@ final class AuthController extends Controller
 
         return $this->success(
             data: [],
-            message: 'Password updated successfully'
+            message: __('Password updated successfully')
         );
     }
 
@@ -110,7 +110,7 @@ final class AuthController extends Controller
             data: [
                 'token' => $token,
             ],
-            message: 'Password reset token generated successfully'
+            message: __('Password reset token generated successfully')
         );
     }
 
@@ -130,7 +130,11 @@ final class AuthController extends Controller
 
         return $this->success(
             data: [],
-            message: 'Password reset successfully'
+            message: __('Password reset successfully')
         );
     }
+
+
+
+    
 }

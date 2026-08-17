@@ -37,7 +37,7 @@ return new class extends Migration
                 'holiday'
             ])->default('present');
 
-            $table->text('notes')->nullable();
+            $table->json('notes')->nullable();
 
             $table->timestamps();
 

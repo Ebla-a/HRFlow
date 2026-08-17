@@ -33,9 +33,9 @@ return new class extends Migration
 
             $table->string('employee_number')->unique();
 
-            $table->string('first_name');
+            $table->json('first_name');
 
-            $table->string('last_name');
+            $table->json('last_name');
 
             $table->string('phone',30)->nullable();
 
@@ -45,7 +45,7 @@ return new class extends Migration
 
             $table->string('gender');
 
-            $table->text('address')->nullable();
+            $table->json('address')->nullable();
 
             $table->string('employment_type');
 
@@ -55,7 +55,7 @@ return new class extends Migration
 
             $table->date('termination_date')->nullable();
 
-            $table->text('termination_reason')->nullable();
+            $table->json('termination_reason')->nullable();
             $table->softDeletes();
 
             $table->timestamps();

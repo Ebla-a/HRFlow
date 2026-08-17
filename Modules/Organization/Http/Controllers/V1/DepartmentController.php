@@ -37,7 +37,7 @@ class DepartmentController extends Controller
 
         return $this->success(
             $data = $result['data'],
-            $message = 'Departments retrieved successfully',
+            $message = __('Departments retrieved successfully'),
             $status = 200,
             $meta = $result['meta']
         );
@@ -60,7 +60,7 @@ class DepartmentController extends Controller
             'status' => true,
 
             'data' => new DepartmentResource($department),
-        ],  'Department created successfully.',201 );
+        ],  __('Department created successfully.'),201 );
     }
 
     /**
@@ -94,7 +94,7 @@ class DepartmentController extends Controller
 
             return $this->success([
                 'status' => true,
-                'message' => 'Department updated successfully.',
+                'message' => __('Department updated successfully.'),
                 'data' => new DepartmentResource($department),
             ]);
 
@@ -116,7 +116,7 @@ class DepartmentController extends Controller
 
         return $this->success([
             'status' => true,
-            'message' => 'Department deleted successfully.',
+            'message' => __('Department deleted successfully.'),
         ]);
     }
 
@@ -133,7 +133,7 @@ class DepartmentController extends Controller
 
         return $this->success(
             new DepartmentResource($department),
-            'successfully restore the department'
+            __('successfully restore the department')
         );
     }
     /**
@@ -147,7 +147,7 @@ class DepartmentController extends Controller
 
         return $this->success(
             null,
-            'successfully deleted the department permanently'
+            __('successfully deleted the department permanently')
         );
     }
     /**
@@ -164,7 +164,7 @@ class DepartmentController extends Controller
 
         return $this->success(
             new DepartmentResource($department),
-            'manager assigned to the department successfully'
+            __('manager assigned to the department successfully')
         );
     }
 }

@@ -29,10 +29,10 @@ return new class extends Migration
             $table->string('status')
               ->default('pending');
 
-            $table->text('reason')
+            $table->json('reason')
                ->nullable();
 
-            $table->text('rejection_reason')
+            $table->json('rejection_reason')
                 ->nullable();
 
             $table->string('attachment_path')

@@ -35,7 +35,7 @@ class UserController extends Controller
             UserResource::collection($users)
                 ->response()
                 ->getData(true),
-            'Users retrieved successfully.'
+            __('Users retrieved successfully.')
         );
     }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
 
         return $this->success(
             new UserResource($user),
-            'User retrieved successfully.'
+            __('User retrieved successfully.')
         );
     }
 
@@ -73,7 +73,7 @@ class UserController extends Controller
 
         return $this->success(
             new UserResource($updatedUser),
-            'Email updated successfully.'
+            __('Email updated successfully.')
         );
     }
 
@@ -97,7 +97,7 @@ class UserController extends Controller
 
         return $this->success(
             new UserResource($updatedUser),
-            'Profile image updated successfully.'
+            __('Profile image updated successfully.')
         );
     }
 
@@ -114,7 +114,7 @@ class UserController extends Controller
 
         return $this->success(
             new UserResource($updatedUser),
-            'User deactivated successfully.'
+            __('User deactivated successfully.')
         );
     }
 
@@ -131,7 +131,7 @@ class UserController extends Controller
 
         return $this->success(
             new UserResource($updatedUser),
-            'User activated successfully.'
+            __('User activated successfully.')
         );
     }
 

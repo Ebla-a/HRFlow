@@ -92,7 +92,7 @@ class PayslipController extends Controller
         $updatedPayslip->load(['employee', 'deductions']);
 
         return response()->json([
-            'message' => 'Deduction added successfully.',
+            'message' => __('Deduction added successfully.'),
             'data' => new PayslipResource($updatedPayslip),
         ]);
     }

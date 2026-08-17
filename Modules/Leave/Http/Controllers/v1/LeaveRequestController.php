@@ -45,7 +45,7 @@ class LeaveRequestController extends Controller
 
        if (!auth('sanctum')->user()->employee) {
 
-            return $this->error("User is not associated with an employee record",422);
+            return $this->error(__("User is not associated with an employee record"),422);
 
        }
 

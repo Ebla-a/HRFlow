@@ -35,7 +35,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Role created successfully'
+            __('Role created successfully')
         );
     }
 
@@ -50,7 +50,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Role deleted successfully'
+            __('Role deleted successfully')
         );
     }
 
@@ -68,7 +68,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Permission created successfully'
+            __('Permission created successfully')
         );
     }
 
@@ -84,7 +84,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Permission deleted successfully'
+            __('Permission deleted successfully')
         );
     }
 
@@ -104,7 +104,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Role granted successfully'
+            __('Role granted successfully')
         );
     }
 
@@ -124,7 +124,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Role revoked successfully'
+            __('Role revoked successfully')
         );
     }
 
@@ -148,7 +148,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Permission granted successfully'
+            __('Permission granted successfully')
         );
     }
 
@@ -172,7 +172,7 @@ class HrAdminController extends Controller
 
         return $this->success(
             [],
-            'Permission revoked successfully'
+            __('Permission revoked successfully')
         );
     }
 }

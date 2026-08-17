@@ -24,7 +24,7 @@ public function __construct(
         $result = $this->jobTitleService->getAllJobTitles();
 
          return $this->success($data = $result['data'],
-            $message = 'jobtitles retrieved successfully',
+            $message = __('jobtitles retrieved successfully'),
             $status = 200,
             $meta = $result['meta']
         );
@@ -42,7 +42,7 @@ public function __construct(
         return $this->success([
             'status' => true,
             'data' => new JobTitleResource($jobTitle),
-        ], 'Job title created successfully',201);
+        ], __('Job title created successfully'),201);
     }
     /**
      * Summary of update
@@ -58,7 +58,7 @@ public function __construct(
 
             return $this->success([
                 'status' => true,
-                'message' => 'Job title updated successfully.',
+                'message' => __('Job title updated successfully.'),
                 'data' => new JobTitleResource($jobTitle),
             ]);
 
@@ -75,7 +75,7 @@ public function __construct(
 
             return $this->success([
                 'status' => true,
-                'message' => 'Job title deleted successfully.',
+                'message' => __('Job title deleted successfully.'),
             ]);
 
 
@@ -94,6 +94,6 @@ public function __construct(
         $jobTitle = $this->jobTitleService->restoreJobTitle($id);
 
         return $this->success(new JobTitleResource($jobTitle),
-'successfully restore the job title'        );
+__('successfully restore the job title')        );
     }
 }

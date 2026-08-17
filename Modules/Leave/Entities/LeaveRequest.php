@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Modules\Leave\Enums\LeaveRequestStatusEnum;
 use Modules\Employee\Entities\Employee;
- 
+use CodingPartners\TranslaGenius\Traits\Translatable;
+
   #[Fillable([
     'employee_id',
     'leave_type_id',
@@ -34,7 +35,7 @@ use Modules\Employee\Entities\Employee;
 
   class LeaveRequest extends Model
   {
-    use SoftDeletes;
+    use SoftDeletes,Translatable;
 
     protected $casts = [
 
@@ -43,7 +44,12 @@ use Modules\Employee\Entities\Employee;
         'end_date' => 'date',
         'manager_approved_at' => 'datetime',
         'hr_approved_at' => 'datetime',
+        'reason'=>'json',
+        'rejection_reason'=>'json'
     ];
+
+    public array $translatable = ['reason','rejection_reason'];
+
  
     public function employee()
     {

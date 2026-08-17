@@ -4,7 +4,12 @@ namespace Modules\Auth\App\Exceptions;
 use Exception;
 
 class InvalidCredentialsException extends Exception
-{
-    protected $code = 401;
-    protected $message = 'Invalid password.';
+{   
+    public function __construct($message = null, $code = 401, ?\Throwable $previous = null)
+    {
+            
+            $message = $message ?: __('Invalid password.');
+            
+            parent::__construct($message, $code, $previous);
+    }
 }

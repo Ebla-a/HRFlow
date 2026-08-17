@@ -11,7 +11,7 @@ class UserNotFoundException extends Exception
     {
         return response()->json([
             'success' => false,
-            'message' => $this->getMessage() ?: 'User not found.',
+            'message' => $this->getMessage() ?: __('User not found.'),
         ], Response::HTTP_NOT_FOUND);
     }
 }

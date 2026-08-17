@@ -8,9 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 class InvalidJobTitleForDepartmentException extends Exception
 {
     public function __construct(
-        string $message = 'The selected job title does not belong to the specified department.',
-        int $code = Response::HTTP_UNPROCESSABLE_ENTITY
-    ) {
-        parent::__construct($message, $code);
-    }
+    ?string $message = null,
+    int $code = Response::HTTP_UNPROCESSABLE_ENTITY
+) {
+    $message = $message ?: __('The selected job title does not belong to the specified department.');
+
+    parent::__construct($message, $code);
+}
 }

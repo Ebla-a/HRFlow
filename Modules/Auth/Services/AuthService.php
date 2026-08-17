@@ -33,11 +33,11 @@ class AuthService
         if (! $user) {
             $this->recordLoginAttempt($dto->email, 'email_not_found');
 
-            throw new \Exception('Email not found.', 404);
+            throw new \Exception(__('Email not found.'), 404);
         }
 
         if (! Hash::check($dto->password, $user->password)) {
-            $this->recordLoginAttempt($dto->email, 'invalid_password');
+            $this->recordLoginAttempt($dto->email, __('invalid_password'));
 
               throw new InvalidCredentialsException();
         }
@@ -89,7 +89,7 @@ class AuthService
 
         if (! Hash::check($dto->currentPassword, $user->password)) {
             throw ValidationException::withMessages([
-                'current_password' => ['Current password is incorrect.'],
+                'current_password' => [__('Current password is incorrect.')],
             ]);
         }
 
@@ -113,7 +113,7 @@ class AuthService
             ->first();
 
         if (! $user) {
-            throw new \Exception('Email not found.', 404);
+            throw new \Exception(__('Email not found.'), 404);
         }
 
         $token = Str::random(60);
@@ -150,7 +150,7 @@ class AuthService
             ->first();
 
         if (! $user) {
-            throw new \Exception('User not found.', 404);
+            throw new \Exception(__('User not found.'), 404);
         }
 
         $user->update([

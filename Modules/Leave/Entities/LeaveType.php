@@ -4,10 +4,12 @@ namespace Modules\Leave\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use CodingPartners\TranslaGenius\Traits\Translatable;
+
 
 class LeaveType extends Model
 {
-    use HasFactory;
+    use HasFactory,Translatable;
 
     protected $fillable = [
         'name',
@@ -16,7 +18,10 @@ class LeaveType extends Model
         'requires_attachment',
     ];
 
+    public array $translatable = ['name'];
+
     protected $casts = [
+        'name'=>'json',
         'is_paid' => 'boolean',
         'requires_attachment' => 'boolean',
     ];

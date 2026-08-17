@@ -25,18 +25,18 @@ class LeaveRequestResource extends JsonResource
             'start_date' => $this->start_date?->format('Y-m-d'),
             'end_date' => $this->end_date?->format('Y-m-d'),
             'days_count' => $this->days_count,
-            'status' => $this->status,
+            'status' => __($this->status),
 
             'manager_approval_status'
-                => $this->manager_approval_status,
+                => __($this->manager_approval_status),
 
             'hr_approval_status'
-                => $this->hr_approval_status,
+                => __($this->hr_approval_status),
 
-            'reason' => $this->reason,
+            'reason' =>$this->getTranslation('reason', app()->getLocale()),
 
             'rejection_reason'
-                => $this->rejection_reason,
+                => $this->getTranslation('nrejection_reasoname', app()->getLocale()),
 
             'attachment_path'
                 => $this->attachment_path,

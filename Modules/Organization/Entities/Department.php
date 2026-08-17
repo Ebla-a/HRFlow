@@ -11,12 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Employee\Entities\Employee;
 use Modules\Organization\Database\factories\DepartmentFactory;
 use Modules\Organization\Entities\JobTitle;
+use CodingPartners\TranslaGenius\Traits\Translatable;
 
 #[Fillable(['name','code','parent_id','manager_id','is_active'])]
 
 class Department extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,Translatable;
 
     protected static function newFactory()
     {
@@ -24,7 +25,11 @@ class Department extends Model
     }
 protected $casts = [
         'is_active' => 'boolean',
+        'name'=>'json'
     ];
+
+    public array $translatable = ['name'];
+
 
     protected $appends = ['main_department_name', 'manager_name'];
     /**
