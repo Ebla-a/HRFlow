@@ -363,9 +363,25 @@
   "Forbidden. You do not have the required permissions.":"Forbidden. You do not have the required permissions.",
   "Resource not found.":"Resource not found.",
   "Invalid job title for department.":"Invalid job title for department.",
-  "Internal server error.":"Internal server error."
-  
-                
+  "Internal server error.":"Internal server error.",
 
+
+
+
+
+
+
+
+  "You are not authorized to review this employee.":"You are not authorized to review this employee.",
+  "The performance review cycle is not active.":"The performance review cycle is not active.",
+  "You do not have permission to update reviews for employees in your department.":"You do not have permission to update reviews for employees in your department.",
+   "You are not associated with an employee profile.":"You are not associated with an employee profile.",
+   "The target employee does not have a manager assigned.":"The target employee does not have a manager assigned.",
+   "You do not have permission to create reviews.":"You do not have permission to create reviews.",
+   "You do not have permission to view department reviews.":"You do not have permission to view department reviews.",
+   "You must have an associated employee record.":"You must have an associated employee record.",             
+  "Managers can only view employees in their own department.":"Managers can only view employees in their own department.",
+  "You can only update reviews that you created.":"You can only update reviews that you created.",
+  "Validation failed.":"Validation failed."
 }
 

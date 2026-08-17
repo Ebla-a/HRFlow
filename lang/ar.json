@@ -289,6 +289,16 @@
     "Forbidden. You do not have the required permissions.":"غير مسموح. ليس لديك الصلاحيات المطلوبة.",
     "Resource not found.":"المورد غير موجود",
     "Invalid job title for department.":"المسمى الوظيفي غير تابع للقسم.",
-    "Internal server error.":"خطأ داخلي في الخادم."
-
+    "Internal server error.":"خطأ داخلي في الخادم.",
+    "You are not authorized to review this employee.": "لست مخولاً بتقييم هذا الموظف.",
+  "The performance review cycle is not active.": "دورة تقييم الأداء ليست نشطة.",
+  "You do not have permission to update reviews for employees in your department.": "ليس لديك صلاحية لتحديث تقييمات الموظفين في قسمك.",
+  "You are not associated with an employee profile.": "لست مرتبطاً بملف موظف.",
+  "The target employee does not have a manager assigned.": "الموظف المستهدف ليس لديه مدير معين.",
+  "You do not have permission to create reviews.": "ليس لديك صلاحية لإنشاء التقييمات.",
+  "You do not have permission to view department reviews.": "ليس لديك صلاحية لعرض تقييمات القسم.",
+  "You must have an associated employee record.": "يجب أن يكون لديك سجل موظف مرتبط.",
+  "Managers can only view employees in their own department.": "يمكن للمديرين عرض موظفي قسمهم فقط.",
+  "You can only update reviews that you created.": "يمكنك تحديث التقييمات التي قمت بإنشائها فقط.",
+  "Validation failed.": "فشل التحقق."
 }

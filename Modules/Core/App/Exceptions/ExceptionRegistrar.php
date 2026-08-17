@@ -37,7 +37,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (ValidationException $e) =>
             static::formatResponse(
-                'Validation failed.',
+                __('Validation failed.'),
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 $e->errors()
             )
