@@ -13,7 +13,7 @@ class ReviewResource extends JsonResource
             'cycle_id'      => $this->performance_cycle_id,
             'employee_id'   => $this->employee_id,
             'manager_id'    => $this->reviewer_id,
-            'status'        => $this->status,
+            'status'        => __($this->status),
             'score'         => $this->score,
             'comments'      => $this->comments,
 
@@ -21,7 +21,7 @@ class ReviewResource extends JsonResource
                 ? $this->reviewed_at->toDateTimeString()
                 : null,
 
-            'status_cycle'  => $this->cycle?->status         ?? 'Unassigned',
+            'status_cycle'  => __($this->cycle?->status)         ?? 'Unassigned',
             'cycle_name'    => $this->cycle?->name           ?? 'Unassigned',
             'employee_name' => $this->employee?->first_name  ?? 'Unassigned',
         ];

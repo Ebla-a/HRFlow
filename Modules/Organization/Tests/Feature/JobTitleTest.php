@@ -210,7 +210,7 @@ class JobTitleTest extends TestCase
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('job_titles', [
-            'title' => 'Software Engineer',
+            'title->en' => 'Software Engineer',
             'department_id' => $department->id,
         ]);
     }
@@ -335,7 +335,7 @@ class JobTitleTest extends TestCase
 
         $this->assertDatabaseHas('job_titles', [
             'id' => $jobTitle->id,
-            'title' => 'Updated Senior Engineer',
+            'title->en' => 'Updated Senior Engineer',
             'department_id' => $department->id,
         ]);
     }

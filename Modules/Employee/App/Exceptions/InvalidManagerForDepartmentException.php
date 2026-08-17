@@ -12,9 +12,11 @@ class InvalidManagerForDepartmentException extends Exception
      * @param int $code
      */
     public function __construct(
-        string $message = 'The selected manager is invalid or does not belong to the eligible department.',
+        ?string $message = null,
         int $code = Response::HTTP_UNPROCESSABLE_ENTITY
     ) {
+        $message = $message ?: __('The selected manager is invalid or does not belong to the eligible department.');
+
         parent::__construct($message, $code);
     }
 }

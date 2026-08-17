@@ -79,7 +79,7 @@ class LeaveTypeController extends Controller
         );
 
         return response()->json([
-            'message' => 'Leave type deleted successfully.'
+            'message' => __('Leave type deleted successfully.')
         ]);
     }
 }

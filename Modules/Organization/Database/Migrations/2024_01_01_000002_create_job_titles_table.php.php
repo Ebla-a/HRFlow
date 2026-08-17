@@ -15,8 +15,8 @@ return new class extends Migration
 
             $table->foreignId('department_id')->constrained('departments')->restrictOnDelete();
 
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->json('title');
+            $table->json('description')->nullable();
             $table->enum('grade', JobTitleGrade::cases())->default(JobTitleGrade::JUNIOR->value);
 
             $table->boolean('is_active')
@@ -26,11 +26,7 @@ return new class extends Migration
             $table->softDeletes();
 
 
-            $table->unique([
-                'department_id',
-                'title'
-            ]);
-            $table->index(['title','department_id']);
+
 
         });
     }

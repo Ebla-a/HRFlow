@@ -16,7 +16,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('reason');
+            $table->json('reason');
 
             $table->date('effective_date');
 

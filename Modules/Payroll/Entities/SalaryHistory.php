@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\User\Entities\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Modules\Employee\Entities\Employee;
+use CodingPartners\TranslaGenius\Traits\Translatable;
 
 #[Fillable([
     'employee_id',
@@ -20,11 +21,13 @@ use Modules\Employee\Entities\Employee;
 ])]
 final class SalaryHistory extends Model
 {
+    use Translatable;
     protected $table = 'salary_histories';
-
+public array $translatable = ['reason'];
     protected function casts(): array
     {
         return [
+            'reason'=>'json',
             'effective_date' => 'date',
         ];
     }

@@ -16,9 +16,9 @@ class AttendanceLogResource extends JsonResource
             'id' => $this->id,
             'employee_id' => $this->employee_id,
 
-            'type' => $this->type,
+            'type' => __($this->type),
 
-            'result' => $this->result ?? null,
+            'result' => __($this->result) ?? null,
             'message' => $this->message ?? null,
 
             'logged_at' => $this->logged_at?->toIso8601String(),

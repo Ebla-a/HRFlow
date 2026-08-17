@@ -12,7 +12,7 @@ return new class extends Migration
 
             $table->id();
 
-            $table->string('name')->unique();
+            $table->json('name')->unique();
 
             $table->unsignedInteger('annual_days');
 
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('leave_types');
     }
 };
- 

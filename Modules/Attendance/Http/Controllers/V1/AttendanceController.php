@@ -70,7 +70,7 @@ class AttendanceController extends Controller
 
         return Controller::success(
             new AttendanceResource($attendance),
-            'Attendance record created successfully',
+            __('Attendance record created successfully'),
             201
         );
     }
@@ -129,7 +129,7 @@ class AttendanceController extends Controller
         return $this->success(
             [
                 $attendances,
-                'Personal attendance records retrieved successfully'
+                __('Personal attendance records retrieved successfully')
             ]
         );
     }
@@ -165,7 +165,7 @@ class AttendanceController extends Controller
 
         return Controller::success(
             $summary,
-            'Attendance summary retrieved successfully'
+            __('Attendance summary retrieved successfully')
         );
     }
 }

@@ -3,7 +3,6 @@
     "Active": "Active",
     "Closed": "Closed",
     "Reviewed": "Reviewed",
-
     "Performance cycles retrieved successfully.": "Performance cycles retrieved successfully.",
     "Performance cycle created successfully.": "Performance cycle created successfully.",
     "Performance cycle activated successfully.": "Performance cycle activated successfully.",
@@ -12,10 +11,8 @@
     "Employee reviews retrieved successfully.": "Employee reviews retrieved successfully.",
     "Performance reviews retrieved successfully.": "Performance reviews retrieved successfully.",
     "Performance review created successfully.": "Performance review created successfully.",
-
     "Cannot activate a performance cycle whose end date has passed.": "Cannot activate a performance cycle whose end date has passed.",
     "Employee has already been reviewed in this cycle.": "Employee has already been reviewed in this cycle.",
-
     "The cycle name is required.": "The cycle name is required.",
     "The cycle name must be a string.": "The cycle name must be a string.",
     "The cycle name may not exceed 255 characters.": "The cycle name may not exceed 255 characters.",
@@ -44,5 +41,347 @@
 
     "Unauthenticated.": "Unauthenticated.",
     "This action is unauthorized.": "This action is unauthorized.",
-    "Validation errors": "Validation errors"
+    "Validation errors": "Validation errors",
+
+"Invalid attendance type":"Invalid attendance type",
+"'User account is inactive.":"'User account is inactive.",
+"Current password is incorrect.":"Current password is incorrect.",
+"inactive_account":"inactive_account",
+  "Invalid password.":"Invalid password.",
+    "Email not found.":"Email not found.",
+    "User not found.":"User not found.",
+    "Success":"Success",
+    "Role created successfully":"Role created successfully",
+    "Role deleted successfully":"Role deleted successfully",
+    "Permission created successfully":"Permission created successfully",
+    "Permission deleted successfully":"Permission deleted successfully",
+    "Role granted successfully":"Role granted successfully",
+    "Role revoked successfully":"Role revoked successfully",
+    "Permission granted successfully":"Permission granted successfully",
+    "Permission revoked successfully":"Permission revoked successfully",
+    "Users retrieved successfully.":"Users retrieved successfully.",
+    "User retrieved successfully.":"User retrieved successfully.",
+    "Email updated successfully.":"Email updated successfully.",
+    "Profile image updated successfully.":"Profile image updated successfully.",
+    "User deactivated successfully.":"User deactivated successfully.",
+    "User activated successfully.":"User activated successfully.",
+    "payroll":"payroll",
+    "attendance":"attendance",
+    "leave":"leave",
+
+
+
+
+
+    "performance":"performance",
+    "employees":"employees",
+    "present":"present",
+    "absent":"absent",
+    "late":"late",
+    "on_leave":"on_leave",
+    "holiday":"holiday",
+    "Attendance record created successfully":"Attendance record created successfully",
+    "Personal attendance records retrieved successfully":"Personal attendance records retrieved successfully",
+    "Attendance summary retrieved successfully":"Attendance summary retrieved successfully",
+    "Report not found for this period. Generate it first.":"Report not found for this period. Generate it first.",
+    "Payroll run created successfully.":"Payroll run created successfully.",
+    "Deduction added successfully.":"Deduction added successfully.",
+    "Employee ID is required":"Employee ID is required",
+
+
+
+
+    "Selected employee does not exist":"Selected employee does not exist",
+    "Attendance type is required":"Attendance type is required",
+    "Invalid attendance type selected":"Invalid attendance type selected",
+    "Invalid type, must be check_in or check_ou":"Invalid type, must be check_in or check_ou",
+    "Invalid result, must be success or failed":"Invalid result, must be success or failed",
+    "The from_date must be a valid date":"The from_date must be a valid date",
+    "The to_date must be a valid date":"The to_date must be a valid date",
+    "The to_date must be a date after or equal to from_date":"The to_date must be a date after or equal to from_date",
+    "The per_page parameter must be an integer":"The per_page parameter must be an integer",
+    "The per_page parameter must be at least 1":"The per_page parameter must be at least 1",
+    "The per_page parameter may not be greater than 100":"The per_page parameter may not be greater than 100",
+    "Invalid status, must be present, late, absent, on_leave, or holiday": "Invalid status, must be present, late, absent, on_leave, or holiday",
+    "The late field must be true or false": "The late field must be true or false",
+
+
+
+
+    "Invalid sort_by field, must be arrival, late, or notes": "Invalid sort_by field, must be arrival, late, or notes",
+    "The check_in must be a valid date": "The check_in must be a valid date",
+    "The check_out must be a valid date": "The check_out must be a valid date",
+    "The check_out must be a date after or equal to check_in": "The check_out must be a date after or equal to check_in",
+    "The status must be a valid string": "The status must be a valid string",
+    "The notes must be a valid string": "The notes must be a valid string",
+    "The notes field may not be greater than 500 characters": "The notes field may not be greater than 500 characters",
+    "Login successful":"Login successful",
+    "Logout successful":"Logout successful",
+    "User retrieved successfully":"User retrieved successfully",
+    "Password updated successfully":"Password updated successfully",
+    "Password reset token generated successfully":"Password reset token generated successfully",
+    "Password reset successfully":"Password reset successfully",
+    "Email is required": "Email is required",
+
+
+
+
+    "The email must be a valid email address": "The email must be a valid email address",
+    "The selected email does not exist": "The selected email does not exist",
+    "Password is required": "Password is required",
+    "Token is required": "Token is required",
+    "Token must be a valid string": "Token must be a valid string",
+    "Password must be a valid string": "Password must be a valid string",
+    "Password confirmation does not match": "Password confirmation does not match",
+    "Current password is required": "Current password is required",
+
+
+
+
+
+
+    "Current password must be a valid string": "Current password must be a valid string",
+    "The provided password does not match your current password": "The provided password does not match your current password",
+    "New password is required": "New password is required",
+    "New password must be a valid string": "New password must be a valid string",
+    "New password must be different from current password": "New password must be different from current password",
+    "Employee record not found.":"Employee record not found.",
+    "Document deleted successfully":"Document deleted successfully",
+    "File not found on local storage.":"File not found on local storage.",
+    "The search parameter must be a valid string": "The search parameter must be a valid string",
+"The search parameter may not be greater than 255 characters": "The search parameter may not be greater than 255 characters",
+"The department ID must be an integer": "The department ID must be an integer",
+"The selected department does not exist": "The selected department does not exist",
+"Invalid sort_by field, must be hire_date, age, first_name, or department_id": "Invalid sort_by field, must be hire_date, age, first_name, or department_id",
+"Invalid direction, must be asc or desc": "Invalid direction, must be asc or desc",
+"Selected status is invalid": "Selected status is invalid",
+
+
+
+
+
+  "The email field may not be greater than 255 characters": "The email field may not be greater than 255 characters",
+  "The email has already been taken": "The email has already been taken",
+  "First name is required": "First name is required",
+  "First name must be a valid string": "First name must be a valid string",
+  "First name field may not be greater than 100 characters": "First name field may not be greater than 100 characters",
+  "Last name is required": "Last name is required",
+  "Last name must be a valid string": "Last name must be a valid string",
+  "Last name field may not be greater than 100 characters": "Last name field may not be greater than 100 characters",
+  "Department is required": "Department is required",
+  "Department ID must be an integer": "Department ID must be an integer",
+  "Job title is required": "Job title is required",
+
+
+
+
+
+  "Job title ID must be an integer": "Job title ID must be an integer",
+  "The selected job title does not exist": "The selected job title does not exist",
+  "Employee number is required": "Employee number is required",
+  "Employee number must be a valid string": "Employee number must be a valid string",
+  "Employee number field may not be greater than 50 characters": "Employee number field may not be greater than 50 characters",
+  "The employee number has already been taken": "The employee number has already been taken",
+  "Employment type is required": "Employment type is required",
+  "Selected employment type is invalid": "Selected employment type is invalid",
+  "Status is required": "Status is required",
+
+
+
+  "Hire date is required": "Hire date is required",
+  "Hire date must be a valid date": "Hire date must be a valid date",
+  "Manager ID must be an integer": "Manager ID must be an integer",
+  "The selected manager does not exist": "The selected manager does not exist",
+  "National ID is required": "National ID is required",
+  "National ID must be a valid string": "National ID must be a valid string",
+  "National ID field may not be greater than 50 characters": "National ID field may not be greater than 50 characters",
+  "The national ID has already been taken": "The national ID has already been taken",
+  "Phone number must be a valid string": "Phone number must be a valid string",
+  "Phone number field may not be greater than 30 characters": "Phone number field may not be greater than 30 characters",
+  "Address must be a valid string": "Address must be a valid string",
+  "Birth date is required": "Birth date is required",
+  "Birth date must be a valid date": "Birth date must be a valid date",
+  "Gender is required": "Gender is required",
+
+
+
+
+  "Selected gender is invalid": "Selected gender is invalid",
+  "Termination reason is required": "Termination reason is required",
+  "Termination reason must be a valid string": "Termination reason must be a valid string",
+  "Termination reason may not be greater than 500 characters": "Termination reason may not be greater than 500 characters",
+  "An employee cannot be their own manager": "An employee cannot be their own manager",
+  "Title is required": "Title is required",
+  "Title must be a valid string": "Title must be a valid string",
+  "Title field may not be greater than 255 characters": "Title field may not be greater than 255 characters",
+  "Type is required": "Type is required",
+  "Type must be a valid string": "Type must be a valid string",
+  "Type field may not be greater than 50 characters": "Type field may not be greater than 50 characters",
+  "File is required": "File is required",
+
+
+
+
+  "The uploaded item must be a valid file": "The uploaded item must be a valid file",
+  "File must be a file of type: pdf, jpg, jpeg, png": "File must be a file of type: pdf, jpg, jpeg, png",
+  "File size may not be greater than 10240 kilobytes": "File size may not be greater than 10240 kilobytes",
+  "Invalid or expired reset token":"Invalid or expired reset token",
+  "active":"active",
+  "suspended":"suspended",
+  "terminated":"terminated",
+  "full_time":"full_time",
+  "part_time":"part_time",
+  "contract":"contract",
+  "male":"male",
+  "female":"female",
+
+
+
+
+
+  "inactive":"inactive",
+  "pending":"pending",
+  "approved":"approved",
+  "rejected":"rejected",
+  "cancelled":"cancelled",
+  "User is not associated with an employee record":"User is not associated with an employee record",
+  "Leave type deleted successfully.":"Leave type deleted successfully.",
+  "Rejection reason must be a valid string": "Rejection reason must be a valid string",
+  "Rejection reason is required": "Rejection reason is required",
+  "junior":"junior",
+  "med":"med",
+  "senior":"senior",
+
+
+
+  "lead":"lead",
+  "manager":"manager",
+  "Departments retrieved successfully":"Departments retrieved successfully",
+  "Department created successfully.":"Department created successfully.",
+  "Department updated successfully.":"Department updated successfully.",
+  "Department deleted successfully.":"Department deleted successfully.",
+  "successfully restore the department":"successfully restore the department",
+  "successfully deleted the department permanently":"successfully deleted the department permanently",
+  "manager assigned to the department successfully":"manager assigned to the department successfully",
+  "jobtitles retrieved successfully":"jobtitles retrieved successfully",
+  "Job title created successfully":"Job title created successfully",
+  "Job title updated successfully.":"Job title updated successfully.",
+  "Job title deleted successfully.":"Job title deleted successfully.",
+
+
+
+
+
+  "successfully restore the job title":"successfully restore the job title",
+  "You must select a manager to assign to the department.": "You must select a manager to assign to the department.",
+  "The manager id must be a valid integer.": "The manager id must be a valid integer.",
+  "The selected manager does not exist in the system.": "The selected manager does not exist in the system.",
+  "Name is required": "Name is required",
+  "Name must be a valid string": "Name must be a valid string",
+  "Name field may not be greater than 255 characters": "Name field may not be greater than 255 characters",
+  "The name has already been taken": "The name has already been taken",
+  "Code is required": "Code is required",
+  "Code must be a valid string": "Code must be a valid string",
+  "Code field may not be greater than 20 characters": "Code field may not be greater than 20 characters",
+  "The code has already been taken": "The code has already been taken",
+  "Parent department ID must be an integer": "Parent department ID must be an integer",
+  "The selected parent department does not exist": "The selected parent department does not exist",
+  "Is active field must be true or false": "Is active field must be true or false",
+  "The department cannot be its own parent.":"The department cannot be its own parent.",
+  "The selected parent department is a descendant of the current department, which would create a circular reference.":"The selected parent department is a descendant of the current department, which would create a circular reference.",
+  "Description must be a valid string": "Description must be a valid string",
+  "Department ID is required": "Department ID is required",
+  "draft":"draft",
+  "processing":"processing",
+  "finalized":"finalized",
+  "bonus":"bonus",
+
+
+
+
+  "overtime":"overtime",
+  "other":"other",
+  "manual":"manual",
+  "system":"system",
+  "loan":"loan",
+  "absence":"absence",
+  "penalty":"penalty",
+  "generated":"generated",
+  "paid":"paid",
+  "basic_salary":"basic_salary",
+  "housing_allowance":"housing_allowance",
+  "transport_allowance":"transport_allowance",
+  "other_allowance":"other_allowance",
+  "Payroll run processed successfully.":"Payroll run processed successfully.",
+  "Payroll run finalized successfully.":"Payroll run finalized successfully.",
+  "Salary structure created successfully.":"Salary structure created successfully.",
+  "Salary structure updated successfully.":"Salary structure updated successfully.",
+  "Amount is required": "Amount is required",
+
+
+
+  
+  "Amount must be a number": "Amount must be a number",
+  "Amount must be at least 0.01": "Amount must be at least 0.01",
+  "Description is required": "Description is required",
+  "Description field may not be greater than 255 characters": "Description field may not be greater than 255 characters",
+  "Month is required": "Month is required",
+  "Month must be an integer": "Month must be an integer",
+  "Month must be between 1 and 12": "Month must be between 1 and 12",
+  "Year is required": "Year is required",
+  "Year must be an integer": "Year must be an integer",
+  "Year must be at least 2020": "Year must be at least 2020",
+  "Notes must be a valid string": "Notes must be a valid string",
+"Already checked in":"Already checked in",
+"Already completed attendance for today":"Already completed attendance for today",
+"Cannot check out without check in":"Cannot check out without check in",
+"Already checked out":"Already checked out",
+"The selected job title does not belong to the specified department.":"The selected job title does not belong to the specified department.",
+"The selected manager is invalid or does not belong to the eligible department.":"The selected manager is invalid or does not belong to the eligible department.",
+"The employee field is required.": "The employee field is required.",
+    "The selected employee is invalid.": "The selected employee is invalid.",
+    "The leave type field is required.": "The leave type field is required.",
+    "The selected leave type is invalid.": "The selected leave type is invalid.",
+    "The start date field is required.": "The start date field is required.",
+    
+    "The end date field is required.": "The end date field is required.",
+    
+    "The end date must be a date greater than or equal to start date.": "The end date must be a date greater than or equal to start date.",
+    "Attachment is required for sick leave longer than two days.": "Attachment is required for sick leave longer than two days.",
+    "The attachment must be a file.": "The attachment must be a file.",
+    "The attachment must be a file of type: pdf, jpg, jpeg, png.": "The attachment must be a file of type: pdf, jpg, jpeg, png.",
+    "The attachment must not be greater than 2048 kilobytes.": "The attachment must not be greater than 2048 kilobytes.",
+
+    "You already have a leave request in this period.":"You already have a leave request in this period.",
+    "Leave balance not found.":"Leave balance not found.",
+    "Insufficient leave balance.":"Insufficient leave balance.",
+    "Leave request must be pending.":"Leave request must be pending.",
+    "Manager approval is required first.":"Manager approval is required first.",
+    "Approved request cannot be rejected.":"Approved request cannot be rejected.",
+  
+  "Users retrieved successfully":"Users retrieved successfully",
+  "Forbidden. You do not have the required permissions.":"Forbidden. You do not have the required permissions.",
+  "Resource not found.":"Resource not found.",
+  "Invalid job title for department.":"Invalid job title for department.",
+  "Internal server error.":"Internal server error.",
+
+
+
+
+
+
+
+
+  "You are not authorized to review this employee.":"You are not authorized to review this employee.",
+  "The performance review cycle is not active.":"The performance review cycle is not active.",
+  "You do not have permission to update reviews for employees in your department.":"You do not have permission to update reviews for employees in your department.",
+   "You are not associated with an employee profile.":"You are not associated with an employee profile.",
+   "The target employee does not have a manager assigned.":"The target employee does not have a manager assigned.",
+   "You do not have permission to create reviews.":"You do not have permission to create reviews.",
+   "You do not have permission to view department reviews.":"You do not have permission to view department reviews.",
+   "You must have an associated employee record.":"You must have an associated employee record.",             
+  "Managers can only view employees in their own department.":"Managers can only view employees in their own department.",
+  "You can only update reviews that you created.":"You can only update reviews that you created.",
+  "Validation failed.":"Validation failed."
 }
+

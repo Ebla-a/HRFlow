@@ -37,7 +37,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (ValidationException $e) =>
             static::formatResponse(
-                'Validation failed.',
+                __('Validation failed.'),
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 $e->errors()
             )
@@ -48,7 +48,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (AuthenticationException $e) =>
             static::formatResponse(
-                'Unauthenticated.',
+                __('Unauthenticated.'),
                 Response::HTTP_UNAUTHORIZED
             )
         );
@@ -58,7 +58,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (AuthorizationException|SpatieUnauthorizedException $e) =>
             static::formatResponse(
-                'Forbidden. You do not have the required permissions.',
+                __('Forbidden. You do not have the required permissions.'),
                 Response::HTTP_FORBIDDEN
             )
         );
@@ -68,7 +68,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (ModelNotFoundException|NotFoundHttpException $e) =>
             static::formatResponse(
-                'Resource not found.',
+                __('Resource not found.'),
                 Response::HTTP_NOT_FOUND
             )
         );
@@ -78,7 +78,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (UserNotFoundException $e) =>
             static::formatResponse(
-                $e->getMessage() ?: 'User not found.',
+                $e->getMessage() ?: __('User not found.'),
                 Response::HTTP_NOT_FOUND
             )
         );
@@ -88,7 +88,7 @@ class ExceptionRegistrar
     {
         $exceptions->render(fn (InvalidJobTitleForDepartmentException $e) =>
             static::formatResponse(
-                $e->getMessage() ?: 'Invalid job title for department.',
+                $e->getMessage() ?: __('Invalid job title for department.'),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             )
         );
@@ -111,7 +111,7 @@ class ExceptionRegistrar
             $message = config('app.debug')
                 ? $e->getMessage()
                 : ($statusCode === Response::HTTP_INTERNAL_SERVER_ERROR
-                    ? 'Internal server error.'
+                    ? __('Internal server error.')
                     : $e->getMessage());
 
             return static::formatResponse($message, $statusCode);

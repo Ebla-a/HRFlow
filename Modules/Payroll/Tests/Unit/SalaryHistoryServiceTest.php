@@ -46,14 +46,14 @@ class SalaryHistoryServiceTest extends TestCase
 
         $service = new SalaryHistoryService();
         
-       
+        
         $service->store($salaryStructure, $dto, $user->id);
 
         $this->assertDatabaseHas('salary_histories', [
-            'employee_id' => $employee->id,
-            'reason' => 'Annual promotion',
-            'changed_by' => $user->id, 
-        ]);
+        'employee_id' => $employee->id,
+        'reason->en' => 'Annual promotion',
+        'changed_by' => $user->id,
+]);
 
         $history = SalaryHistory::where('employee_id', $employee->id)->first();
 

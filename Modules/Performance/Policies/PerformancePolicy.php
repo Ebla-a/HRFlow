@@ -46,7 +46,7 @@ class PerformancePolicy
      * HR can view all reviews.
      * Manager can view reviews of employees in their department.
      */
-    public function viewReviews(User $authUser, ?Employee $targetEmployee = null): bool
+    public function viewReviews(User $authUser, ?Employee $targetEmployee = null)
     {
         // HR/Admin override
         if ($authUser->hasPermissionTo('view.reviews.all')) {
@@ -55,7 +55,7 @@ class PerformancePolicy
 
         // Manager permission
         if (!$authUser->hasPermissionTo('view.reviews.department')) {
-            return false;
+            return Response::deny(__('You do not have permission to view department reviews.'));
         }
 
         // Listing all reviews (no employee filter)
@@ -66,11 +66,15 @@ class PerformancePolicy
         // Manager must have employee record
         $managerEmployee = $authUser->employee;
         if (!$managerEmployee) {
-            return false;
+            return Response::deny(__('You must have an associated employee record.'));
         }
 
         // Manager can view only employees in same department
-        return (int) $managerEmployee->department_id === (int) $targetEmployee->department_id;
+        if ((int) $managerEmployee->department_id !== (int) $targetEmployee->department_id) {
+        return Response::deny(__('Managers can only view employees in their own department.'));
+        }
+
+        return Response::allow();
     }
 
     /**
@@ -85,7 +89,7 @@ class PerformancePolicy
 {
     // Cycle must be active
     if (!$cycle || $cycle->status !== 'Active') {
-        return false;
+        return Response::deny(__('The performance review cycle is not active.'));
     }
 
     // 1) Prevent duplicate reviews FIRST
@@ -95,7 +99,7 @@ class PerformancePolicy
         ->exists();
 
     if ($alreadyReviewed) {
-        return Response::deny('Employee has already been reviewed in this cycle.');
+        return Response::deny(__('Employee has already been reviewed in this cycle.'));
     }
 
     // 2) HR/Admin override
@@ -105,23 +109,23 @@ class PerformancePolicy
 
     // 3) Manager permission
     if (!$authUser->hasPermissionTo('create.review.employee.own.department')) {
-        return false;
+        return  Response::deny(__('You do not have permission to create reviews.'));
     }
 
     // Manager must have employee record
     $managerEmployee = $authUser->employee;
     if (!$managerEmployee) {
-        return false;
+        return Response::deny(__('You are not associated with an employee profile.'));
     }
 
     // If employee has no manager → only HR can review (already handled above)
     if (!$targetEmployee->manager_id) {
-        return false;
+        return Response::deny(__('The target employee does not have a manager assigned.'));
     }
 
     // 4) Manager must be direct manager
     if ((int) $targetEmployee->manager_id !== (int) $managerEmployee->id) {
-        return false;
+        return Response::deny(__('You are not authorized to review this employee.'));
     }
 
     return Response::allow();
@@ -132,11 +136,11 @@ class PerformancePolicy
      * - HR can update any review if cycle is Active.
      * - Manager can update only reviews they created.
      */
-    public function updateReview(User $authUser, PerformanceReview $review): bool
+    public function updateReview(User $authUser, PerformanceReview $review)
     {
         // Cycle must be active
         if ($review->cycle?->status !== 'Active') {
-            return false;
+            return Response::deny(__('The performance review cycle is not active.'));
         }
 
         // HR/Admin override
@@ -146,16 +150,20 @@ class PerformancePolicy
 
         // Manager permission
         if (!$authUser->hasPermissionTo('update.review.employee.own.department')) {
-            return false;
+            return Response::deny(__('You do not have permission to update reviews for employees in your department.'));
         }
 
         // Manager must have employee record
         $managerEmployee = $authUser->employee;
         if (!$managerEmployee) {
-            return false;
+            return Response::deny(__('You are not associated with an employee profile.'));
         }
 
         // Manager can update only reviews they created
-        return (int) $review->reviewer_id === (int) $managerEmployee->id;
+        if ((int) $review->reviewer_id !== (int) $managerEmployee->id) {
+        return Response::deny(__('You can only update reviews that you created.'));
+        }
+
+        return Response::allow();
     }
 }
