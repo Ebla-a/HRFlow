@@ -5,6 +5,11 @@ use Exception;
 
 class InactiveUserException extends Exception
 {
-    protected $code = 403;
-    protected $message = 'User account is inactive.';
+    public function __construct($message = null, $code = 403, ?\Throwable $previous = null)
+    {
+        
+        $message = $message ?: __('User account is inactive.');
+        
+        parent::__construct($message, $code, $previous);
+    }
 }

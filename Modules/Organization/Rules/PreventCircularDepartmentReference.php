@@ -30,14 +30,14 @@ class PreventCircularDepartmentReference implements ValidationRule
         }
         // 1. Prevent the department from setting itself as its own parent.
         if ((string) $value === (string) $this->departmentId) {
-            $fail('The department cannot be its own parent.');
+            $fail(__('The department cannot be its own parent.'));
             return;
         }
 // 2. Fetch the parent candidate to check for circular reference.
 
         $parentCandidate = Department::find($value);
         if ($parentCandidate && $this->isDescendant($parentCandidate, $this->departmentId)) {
-            $fail('The selected parent department is a descendant of the current department, which would create a circular reference.');
+            $fail(__('The selected parent department is a descendant of the current department, which would create a circular reference.'));
         }
     }
 

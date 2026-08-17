@@ -35,7 +35,7 @@ class UsersResource extends JsonResource
     {
         return [
             'status'  => true,
-            'message' => 'Success',
+            'message' => __('Success'),
         ];
     }
 }

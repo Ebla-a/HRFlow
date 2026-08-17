@@ -121,7 +121,7 @@ class EmployeeController extends Controller
         abort_if(
             $employee === null,
             404,
-            'Employee record not found.'
+            __('Employee record not found.')
         );
 
         return new EmployeeResource(

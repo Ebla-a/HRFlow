@@ -12,11 +12,13 @@ use Modules\Employee\Entities\Employee;
 use Modules\Organization\Database\factories\JobTitleFactory;
 use Modules\Organization\Entities\Department;
 use Modules\Organization\Enums\JobTitleGrade;
+use CodingPartners\TranslaGenius\Traits\Translatable;
+
 
 #[Fillable(['department_id','title','grade','is_active','description'])]
 class JobTitle extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,Translatable;
 
 
     protected static function newFactory()
@@ -26,7 +28,11 @@ class JobTitle extends Model
 protected $casts = [
         'is_active' => 'boolean',
         'grade' => JobTitleGrade::class,
+        'title'=>'json',
+        'description'=>'json'
     ];
+    public array $translatable = ['title','description'];
+
     /**
      * Summary of department
      * @return BelongsTo<Department, JobTitle>
@@ -60,5 +66,9 @@ public function employees(): HasMany
     {
         $this->attributes['title'] = ucwords(strtolower($value));
     }
+
+
+
+
 
 }

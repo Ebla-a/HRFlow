@@ -120,7 +120,7 @@ class LeaveRequestService
 
             throw ValidationException::withMessages([
                 'date' =>
-                'You already have a leave request in this period.',
+                __('You already have a leave request in this period.'),
             ]);
         }
     }
@@ -151,14 +151,14 @@ class LeaveRequestService
         if (!$balance) {
 
             throw ValidationException::withMessages([
-                'balance' => 'Leave balance not found.',
+                'balance' => __('Leave balance not found.'),
             ]);
         }
 
         if ($balance->remaining_days < $days) {
 
             throw ValidationException::withMessages([
-                'balance' => 'Insufficient leave balance.',
+                'balance' => __('Insufficient leave balance.'),
             ]);
         }
     }
@@ -175,7 +175,7 @@ class LeaveRequestService
         if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
 
             throw ValidationException::withMessages([
-                'status' => 'Leave request must be pending.',
+                'status' => __('Leave request must be pending.'),
             ]);
         }
 
@@ -201,7 +201,7 @@ class LeaveRequestService
             if ($leaveRequest->status !== LeaveRequestStatusEnum::PENDING) {
 
                 throw ValidationException::withMessages([
-                    'status' => 'Leave request must be pending.',
+                    'status' => __('Leave request must be pending.'),
                 ]);
             }
 
@@ -210,7 +210,7 @@ class LeaveRequestService
                 !== 'approved'
             ) {
                 throw ValidationException::withMessages([
-                    'approval' => 'Manager approval is required first.',
+                    'approval' => __('Manager approval is required first.'),
                 ]);
             }
 
@@ -251,7 +251,7 @@ class LeaveRequestService
         if (!$balance) {
 
             throw ValidationException::withMessages([
-                'balance' => 'Leave balance not found.',
+                'balance' => __('Leave balance not found.'),
             ]);
         }
 
@@ -276,7 +276,7 @@ class LeaveRequestService
 
         if ($leaveRequest->status === LeaveRequestStatusEnum::APPROVED) {
             throw ValidationException::withMessages([
-                'status' => 'Approved request cannot be rejected.',
+                'status' => __('Approved request cannot be rejected.'),
             ]);
         }
 

@@ -11,7 +11,7 @@ class PayslipDeductionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type' => $this->type,
+            'type' => __($this->type),
             'amount' => (float) $this->amount,
             'description' => $this->description,
         ];

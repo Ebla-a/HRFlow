@@ -52,7 +52,7 @@ class PayrollRunController extends Controller
         $run->load(['processedBy', 'finalizedBy']);
 
         return response()->json([
-            'message' => 'Payroll run created successfully.',
+            'message' => __('Payroll run created successfully.'),
             'data' => new PayrollRunResource($run),
         ], 201);
     }
@@ -65,7 +65,7 @@ class PayrollRunController extends Controller
         $run->load(['processedBy', 'payslips.employee', 'payslips.deductions']);
 
         return response()->json([
-            'message' => 'Payroll run processed successfully.',
+            'message' => __('Payroll run processed successfully.'),
             'data' => new PayrollRunResource($run),
         ]);
     }
@@ -78,7 +78,7 @@ class PayrollRunController extends Controller
         $run->load(['finalizedBy']);
 
         return response()->json([
-            'message' => 'Payroll run finalized successfully.',
+            'message' => __('Payroll run finalized successfully.'),
             'data' => new PayrollRunResource($run),
         ]);
     }

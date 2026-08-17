@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use CodingPartners\TranslaGenius\Traits\Translatable;
 
 
 use Modules\Employee\App\Enums\EmployeeStatus;
@@ -44,7 +45,7 @@ use Spatie\Permission\Traits\HasRoles;
 ])]
 class Employee extends Model
 {
-    use SoftDeletes, HasFactory, HasRoles;
+    use SoftDeletes, HasFactory, HasRoles,Translatable;
     protected $casts = [
         'status' => EmployeeStatus::class,
         'employment_type' => EmploymentType::class,
@@ -52,7 +53,13 @@ class Employee extends Model
         'hire_date' => 'date',
         'birth_date' => 'date',
         'termination_date' => 'date',
+        'first_name'=>'json',
+        'last_name'=>'json',
+        'termination_reason'=>'json',
+        'address'=>'json',
     ];
+
+    public array $translatable = ['termination_reason','address','last_name','first_name'];
 
 
 
@@ -68,7 +75,7 @@ class Employee extends Model
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn() => "{$this->first_name} {$this->last_name}"
+            get: fn() => "{$this->first_name } {$this->last_name}"
         );
     }
     /**

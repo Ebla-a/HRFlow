@@ -4,11 +4,15 @@ namespace Modules\Attendance\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Modules\Employee\Entities\Employee;
+use CodingPartners\TranslaGenius\Traits\Translatable;
+
 /**
  * Summary of Attendance
  */
 class Attendance extends Model
 {
+    use Translatable;
+
     protected $fillable = [
         'employee_id',
         'attendance_date',
@@ -20,13 +24,15 @@ class Attendance extends Model
         'status',
         'notes'
     ];
-    
+
+    public array $translatable = ['notes'];
 
         /**
          * Summary of casts
          * @var array
          */
         protected $casts = [
+    'notes'=>'json',
     'attendance_date' => 'date',
     'check_in' => 'datetime',
     'check_out' => 'datetime',

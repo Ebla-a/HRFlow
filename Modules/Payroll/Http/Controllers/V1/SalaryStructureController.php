@@ -43,7 +43,7 @@ class SalaryStructureController extends Controller
         $structure = SalaryStructure::create($validated);
 
         return response()->json([
-            'message' => 'Salary structure created successfully.',
+            'message' => __('Salary structure created successfully.'),
             'data' => $structure->load('employee'),
         ], 201);
     }
@@ -76,7 +76,7 @@ class SalaryStructureController extends Controller
         $updatedStructure = $action->execute($salaryStructure, $dto, $request->user()->id);
 
         return response()->json([
-            'message' => 'Salary structure updated successfully.',
+            'message' => __('Salary structure updated successfully.'),
             'data' => $updatedStructure->fresh('employee'),
         ]); }
 }

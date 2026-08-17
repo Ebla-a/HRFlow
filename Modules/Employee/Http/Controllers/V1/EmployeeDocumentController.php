@@ -71,7 +71,7 @@ class EmployeeDocumentController extends Controller
 
         $this->documentService->delete($document);
 
-        return response()->json(['message' => 'Document deleted successfully'], 200);
+        return response()->json(['message' => __('Document deleted successfully')], 200);
     }
 
     /**
@@ -86,7 +86,7 @@ class EmployeeDocumentController extends Controller
         if (!Storage::disk($diskName)->exists($document->file_path)) {
             return response()->json([
                 'success' => false,
-                'message' => 'File not found on local storage.'
+                'message' => __('File not found on local storage.')
             ], 404);
         }
 
