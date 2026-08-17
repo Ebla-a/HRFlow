@@ -27,7 +27,6 @@ class PerformanceReview extends Model
 
     
     protected $casts = [
-        'reviewed_at' => 'datetime', 
         'comments' => 'json', 
       'reviewed_at' => 'datetime:Y-m-d H:i:s',
     ];

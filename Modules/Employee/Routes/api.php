@@ -22,7 +22,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         ->middleware('permission:employee.update');
 
     Route::post('/employees/{employee}/terminate', [EmployeeController::class, 'terminate'])
-        ->middleware('permission:employee.change.status');
+    ->middleware('permission:employee.change.status,sanctum');
 
     // --- Employee Documents Routes ---
     
