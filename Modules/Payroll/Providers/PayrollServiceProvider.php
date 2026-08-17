@@ -16,6 +16,8 @@ use Modules\Payroll\Policies\PayrollRunPolicy;
 use Modules\Payroll\Policies\PayslipPolicy;
 use Modules\Payroll\Services\ApiExchangeRateFetcher;
 use Modules\Payroll\Services\DatabaseExchangeRateProvider;
+use Illuminate\Console\Scheduling\Schedule;
+use Modules\Payroll\Jobs\FetchLatestExchangeRatesJob;
 
 class PayrollServiceProvider extends ServiceProvider
 {
@@ -36,13 +38,20 @@ class PayrollServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->job(new FetchLatestExchangeRatesJob('USD'))
+                ->daily()
+                ->withoutOverlapping();
+        });
         Event::listen(
             EventsEmployeeHired::class,
             CreateInitialSalaryStructure::class
         );
 
-        Gate::policy(PayrollRun::class,PayrollRunPolicy::class);
-        Gate::policy(Payslip::class,PayslipPolicy::class);
+        Gate::policy(PayrollRun::class, PayrollRunPolicy::class);
+        Gate::policy(Payslip::class, PayslipPolicy::class);
 
 
 
@@ -75,7 +84,8 @@ class PayrollServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 

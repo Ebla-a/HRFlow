@@ -7,11 +7,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
-
+use Spatie\Permission\Models\Permission;
 use Modules\Employee\App\Enums\EmployeeStatus;
 use Modules\User\Entities\User;
 use Modules\Employee\Entities\Employee;
 use Modules\Employee\Events\EmployeeTerminated as EventsEmployeeTerminated;
+use Illuminate\Support\Facades\Gate;
 
 class TerminateEmployeeTest extends TestCase
 {
@@ -24,14 +25,18 @@ class TerminateEmployeeTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Modules\User\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->hrAdmin = User::factory()->create();
+
+
+        $this->hrAdmin->givePermissionTo(
+            Permission::firstOrCreate(['name' => 'employee.change.status', 'guard_name' => 'sanctum'])
+        );
 
 
         $this->hrAdmin = User::factory()->create();
-        $this->hrAdmin->guard_name = 'sanctum';
-        $this->hrAdmin->assignRole('Hr_admin');
 
-        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        Gate::before(fn() => true);
 
         $user = User::factory()->create(['is_active' => true]);
 
@@ -60,7 +65,7 @@ class TerminateEmployeeTest extends TestCase
         $this->assertDatabaseHas('employees', [
             'id' => $this->employee->id,
             'status' => EmployeeStatus::TERMINATED->value,
-            'termination_reason' => 'End of contract',
+            'termination_reason->en' => 'End of contract',
         ]);
 
         $this->assertDatabaseHas('users', [
